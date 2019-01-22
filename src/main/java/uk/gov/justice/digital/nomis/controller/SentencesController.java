@@ -29,7 +29,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Sentence resources", tags = "Offender Sentences")
+@Api(description = "Sentence resources", tags = "Offender Sentences")
 public class SentencesController {
 
     private final SentencesService sentencesService;
@@ -46,11 +46,10 @@ public class SentencesController {
                     value = "Results page you want to retrieve (0..N)"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
                     value = "Number of records per page.")})
-    public PagedResources<Resource<Sentence>> getSentences(final @ApiIgnore Pageable pageable,
-                                                           final PagedResourcesAssembler<Sentence> assembler) {
+    public PagedResources<Resource<Sentence>> getSentences(final @ApiIgnore Pageable pageable) {
 
         Page<Sentence> sentences = sentencesService.getSentences(pageable);
-        return assembler.toResource(sentences);
+        return new PagedResourcesAssembler<Sentence>(null, null).toResource(sentences);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/sentences", method = RequestMethod.GET)

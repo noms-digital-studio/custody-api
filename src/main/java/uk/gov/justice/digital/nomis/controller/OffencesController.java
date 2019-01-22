@@ -35,11 +35,10 @@ public class OffencesController {
                     value = "Results page you want to retrieve (0..N)"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
                     value = "Number of records per page.")})
-    public PagedResources<Resource<Offence>> getOffences(final @ApiIgnore Pageable pageable,
-                                                         final PagedResourcesAssembler<Offence> assembler) {
+    public PagedResources<Resource<Offence>> getOffences(final @ApiIgnore Pageable pageable) {
 
         Page<Offence> offences = offencesService.getOffences(pageable);
-        return assembler.toResource(offences);
+        return new PagedResourcesAssembler<Offence>(null, null).toResource(offences);
     }
 
 }

@@ -37,7 +37,7 @@ public class NomisStaffUsersController {
 
     @RequestMapping(path = "/nomis-staff-users/{username}", method = RequestMethod.GET)
     @ApiOperation(value = "Retrieves the NOMIS staff user for this username", notes = "Username is a unique reference to a NOMIS staff member",
-            nickname="retrieve NOMIS staff user")
+            nickname = "retrieve NOMIS staff user")
     @ApiResponses({
             @ApiResponse(code = 404, message = "User not found"),
             @ApiResponse(code = 200, message = "OK")})
@@ -50,17 +50,16 @@ public class NomisStaffUsersController {
 
     @RequestMapping(path = "/nomis-staff-users", method = RequestMethod.GET)
     @ApiOperation(value = "Retrieves a pageable list of NOMIS staff users", notes = "Paged list of NOMIS staff users",
-            nickname="retrieve page list of NOMIS staff users")
+            nickname = "retrieve page list of NOMIS staff users")
     @ResponseBody
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
                     value = "Results page you want to retrieve (0..N)"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
                     value = "Number of records per page.")})
-    public PagedResources<Resource<NomisStaffUser>> getNomisStaffUsers(final Pageable pageable,
-                                                                       final PagedResourcesAssembler<NomisStaffUser> assembler) {
+    public PagedResources<Resource<NomisStaffUser>> getNomisStaffUsers(final Pageable pageable) {
 
         Page<NomisStaffUser> staffUsers = staffUsersService.getStaffUsers(pageable);
-        return assembler.toResource(staffUsers);
+        return new PagedResourcesAssembler<NomisStaffUser>(null, null).toResource(staffUsers);
     }
 }

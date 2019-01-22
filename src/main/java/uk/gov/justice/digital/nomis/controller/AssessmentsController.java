@@ -30,7 +30,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Offender Assessment resources", tags = "Offender Assessments")
+@Api(description = "Offender Assessment resources", tags = "Offender Assessments")
 public class AssessmentsController {
 
     private final AssessmentService assessmentService;
@@ -52,11 +52,10 @@ public class AssessmentsController {
             @ApiImplicitParam(name = "to", dataType = "date", paramType = "query",
                     value = "ISO 8601 Date Time without zone or offset (local date time), eg 2017-07-24T09:18:15")})
     public PagedResources<Resource<OffenderAssessment>> getAssessments(final @ApiIgnore Pageable pageable,
-                                                                       final PagedResourcesAssembler<OffenderAssessment> assembler,
                                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
                                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("to") Optional<LocalDateTime> maybeTo) {
 
-        return assembler.toResource(assessmentService.getAssessments(pageable, maybeFrom, maybeTo));
+        return new PagedResourcesAssembler<OffenderAssessment>(null, null).toResource(assessmentService.getAssessments(pageable, maybeFrom, maybeTo));
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/assessments", method = RequestMethod.GET)

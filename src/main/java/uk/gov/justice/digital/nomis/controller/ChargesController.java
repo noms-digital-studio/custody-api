@@ -31,7 +31,7 @@ import java.util.Set;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Offender charge resources", tags = "Offender Charges")
+@Api(description = "Offender charge resources", tags = "Offender Charges")
 public class ChargesController {
 
     private final ChargesService chargesService;
@@ -53,11 +53,10 @@ public class ChargesController {
             @ApiParam(allowMultiple = true,
                     value = "Optionally specifies multiple individual offenders' bookings (i.e. prison terms)",
                     example = "/charges?bookingId=1001&bookingId=2002")
-            @RequestParam(value = "bookingId", required = false) Set<Long> bookingId,
-            final PagedResourcesAssembler<Charge> assembler) {
+            @RequestParam(value = "bookingId", required = false) Set<Long> bookingId) {
 
         Page<Charge> charges = chargesService.getCharges(pageable, bookingId);
-        return assembler.toResource(charges);
+        return new PagedResourcesAssembler<Charge>(null, null).toResource(charges);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/charges", method = RequestMethod.GET)

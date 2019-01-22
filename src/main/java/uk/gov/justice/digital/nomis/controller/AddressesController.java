@@ -27,7 +27,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Address resources", tags = "Addresses")
+@Api(description = "Address resources", tags = "Addresses")
 public class AddressesController {
 
     private final AddressService addressService;
@@ -44,11 +44,10 @@ public class AddressesController {
                     value = "Results page you want to retrieve (0..N)"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
                     value = "Number of records per page.")})
-    public PagedResources<Resource<Address>> getAddresses(final @ApiIgnore Pageable pageable,
-                                                          final PagedResourcesAssembler<Address> assembler) {
+    public PagedResources<Resource<Address>> getAddresses(final @ApiIgnore Pageable pageable) {
 
         Page<Address> addresses = addressService.getAddresses(pageable);
-        return assembler.toResource(addresses);
+        return new PagedResourcesAssembler<Address>(null, null).toResource(addresses);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/addresses", method = RequestMethod.GET)

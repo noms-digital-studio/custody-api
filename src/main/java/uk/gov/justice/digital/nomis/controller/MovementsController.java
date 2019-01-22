@@ -31,7 +31,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Offender movement resources", tags = "Offender Movements")
+@Api(description = "Offender movement resources", tags = "Offender Movements")
 public class MovementsController {
 
     private final MovementsService movementsService;
@@ -56,13 +56,12 @@ public class MovementsController {
                     value = "bookingId filter"),
     })
     public PagedResources<Resource<ExternalMovement>> getMovements(final @ApiIgnore Pageable pageable,
-                                                                   final PagedResourcesAssembler<ExternalMovement> assembler,
                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("to") Optional<LocalDateTime> maybeTo,
                                                                    final @RequestParam("bookingId") Optional<Long> maybeBookingId) {
 
         Page<ExternalMovement> externalMovements = movementsService.getMovements(pageable, maybeFrom, maybeTo, maybeBookingId);
-        return assembler.toResource(externalMovements);
+        return new PagedResourcesAssembler<ExternalMovement>(null, null).toResource(externalMovements);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/movements", method = RequestMethod.GET)

@@ -36,11 +36,10 @@ public class ReferenceDataController {
                     value = "Results page you want to retrieve (0..N)"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
                     value = "Number of records per page.")})
-    public PagedResources<Resource<AgencyLocation>> getAgencyLocations(final @ApiIgnore Pageable pageable,
-                                                                       final PagedResourcesAssembler<AgencyLocation> assembler) {
+    public PagedResources<Resource<AgencyLocation>> getAgencyLocations(final @ApiIgnore Pageable pageable) {
 
         Page<AgencyLocation> agencyLocations = referenceDataService.getLocations(pageable);
-        return assembler.toResource(agencyLocations);
+        return new PagedResourcesAssembler<AgencyLocation>(null, null).toResource(agencyLocations);
     }
 
     @RequestMapping(path = "/agencyInternalLocations", method = RequestMethod.GET)
@@ -50,11 +49,10 @@ public class ReferenceDataController {
                     value = "Results page you want to retrieve (0..N)"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
                     value = "Number of records per page.")})
-    public PagedResources<Resource<AgencyInternalLocation>> getAgencyInternalLocations(final @ApiIgnore Pageable pageable,
-                                                                                       final PagedResourcesAssembler<AgencyInternalLocation> assembler) {
+    public PagedResources<Resource<AgencyInternalLocation>> getAgencyInternalLocations(final @ApiIgnore Pageable pageable) {
 
         Page<AgencyInternalLocation> agencyInternalLocations = referenceDataService.getInternalLocations(pageable);
-        return assembler.toResource(agencyInternalLocations);
+        return new PagedResourcesAssembler<AgencyInternalLocation>(null, null).toResource(agencyInternalLocations);
     }
 
 }

@@ -51,11 +51,10 @@ public class AlertsController {
                     value = "ISO 8601 Date Time without zone or offset (local date time), eg 2017-07-24T09:18:15")
     })
     public PagedResources<Resource<Alert>> getAlerts(final @ApiIgnore Pageable pageable,
-                                                     final PagedResourcesAssembler<Alert> assembler,
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("to") Optional<LocalDateTime> maybeTo) {
 
-        return assembler.toResource(alertsService.getAlerts(pageable, maybeFrom, maybeTo));
+        return new PagedResourcesAssembler<Alert>(null, null).toResource(alertsService.getAlerts(pageable, maybeFrom, maybeTo));
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/alerts", method = RequestMethod.GET)

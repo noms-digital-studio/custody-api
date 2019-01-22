@@ -48,8 +48,7 @@ public class OffenderController {
     public PagedResources<Resource<Offender>> getOffenders(final Pageable pageable) {
         Page<Offender> offenders = offenderService.getOffenders(pageable);
 
-        PagedResourcesAssembler<Offender> assembler = new PagedResourcesAssembler<>(null, null);
-        return assembler.toResource(offenders);
+        return new PagedResourcesAssembler<Offender>(null, null).toResource(offenders);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}", method = RequestMethod.GET)
@@ -92,8 +91,7 @@ public class OffenderController {
                                                                                 @PageableDefault(page = 0, size = 10, sort = {"offender.lastName", "offender.firstName"}, direction = Sort.Direction.ASC) final Pageable pageable) {
 
         Page<OffenderActiveBooking> offenders = offenderService.getOffendersByPrison(agencyLocationId, pageable);
-        PagedResourcesAssembler<OffenderActiveBooking> assembler = new PagedResourcesAssembler<>(null, null);
-        return assembler.toResource(offenders);
+        return new PagedResourcesAssembler<OffenderActiveBooking>(null, null).toResource(offenders);
     }
 
 }

@@ -31,7 +31,7 @@ import java.util.Set;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Sentence Calculation resources", tags = "Offender Sentence calculations")
+@Api(description = "Sentence Calculation resources", tags = "Offender Sentence calculations")
 public class SentenceCalculationsController {
 
     private final SentenceCalculationsService sentenceCalculationsService;
@@ -53,11 +53,10 @@ public class SentenceCalculationsController {
             @ApiParam(allowMultiple = true,
                     value = "Optionally specifies multiple individual offenders' bookings (i.e. prison terms)",
                     example = "/sentenceCalculations?bookingId=1001&bookingId=2002")
-            @RequestParam(value = "bookingId", required = false) Set<Long> bookingId,
-            final PagedResourcesAssembler<SentenceCalculation> assembler) {
+            @RequestParam(value = "bookingId", required = false) Set<Long> bookingId) {
 
         Page<SentenceCalculation> sentenceCalculations = sentenceCalculationsService.getSentenceCalculations(pageable, bookingId);
-        return assembler.toResource(sentenceCalculations);
+        return new PagedResourcesAssembler<SentenceCalculation>(null, null).toResource(sentenceCalculations);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/sentenceCalculations", method = RequestMethod.GET)
@@ -65,7 +64,7 @@ public class SentenceCalculationsController {
             @ApiResponse(code = 404, message = "Offender or booking not found"),
             @ApiResponse(code = 200, message = "OK")})
     public ResponseEntity<List<SentenceCalculation>> getOffenderSentenceCalculations(@PathVariable("offenderId") Long offenderId,
-                                                                                        @RequestParam("bookingId") Optional<Long> maybeBookingId) {
+                                                                                     @RequestParam("bookingId") Optional<Long> maybeBookingId) {
 
         return maybeBookingId
                 .map(bookingId -> sentenceCalculationsService.sentenceCalculationsForOffenderIdAndBookingId(offenderId, bookingId))

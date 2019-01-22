@@ -31,7 +31,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Offender military records", tags = "Offender Military Records")
+@Api(description = "Offender military records", tags = "Offender Military Records")
 public class MilitaryRecordsController {
 
     private final MilitaryRecordsService militaryRecordsService;
@@ -53,12 +53,11 @@ public class MilitaryRecordsController {
             @ApiImplicitParam(name = "to", dataType = "date", paramType = "query",
                     value = "ISO 8601 Date Time without zone or offset (local date time), eg 2017-07-24T09:18:15")})
     public PagedResources<Resource<MilitaryRecord>> getMilitaryRecords(final @ApiIgnore Pageable pageable,
-                                                                       final PagedResourcesAssembler<MilitaryRecord> assembler,
                                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
                                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("to") Optional<LocalDateTime> maybeTo) {
 
         Page<MilitaryRecord> militaryRecords = militaryRecordsService.getMilitaryRecords(pageable, maybeFrom, maybeTo);
-        return assembler.toResource(militaryRecords);
+        return new PagedResourcesAssembler<MilitaryRecord>(null, null).toResource(militaryRecords);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/militaryRecords", method = RequestMethod.GET)

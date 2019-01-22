@@ -30,7 +30,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Release Detail resources", tags = "Offender Release details")
+@Api(description = "Release Detail resources", tags = "Offender Release details")
 public class ReleaseDetailsController {
 
     private final ReleaseDetailsService releaseDetailsService;
@@ -48,11 +48,10 @@ public class ReleaseDetailsController {
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
                     value = "Number of records per page.")})
     public PagedResources<Resource<ReleaseDetails>> getReleaseDetails(
-            final @ApiIgnore Pageable pageable,
-            final PagedResourcesAssembler<ReleaseDetails> assembler) {
+            final @ApiIgnore Pageable pageable) {
 
         Page<ReleaseDetails> releaseDetails = releaseDetailsService.getReleaseDetails(pageable);
-        return assembler.toResource(releaseDetails);
+        return new PagedResourcesAssembler<ReleaseDetails>(null, null).toResource(releaseDetails);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/releaseDetails", method = RequestMethod.GET)

@@ -29,7 +29,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@Api( description = "Health problem resources", tags = "Health Problems")
+@Api(description = "Health problem resources", tags = "Health Problems")
 public class HealthProblemsController {
 
     private final HealthProblemsService healthProblemsService;
@@ -46,11 +46,10 @@ public class HealthProblemsController {
                     value = "Results page you want to retrieve (0..N)"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
                     value = "Number of records per page.")})
-    public PagedResources<Resource<HealthProblem>> getHealthProblems(final @ApiIgnore Pageable pageable,
-                                                                     final PagedResourcesAssembler<HealthProblem> assembler) {
+    public PagedResources<Resource<HealthProblem>> getHealthProblems(final @ApiIgnore Pageable pageable) {
 
         Page<HealthProblem> healthProblems = healthProblemsService.getHealthProblems(pageable);
-        return assembler.toResource(healthProblems);
+        return new PagedResourcesAssembler<HealthProblem>(null, null).toResource(healthProblems);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/healthProblems", method = RequestMethod.GET)
