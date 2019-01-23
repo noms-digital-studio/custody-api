@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.nomis.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
+import net.minidev.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -104,5 +106,31 @@ public class MovementsControllerTest {
                 .then()
                 .statusCode(401);
     }
+
+    @Test
+    public void embeddedHateoasLinksWork() {
+        final String response = given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .queryParam("page", 1)
+                .queryParam("size", 1)
+                .get("/movements")
+                .then()
+                .statusCode(200)
+                .extract().asString();
+
+        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+
+        hrefs.forEach(href -> given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .log()
+                .all()
+                .get(href.toString())
+                .then()
+                .statusCode(200));
+
+    }
+
 
 }

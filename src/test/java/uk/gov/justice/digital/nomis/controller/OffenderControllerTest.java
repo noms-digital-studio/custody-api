@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.nomis.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
+import net.minidev.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -165,6 +167,56 @@ public class OffenderControllerTest {
                 .get("/offenders/prison/ZZZZZZZ")
                 .then()
                 .statusCode(404);
+    }
+
+    @Test
+    public void embeddedHateoasLinksWorkForOffenders() {
+        final String response = given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .queryParam("page", 1)
+                .queryParam("size", 1)
+                .get("/offenders")
+                .then()
+                .statusCode(200)
+                .extract().asString();
+
+        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+
+        hrefs.forEach(href -> given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .log()
+                .all()
+                .get(href.toString())
+                .then()
+                .statusCode(200));
+
+    }
+
+    @Test
+    public void embeddedHateoasLinksWorkForOffenderActiveBookings() {
+        final String response = given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .queryParam("page", 1)
+                .queryParam("size", 1)
+                .get("/offenders/prison/MDI")
+                .then()
+                .statusCode(200)
+                .extract().asString();
+
+        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+
+        hrefs.forEach(href -> given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .log()
+                .all()
+                .get(href.toString())
+                .then()
+                .statusCode(200));
+
     }
 
 

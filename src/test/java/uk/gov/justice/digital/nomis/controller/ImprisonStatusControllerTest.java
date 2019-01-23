@@ -16,14 +16,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.gov.justice.digital.nomis.api.OffenderImprisonmentStatus;
 
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("dev")
-public class ReferenceDataControllerTest {
+public class ImprisonStatusControllerTest {
 
     @LocalServerPort
     int port;
@@ -44,55 +46,57 @@ public class ReferenceDataControllerTest {
     }
 
     @Test
-    public void canGetAgencyLocations() {
+    public void canGetAllImprisonmentStatuses() {
         given()
                 .when()
                 .auth().oauth2(validOauthToken)
-                .get("/agencyLocations")
+                .get("/imprisonmentStatuses")
                 .then()
                 .statusCode(200)
                 .body("page.totalElements", greaterThan(0));
-
     }
 
     @Test
-    public void agencyLocationsAreAuthorized() {
+    public void canGetOffenderImprisonmentStatus() {
+        OffenderImprisonmentStatus[] imprisonmentStatuses = given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .get("/offenders/offenderId/-1001/imprisonmentStatuses")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(OffenderImprisonmentStatus[].class);
+
+        assertThat(imprisonmentStatuses.length).isGreaterThan(0);
+    }
+
+    @Test
+    public void imprisonmentStatusesIsAuthorized() {
         given()
                 .when()
-                .get("/agencyLocations")
+                .get("/imprisonmentStatuses")
                 .then()
                 .statusCode(401);
     }
 
     @Test
-    public void canGetAgencyInternalLocations() {
+    public void offenderImprisonmentStatusesIsAuthorized() {
         given()
                 .when()
-                .auth().oauth2(validOauthToken)
-                .get("/agencyInternalLocations")
-                .then()
-                .statusCode(200)
-                .body("page.totalElements", greaterThan(0));
-
-    }
-
-    @Test
-    public void agencyInternalLocationsAreAuthorized() {
-        given()
-                .when()
-                .get("/agencyInternalLocations")
+                .get("/offenders/offenderId/-1001/imprisonmentStatuses")
                 .then()
                 .statusCode(401);
     }
 
     @Test
-    public void embeddedHateoasLinksWorkForAgencyLocations() {
+    public void embeddedHateoasLinksWork() {
         final String response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
                 .queryParam("size", 1)
-                .get("/agencyLocations")
+                .get("/imprisonmentStatuses")
                 .then()
                 .statusCode(200)
                 .extract().asString();
@@ -109,30 +113,4 @@ public class ReferenceDataControllerTest {
                 .statusCode(200));
 
     }
-
-    @Test
-    public void embeddedHateoasLinksWorkForAgencyInternalLocations() {
-        final String response = given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .queryParam("page", 1)
-                .queryParam("size", 1)
-                .get("/agencyInternalLocations")
-                .then()
-                .statusCode(200)
-                .extract().asString();
-
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
-
-        hrefs.forEach(href -> given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .log()
-                .all()
-                .get(href.toString())
-                .then()
-                .statusCode(200));
-
-    }
-
 }
