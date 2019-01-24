@@ -875,9 +875,7 @@ public class OffenderEventsTransformer {
         final String pattern = "yyyy-MM-dd hh:mm:ss";
         try {
             return Optional.ofNullable(date)
-                    .map(d -> {
-                        return LocalDateTime.parse(d, DateTimeFormatter.ofPattern(pattern)).toLocalDate();
-                    })
+                    .map(d -> LocalDateTime.parse(d, DateTimeFormatter.ofPattern(pattern)).toLocalDate())
                     .orElse(null);
         } catch (DateTimeParseException dtpe) {
             log.error("Unable to parse {} into a LocalDate using patern {}", date, pattern);
