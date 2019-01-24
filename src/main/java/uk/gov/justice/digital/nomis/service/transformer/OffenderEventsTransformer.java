@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +40,14 @@ public class OffenderEventsTransformer {
     public OffenderEventsTransformer(TypesTransformer typesTransformer, @Qualifier("globalObjectMapper") ObjectMapper objectMapper) {
         this.typesTransformer = typesTransformer;
         this.objectMapper = objectMapper;
+    }
+
+    public static LocalDateTime xtagFudgedTimestampOf(LocalDateTime xtagEnqueueTime) {
+        final ZoneId london = ZoneId.of("Europe/London");
+        if (london.getRules().isDaylightSavings(xtagEnqueueTime.atZone(london).toInstant())) {
+            return xtagEnqueueTime;
+        }
+        return xtagEnqueueTime.minusHours(1L);
     }
 
     public OffenderEvent offenderEventOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent offenderEvent) {
@@ -93,14 +101,6 @@ public class OffenderEventsTransformer {
                 .nomisTimestamp(xtagFudgedTimestampOf(enqTime.toLocalDateTime()))
                 .content(maybeMap.map(this::xtagContentOf).orElse(null))
                 .build());
-    }
-
-    public static LocalDateTime xtagFudgedTimestampOf(LocalDateTime xtagEnqueueTime) {
-        final ZoneId london = ZoneId.of("Europe/London");
-        if (london.getRules().isDaylightSavings(xtagEnqueueTime.atZone(london).toInstant())) {
-            return xtagEnqueueTime;
-        }
-        return xtagEnqueueTime.minusHours(1L);
     }
 
     public XtagContent xtagContentOf(Map<String, String> map) {
@@ -872,9 +872,17 @@ public class OffenderEventsTransformer {
     }
 
     private LocalDate localDateOf(String date) {
-        return Optional.ofNullable(date)
-                .map(d -> typesTransformer.localDateOf(Timestamp.valueOf(d)))
-                .orElse(null);
+        final String pattern = "yyyy-MM-dd hh:mm:ss";
+        try {
+            return Optional.ofNullable(date)
+                    .map(d -> {
+                        return LocalDateTime.parse(d, DateTimeFormatter.ofPattern(pattern)).toLocalDate();
+                    })
+                    .orElse(null);
+        } catch (DateTimeParseException dtpe) {
+            log.error("Unable to parse {} into a LocalDate using patern {}", date, pattern);
+        }
+        return null;
     }
 
     private LocalDateTime localDateTimeOf(String date, String time) {
