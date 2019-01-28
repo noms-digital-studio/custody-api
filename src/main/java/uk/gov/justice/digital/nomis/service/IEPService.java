@@ -2,6 +2,7 @@ package uk.gov.justice.digital.nomis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.OffenderIepLevel;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderRepository;
 import uk.gov.justice.digital.nomis.service.transformer.IEPTransformer;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class IEPService {
 
     private static final Comparator<uk.gov.justice.digital.nomis.jpa.entity.OffenderIepLevel> BY_IEP_SEQ_REVERSED = Comparator

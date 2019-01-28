@@ -2,6 +2,7 @@ package uk.gov.justice.digital.nomis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.RehabDecision;
 import uk.gov.justice.digital.nomis.api.RehabProvider;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderRehabDecision;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class RehabDecisionService {
 
     private final RehabDecisionTransformer rehabDecisionTransformer;

@@ -2,6 +2,7 @@ package uk.gov.justice.digital.nomis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.jpa.filters.OffenderEventsFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.XtagEventsRepository;
 import uk.gov.justice.digital.nomis.service.transformer.OffenderEventsTransformer;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class XtagEventsService {
 
     private final XtagEventsRepository xtagEventsRepository;

@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class SentencesService {
 
     private static final Comparator<? super OffenderSentence> BY_SENTENCE_PRIORITY = Comparator

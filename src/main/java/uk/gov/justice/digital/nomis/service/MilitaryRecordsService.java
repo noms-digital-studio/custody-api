@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class MilitaryRecordsService {
     private static final Comparator<OffenderMilitaryRecord> BY_SEQUENCE = Comparator
             .comparingLong((OffenderMilitaryRecord oem) -> oem.getId().getMilitarySeq())

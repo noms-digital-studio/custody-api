@@ -2,6 +2,7 @@ package uk.gov.justice.digital.nomis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.CourseAttendance;
 import uk.gov.justice.digital.nomis.api.Exclusion;
 import uk.gov.justice.digital.nomis.jpa.entity.Offender;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class AttendancesAndExclusionsService {
 
     private static final Comparator<OffenderExcludeActsSchds> BY_EXCLUSION_PRIORITY = Comparator

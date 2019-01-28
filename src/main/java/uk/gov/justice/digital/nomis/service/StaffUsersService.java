@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.NomisStaffUser;
 import uk.gov.justice.digital.nomis.jpa.entity.StaffUserAccount;
 import uk.gov.justice.digital.nomis.jpa.repository.StaffUserAccountRepository;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class StaffUsersService {
 
     private final StaffUserTransformer staffUserTransformer;

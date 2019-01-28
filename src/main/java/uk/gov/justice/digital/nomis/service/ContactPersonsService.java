@@ -2,6 +2,7 @@ package uk.gov.justice.digital.nomis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.OffenderContactPerson;
 import uk.gov.justice.digital.nomis.jpa.entity.AddressPhone;
 import uk.gov.justice.digital.nomis.jpa.entity.AddressUsage;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 
 @Service
+@Transactional(readOnly = true)
 public class ContactPersonsService {
 
     private final ContactPersonsTransformer contactPersonsTransformer;

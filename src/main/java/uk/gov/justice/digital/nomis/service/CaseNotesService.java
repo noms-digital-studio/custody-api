@@ -2,6 +2,7 @@ package uk.gov.justice.digital.nomis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.CaseNote;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderCaseNote;
 import uk.gov.justice.digital.nomis.jpa.filters.OffenderCaseNotesFilter;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class CaseNotesService {
 
     private static final Comparator<OffenderCaseNote> BY_CONTACT_TIMESTAMP =

@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class AssessmentService {
 
     private static final Comparator<uk.gov.justice.digital.nomis.jpa.entity.OffenderAssessment> BY_ASSESSMENT_PRIORITY =

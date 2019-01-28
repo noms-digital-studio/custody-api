@@ -3,6 +3,7 @@ package uk.gov.justice.digital.nomis.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.OffenderImage;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderImagesRepository;
 import uk.gov.justice.digital.nomis.service.transformer.OffenderImageTransformer;
@@ -14,6 +15,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
+@Transactional(readOnly = true)
 public class ImagesService {
 
     private final OffenderImagesRepository offenderImagesRepository;

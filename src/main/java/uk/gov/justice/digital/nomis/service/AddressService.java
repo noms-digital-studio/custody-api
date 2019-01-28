@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 
 @Service
+@Transactional(readOnly = true)
 public class AddressService {
 
     private static final Timestamp EARLIEST = new Timestamp(0);
