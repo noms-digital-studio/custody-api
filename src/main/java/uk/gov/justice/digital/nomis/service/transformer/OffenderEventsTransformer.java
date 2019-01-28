@@ -63,12 +63,11 @@ public class OffenderEventsTransformer {
     }
 
     public OffenderEvent offenderEventOf(XtagEventNonJpa xtagEvent) {
+        final STRUCT s = xtagEvent.getUserData();
         try {
-            final STRUCT s = xtagEvent.getUserData();
-
             return getOffenderEvent(s, xtagEvent.getEnqTime());
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.error("Failed to convert STRUCT {} to OffenderEvent: {}", s, e.getMessage());
             return null;
         }
     }
@@ -78,11 +77,11 @@ public class OffenderEventsTransformer {
         final Optional<Datum> maybeRaw = Arrays.asList(s.getOracleAttributes()).stream().filter(a -> a instanceof RAW).findFirst();
 
         final Optional<String> maybeType = maybeStruct.flatMap(d -> {
+            final STRUCT d1 = (STRUCT) d;
             try {
-                final STRUCT d1 = (STRUCT) d;
                 return Optional.ofNullable(d1.getAttributes()[1].toString());
             } catch (SQLException e) {
-                log.error(e.getMessage());
+                log.error("Failed to derive Type from STRUCT {} : {}", d, e.getMessage());
                 return Optional.empty();
             }
         });
@@ -91,7 +90,7 @@ public class OffenderEventsTransformer {
             try {
                 return Optional.ofNullable(deserialize(d.getBytes()));
             } catch (IOException | ClassNotFoundException e) {
-                log.error(e.getMessage());
+                log.error("Failed to derive Map from Datum {} : {}", d, e.getMessage());
                 return Optional.empty();
             }
         });
@@ -108,7 +107,7 @@ public class OffenderEventsTransformer {
             String stringValue = objectMapper.writeValueAsString(map);
             return objectMapper.readValue(stringValue, XtagContent.class);
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("Failed to deserialize Map {} into XtagContent: {}", map.toString(), e.getMessage());
             return null;
         }
     }
@@ -120,6 +119,7 @@ public class OffenderEventsTransformer {
 
     private OffenderEvent offenderEventOf(Xtag xtag) {
         if (xtag == null) {
+            log.warn("Null xtag");
             return null;
         }
 
@@ -855,12 +855,13 @@ public class OffenderEventsTransformer {
 
     private String withEventTypeOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent event) {
         if (event.getEventType().equalsIgnoreCase("CASE_NOTE")) {
+            final String eventData1 = event.getEventData1();
             try {
-                JsonNode json = new ObjectMapper().readTree(event.getEventData1());
+                JsonNode json = new ObjectMapper().readTree(eventData1);
 
                 return String.format("%s-%s", json.get("case_note").get("type").get("code").asText(), json.get("case_note").get("sub_type").get("code").asText());
             } catch (IOException e) {
-                System.err.println(Arrays.toString(e.getStackTrace()));
+                log.error("Could not deserialize {} into JsonNode: {}", eventData1, e.getMessage());
             }
         }
 
