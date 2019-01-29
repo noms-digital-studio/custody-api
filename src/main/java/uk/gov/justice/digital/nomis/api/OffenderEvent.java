@@ -46,8 +46,8 @@ public class OffenderEvent {
     private Long sentenceCalculationId;
     private Long oicHearingId;
     private Long oicOffenceId;
-    private Long pleaFindingCode;
-    private Long findingCode;
+    private String pleaFindingCode;
+    private String findingCode;
 
     private Long resultSeq;
     private Long agencyIncidentId;

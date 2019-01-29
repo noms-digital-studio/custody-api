@@ -488,8 +488,8 @@ public class OffenderEventsTransformer {
                 .agencyIncidentId(longOf(xtag.getContent().getP_agency_incident_id()))
                 .chargeSeq(longOf(xtag.getContent().getP_charge_seq()))
                 .oicOffenceId(longOf(xtag.getContent().getP_oic_offence_id()))
-                .pleaFindingCode(longOf(xtag.getContent().getP_plea_finding_code()))
-                .findingCode(longOf(xtag.getContent().getP_finding_code()))
+                .pleaFindingCode(xtag.getContent().getP_plea_finding_code())
+                .findingCode(xtag.getContent().getP_finding_code())
                 .eventDatetime(xtag.getNomisTimestamp())
                 .nomisEventType(xtag.getEventType())
                 .build();
