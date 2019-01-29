@@ -855,13 +855,15 @@ public class OffenderEventsTransformer {
 
     private String withEventTypeOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent event) {
         if (event.getEventType().equalsIgnoreCase("CASE_NOTE")) {
-            final String eventData1 = event.getEventData1();
+            final String eventData = event.getEventData1() +
+                    Optional.ofNullable(event.getEventData2()).orElse("") +
+                    Optional.ofNullable(event.getEventData3()).orElse("");
             try {
-                JsonNode json = new ObjectMapper().readTree(eventData1);
+                JsonNode json = new ObjectMapper().readTree(eventData);
 
                 return String.format("%s-%s", json.get("case_note").get("type").get("code").asText(), json.get("case_note").get("sub_type").get("code").asText());
             } catch (IOException e) {
-                log.error("Could not deserialize {} into JsonNode: {}", eventData1, e.getMessage());
+                log.error("Could not deserialize {} into JsonNode: {}", eventData, e.getMessage());
             }
         }
 
