@@ -767,17 +767,15 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private String externalMovementEventOf(Xtag xtag) {
-        String del = xtag.getContent().getP_record_deleted();
+    public static String externalMovementEventOf(Xtag xtag) {
+        String del = Optional.ofNullable(xtag.getContent().getP_record_deleted()).orElse("");
         switch (del) {
             case "N":
                 return "EXTERNAL_MOVEMENT_RECORD-INSERTED";
             case "Y":
                 return "EXTERNAL_MOVEMENT_RECORD-DELETED";
             default:
-                return Strings.isNullOrEmpty(del) ?
-                        "" :
-                        "EXTERNAL_MOVEMENT_RECORD-UPDATED";
+                return "EXTERNAL_MOVEMENT_RECORD-UPDATED";
         }
     }
 
