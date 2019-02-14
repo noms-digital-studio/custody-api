@@ -50,6 +50,18 @@ public class OffenderEventsTransformer {
         return xtagEnqueueTime.minusHours(1L);
     }
 
+    public static String externalMovementEventOf(Xtag xtag) {
+        String del = Optional.ofNullable(xtag.getContent().getP_record_deleted()).orElse("");
+        switch (del) {
+            case "N":
+                return "EXTERNAL_MOVEMENT_RECORD-INSERTED";
+            case "Y":
+                return "EXTERNAL_MOVEMENT_RECORD-DELETED";
+            default:
+                return "EXTERNAL_MOVEMENT_RECORD-UPDATED";
+        }
+    }
+
     public OffenderEvent offenderEventOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent offenderEvent) {
         return Optional.ofNullable(offenderEvent)
                 .map(event -> OffenderEvent.builder()
@@ -767,18 +779,6 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    public static String externalMovementEventOf(Xtag xtag) {
-        String del = Optional.ofNullable(xtag.getContent().getP_record_deleted()).orElse("");
-        switch (del) {
-            case "N":
-                return "EXTERNAL_MOVEMENT_RECORD-INSERTED";
-            case "Y":
-                return "EXTERNAL_MOVEMENT_RECORD-DELETED";
-            default:
-                return "EXTERNAL_MOVEMENT_RECORD-UPDATED";
-        }
-    }
-
     private OffenderEvent offenderMovementDischargeEventOf(Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_MOVEMENT-DISCHARGE")
@@ -872,8 +872,8 @@ public class OffenderEventsTransformer {
         return Optional.ofNullable(num).map(Long::valueOf).orElse(null);
     }
 
-    private LocalDate localDateOf(String date) {
-        final String pattern = "yyyy-MM-dd hh:mm:ss";
+    public static LocalDate localDateOf(String date) {
+        final String pattern = "yyyy-MM-dd HH:mm:ss";
         try {
             return Optional.ofNullable(date)
                     .map(d -> LocalDateTime.parse(d, DateTimeFormatter.ofPattern(pattern)).toLocalDate())
@@ -884,11 +884,27 @@ public class OffenderEventsTransformer {
         return null;
     }
 
-    private LocalDateTime localDateTimeOf(String date, String time) {
-        return Optional.ofNullable(date)
-                .map(d -> Optional.ofNullable(time)
-                        .map(t -> typesTransformer.localDateTimeOf(Timestamp.valueOf(d), Timestamp.valueOf(t)))
-                        .orElse(localDateOf(date).atStartOfDay()))
+    public static LocalDateTime localDateTimeOf(String date) {
+        final String pattern = "yyyy-MM-dd HH:mm:ss";
+        try {
+            return Optional.ofNullable(date)
+                    .map(d -> LocalDateTime.parse(d, DateTimeFormatter.ofPattern(pattern)))
+                    .orElse(null);
+        } catch (DateTimeParseException dtpe) {
+            log.error("Unable to parse {} into a LocalDateTime using pattern {}", date, pattern);
+        }
+        return null;
+    }
+
+    public static LocalDateTime localDateTimeOf(String date, String time) {
+
+        var maybeLocalDate = Optional.ofNullable(localDateOf(date));
+        var maybeLocalTime = Optional.ofNullable((localDateTimeOf(time)));
+
+        return maybeLocalDate
+                .map(ld -> maybeLocalTime.map(lt -> lt.toLocalTime().atDate(ld)).orElse(ld.atStartOfDay()))
                 .orElse(null);
     }
+
+
 }
