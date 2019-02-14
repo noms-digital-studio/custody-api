@@ -76,8 +76,8 @@ public class OffenderEvent {
     private String movementReasonCode;
     private String directionCode;
     private String escortCode;
-    private Long fromAgencyLocationId;
-    private Long toAgencyLocationId;
+    private String fromAgencyLocationId;
+    private String toAgencyLocationId;
 
     private String nomisEventType;
 }

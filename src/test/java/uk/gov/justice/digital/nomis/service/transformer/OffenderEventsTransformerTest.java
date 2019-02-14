@@ -76,4 +76,16 @@ public class OffenderEventsTransformerTest {
         assertThat(OffenderEventsTransformer.localDateTimeOf( "2019-02-14 00:00:00", null)).isEqualTo(LocalDateTime.of(2019, 02, 14, 00, 00, 00));
     }
 
+    @Test
+    public void externalMovementRecordEventOfHandlesAgyLocIdsAsStrings() {
+
+        var transformer = new OffenderEventsTransformer(null,null);
+        assertThat(transformer.externalMovementRecordEventOf(Xtag.builder().content(
+                XtagContent.builder()
+                        .p_from_agy_loc_id("BARBECUE")
+                        .p_to_agy_loc_id("SAUCE")
+                        .build()
+        ).build())).extracting("fromAgencyLocationId","toAgencyLocationId").containsOnly("BARBECUE","SAUCE");
+
+    }
 }

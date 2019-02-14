@@ -762,7 +762,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent externalMovementRecordEventOf(Xtag xtag) {
+    public OffenderEvent externalMovementRecordEventOf(Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType(externalMovementEventOf(xtag))
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -773,8 +773,8 @@ public class OffenderEventsTransformer {
                 .movementReasonCode(xtag.getContent().getP_movement_reason_code())
                 .directionCode(xtag.getContent().getP_direction_code())
                 .escortCode(xtag.getContent().getP_escort_code())
-                .fromAgencyLocationId(longOf(xtag.getContent().getP_from_agy_loc_id()))
-                .toAgencyLocationId(longOf(xtag.getContent().getP_to_agy_loc_id()))
+                .fromAgencyLocationId(xtag.getContent().getP_from_agy_loc_id())
+                .toAgencyLocationId(xtag.getContent().getP_to_agy_loc_id())
                 .nomisEventType(xtag.getEventType())
                 .build();
     }
