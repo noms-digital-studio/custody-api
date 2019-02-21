@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.justice.digital.nomis.CustodyApiApplication;
+import uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent;
 import uk.gov.justice.digital.nomis.xtag.Xtag;
 import uk.gov.justice.digital.nomis.xtag.XtagContent;
 
@@ -16,6 +17,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class OffenderEventsTransformerTest {
+
+    public static final String NOT_A_CASE_NOTE = "NOT_A_CASE_NOTE";
+    public static final String CASE_NOTE_JSON = "{\"case_note\":{\"id\":61342651,\"contact_datetime\":\"1819-02-20 14:09:00\"\n" +
+            ",\"source\":{\"code\":\"INST\"\n" +
+            ",\"desc\":\"Prison\"\n" +
+            "},\"type\":{\"code\":\"GEN\"\n" +
+            ",\"desc\":\"General\"\n" +
+            "},\"sub_type\":{\"code\":\"OSE\"\n" +
+            ",\"desc\":\"\"\n" +
+            "},\"staff_member\":{\"id\":483079,\"name\":\"White, Barry\"\n" +
+            ",\"userid\":\"QWU90D\"\n" +
+            "},\"text\":\"[redacted]stice.gov.uk \\n\\u260F 01811 8055 (Direct \\u2013 22222) \\u#### N/A [redacted]\"\n" +
+            ",\"amended\":false}}";
 
     @Test
     public void canDeserializeIntoXtagContent() {
@@ -88,4 +102,25 @@ public class OffenderEventsTransformerTest {
         ).build())).extracting("fromAgencyLocationId","toAgencyLocationId").containsOnly("BARBECUE","SAUCE");
 
     }
+
+    @Test
+    public void canCorrectlyDecodeCaseNoteEventTypes() {
+        OffenderEventsTransformer transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+
+        assertThat(transformer.caseNoteEventTypeOf(OffenderEvent.builder()
+                .eventType("CASE_NOTE")
+                .eventData1(CASE_NOTE_JSON)
+        .build())).isEqualTo("GEN-OSE");
+    }
+
+    @Test
+    public void nonCaseNoteEventTypesAreNotDecoded() {
+        OffenderEventsTransformer transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+
+        assertThat(transformer.caseNoteEventTypeOf(OffenderEvent.builder()
+                .eventType(NOT_A_CASE_NOTE)
+                .eventData1(CASE_NOTE_JSON)
+                .build())).isEqualTo(NOT_A_CASE_NOTE);
+    }
+
 }

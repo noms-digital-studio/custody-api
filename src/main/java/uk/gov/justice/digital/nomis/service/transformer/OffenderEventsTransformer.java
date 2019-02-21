@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.nomis.service.transformer;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +27,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -67,7 +68,7 @@ public class OffenderEventsTransformer {
                 .map(event -> OffenderEvent.builder()
                         .eventId(event.getEventId().toString())
                         .eventDatetime(typesTransformer.localDateTimeOf(event.getEventTimestamp()))
-                        .eventType(withEventTypeOf(event))
+                        .eventType(caseNoteEventTypeOf(event))
                         .rootOffenderId(event.getRootOffenderId())
                         .offenderIdDisplay(event.getOffenderIdDisplay())
                         .agencyLocationId(event.getAgencyLocId())
@@ -851,17 +852,19 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private String withEventTypeOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent event) {
+    public String caseNoteEventTypeOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent event) {
         if (event.getEventType().equalsIgnoreCase("CASE_NOTE")) {
             final String eventData = event.getEventData1() +
                     Optional.ofNullable(event.getEventData2()).orElse("") +
                     Optional.ofNullable(event.getEventData3()).orElse("");
-            try {
-                JsonNode json = new ObjectMapper().readTree(eventData);
+            final Pattern typePattern = Pattern.compile("(?<=\\btype.{0,4}\\bcode.{0,4})(\\w+)");
+            final Matcher typeMatcher = typePattern.matcher(eventData);
 
-                return String.format("%s-%s", json.get("case_note").get("type").get("code").asText(), json.get("case_note").get("sub_type").get("code").asText());
-            } catch (IOException e) {
-                log.error("Could not deserialize {} into JsonNode: {}", eventData, e.getMessage());
+            final Pattern subtypePattern = Pattern.compile("(?<=\\bsub_type.{0,4}\\bcode.{0,4})(\\w+)");
+            final Matcher subtypeMatcher = subtypePattern.matcher(eventData);
+
+            if (typeMatcher.find() && subtypeMatcher.find()) {
+                return String.format("%s-%s", typeMatcher.group(), subtypeMatcher.group());
             }
         }
 
