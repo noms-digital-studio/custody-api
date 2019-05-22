@@ -52,8 +52,8 @@ public class MovementsController {
                     value = "ISO 8601 Date Time without zone or offset (local date time), eg 2017-07-24T09:18:15"),
             @ApiImplicitParam(name = "to", dataType = "date", paramType = "query",
                     value = "ISO 8601 Date Time without zone or offset (local date time), eg 2017-07-24T09:18:15"),
-            @ApiImplicitParam(name = "bookingId", dataType = "int", paramType = "query",
-                    value = "bookingId filter"),
+            @ApiImplicitParam(name = "bookingId", type = "int",
+                    value = "bookingId filter", example = "1002345")
     })
     public PagedResources<Resource<ExternalMovement>> getMovements(final @ApiIgnore Pageable pageable,
                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
@@ -83,7 +83,7 @@ public class MovementsController {
     @ResponseBody
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sequenceNumber", dataType = "int", paramType = "query",
-                    value = "sequence number filter")
+                    value = "sequence number filter", example = "7")
     })
     public ResponseEntity<ExternalMovement> getMovement(final @PathVariable("bookingId") Long bookingId,
                                                         final @PathVariable("sequenceNumber") Long sequenceNumber) {
