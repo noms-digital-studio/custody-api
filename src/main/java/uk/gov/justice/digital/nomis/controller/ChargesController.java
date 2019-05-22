@@ -45,14 +45,13 @@ public class ChargesController {
     @ResponseBody
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)"),
+                    value = "Results page you want to retrieve (0..N)", example = "0", defaultValue = "0"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
-                    value = "Number of records per page.")})
+                    value = "Number of records per page.", example = "20", defaultValue = "20")})
     public PagedResources<Resource<Charge>> getCharges(
             final @ApiIgnore Pageable pageable,
             @ApiParam(allowMultiple = true,
-                    value = "Optionally specifies multiple individual offenders' bookings (i.e. prison terms)",
-                    example = "/charges?bookingId=1001&bookingId=2002")
+                    value = "Optionally specifies multiple individual offenders' bookings (i.e. prison terms)")
             @RequestParam(value = "bookingId", required = false) Set<Long> bookingId) {
 
         Page<Charge> charges = chargesService.getCharges(pageable, bookingId);

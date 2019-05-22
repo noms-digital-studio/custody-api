@@ -33,9 +33,9 @@ public class ReferenceDataController {
     @ResponseBody
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)"),
+                    value = "Results page you want to retrieve (0..N)", example = "0", defaultValue = "0"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
-                    value = "Number of records per page.")})
+                    value = "Number of records per page.", example = "20", defaultValue = "20")})
     public PagedResources<Resource<AgencyLocation>> getAgencyLocations(final @ApiIgnore Pageable pageable) {
 
         Page<AgencyLocation> agencyLocations = referenceDataService.getLocations(pageable);
@@ -46,9 +46,9 @@ public class ReferenceDataController {
     @ResponseBody
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)"),
+                    value = "Results page you want to retrieve (0..N)", example = "0", defaultValue = "0"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
-                    value = "Number of records per page.")})
+                    value = "Number of records per page.", example = "20", defaultValue = "20")})
     public PagedResources<Resource<AgencyInternalLocation>> getAgencyInternalLocations(final @ApiIgnore Pageable pageable) {
 
         Page<AgencyInternalLocation> agencyInternalLocations = referenceDataService.getInternalLocations(pageable);

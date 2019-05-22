@@ -42,9 +42,9 @@ public class OffenderController {
     @ResponseBody
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)"),
+                    value = "Results page you want to retrieve (0..N)", example = "0", defaultValue = "0"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
-                    value = "Number of records per page.")})
+                    value = "Number of records per page.", example = "20", defaultValue = "20")})
     public PagedResources<Resource<Offender>> getOffenders(final Pageable pageable) {
         Page<Offender> offenders = offenderService.getOffenders(pageable);
 
@@ -82,9 +82,9 @@ public class OffenderController {
             @ApiResponse(code = 200, message = "OK")})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)"),
+                    value = "Results page you want to retrieve (0..N)", example = "0", defaultValue = "0"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
-                    value = "Number of records per page."),
+                    value = "Number of records per page.", example = "20", defaultValue = "20"),
             @ApiImplicitParam(name = "sort", dataType = "string", paramType = "query",
                     value = "Sort column and direction, eg sort=offender.lastName,asc. Multiple sort params allowed.")})
     public PagedResources<Resource<OffenderActiveBooking>> getOffendersByPrison(@PathVariable("agencyLocationId") String agencyLocationId,

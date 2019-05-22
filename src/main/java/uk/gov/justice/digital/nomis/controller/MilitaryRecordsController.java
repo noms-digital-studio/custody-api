@@ -45,9 +45,9 @@ public class MilitaryRecordsController {
     @ResponseBody
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)"),
+                    value = "Results page you want to retrieve (0..N)", example = "0", defaultValue = "0"),
             @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
-                    value = "Number of records per page."),
+                    value = "Number of records per page.", example = "20", defaultValue = "20"),
             @ApiImplicitParam(name = "from", dataType = "date", paramType = "query",
                     value = "ISO 8601 Date Time without zone or offset (local date time), eg 2017-07-24T09:18:15"),
             @ApiImplicitParam(name = "to", dataType = "date", paramType = "query",
