@@ -21,6 +21,8 @@ management:
   endpoints:
     web:
       base-path: /
+      exposure:
+        include: 'info, health, ping'
   endpoint:
     health:
       cache:
@@ -34,4 +36,4 @@ logging.level.uk.gov: INFO
 
 application.insights.ikey:
 
-logging.uris.exclude.regex: .*/health|.*/info|.*/swagger.*|/webjars/.*|.*/v2/api-docs
+logging.uris.exclude.regex: .*/health|.*/info|.*/ping|.*/swagger.*|/webjars/.*|.*/v2/api-docs
