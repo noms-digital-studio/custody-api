@@ -46,6 +46,14 @@ To override, set server.port (eg SERVER_PORT=8099 java -jar etc etc)
 ## Documentation
 http://localhost:8080/api/swagger-ui.html
 
+## Application health and info
+
+- `/ping`: will respond `pong` to all requests.  This should be used by dependent systems to check connectivity to custody,
+rather than calling the `/health` endpoint.
+- `/health`: provides information about the application health and its dependencies.  This should only be used
+by custody health monitoring (e.g. pager duty) and not other systems who wish to find out the state of custody.
+- `/info`: provides information about the version of deployed application.
+
 ## Endpoints curl examples
 
 ### List offenders details
@@ -62,5 +70,12 @@ curl -X GET http://localhost:8080/info
 ```
 curl -X GET http://localhost:8080/health
 ```
+
+### Application Ping Endpoint
+```
+curl -X GET http://localhost:8080/ping
+```
+
+
 
 
