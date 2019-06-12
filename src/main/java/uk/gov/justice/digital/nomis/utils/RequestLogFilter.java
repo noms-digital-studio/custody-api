@@ -7,7 +7,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,12 +21,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
-import static uk.gov.justice.digital.nomis.utils.MdcUtility.*;
+import static uk.gov.justice.digital.nomis.utils.MdcUtility.REQUEST_DURATION;
+import static uk.gov.justice.digital.nomis.utils.MdcUtility.REQUEST_ID;
+import static uk.gov.justice.digital.nomis.utils.MdcUtility.RESPONSE_STATUS;
+import static uk.gov.justice.digital.nomis.utils.MdcUtility.SKIP_LOGGING;
+import static uk.gov.justice.digital.nomis.utils.MdcUtility.USER_ID;
+import static uk.gov.justice.digital.nomis.utils.MdcUtility.isLoggingAllowed;
 
 
 @Component
 @Slf4j
-@Order(1)
+@Order(2)
 public class RequestLogFilter implements Filter {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
@@ -57,8 +67,8 @@ public class RequestLogFilter implements Filter {
             LocalDateTime start = LocalDateTime.now();
             MDC.put(REQUEST_ID, mdcUtility.generateUUID());
             MDC.put(USER_ID, getUser(req));
-            if (isLoggingAllowed()) {
-                log.debug("Request: {} {}", req.getMethod(), req.getRequestURI());
+            if (log.isTraceEnabled() && isLoggingAllowed()) {
+                log.trace("Request: {} {}", req.getMethod(), req.getRequestURI());
             }
 
             chain.doFilter(request, response);
@@ -67,8 +77,8 @@ public class RequestLogFilter implements Filter {
             MDC.put(REQUEST_DURATION, String.valueOf(duration));
             int status = res.getStatus();
             MDC.put(RESPONSE_STATUS, String.valueOf(status));
-            if (isLoggingAllowed()) {
-                log.debug("Response: {} {} - Status {} - Start {}, User {}, Duration {} ms", req.getMethod(), req.getRequestURI(), status, start.format(formatter), getUser(req), duration);
+            if (log.isTraceEnabled() && isLoggingAllowed()) {
+                log.trace("Response: {} {} - Status {} - Start {}, User {}, Duration {} ms", req.getMethod(), req.getRequestURI(), status, start.format(formatter), getUser(req), duration);
             }
         } finally {
             MDC.remove(REQUEST_DURATION);
