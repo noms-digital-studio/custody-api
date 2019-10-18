@@ -38,7 +38,7 @@ public class OffenderEvent {
     private String alertCode;
     private LocalDateTime expiryDateTime;
 
-
+    private Long caseNoteId;
     private String agencyLocationId;
     private Long riskPredictorId;
     private Long addressId;

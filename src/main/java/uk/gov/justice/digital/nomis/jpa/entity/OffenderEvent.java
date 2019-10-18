@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -65,5 +66,9 @@ public class OffenderEvent {
     private String auditClientWorkstationName;
     @Column(name = "AUDIT_ADDITIONAL_INFO")
     private String auditAdditionalInfo;
+
+    public String getEventData() {
+        return eventData1 + StringUtils.defaultString(eventData2) + StringUtils.defaultString(eventData3);
+    }
 
 }

@@ -18,8 +18,8 @@ import static org.mockito.Mockito.mock;
 
 public class OffenderEventsTransformerTest {
 
-    public static final String NOT_A_CASE_NOTE = "NOT_A_CASE_NOTE";
-    public static final String CASE_NOTE_JSON = "{\"case_note\":{\"id\":61342651,\"contact_datetime\":\"1819-02-20 14:09:00\"\n" +
+    private static final String NOT_A_CASE_NOTE = "NOT_A_CASE_NOTE";
+    private static final String CASE_NOTE_JSON = "{\"case_note\":{\"id\":61342651,\"contact_datetime\":\"1819-02-20 14:09:00\"\n" +
             ",\"source\":{\"code\":\"INST\"\n" +
             ",\"desc\":\"Prison\"\n" +
             "},\"type\":{\"code\":\"GEN\"\n" +
@@ -43,7 +43,7 @@ public class OffenderEventsTransformerTest {
 
     @Test
     public void xtagEnqueueTimestampIsSeasonallyAdjustedIntoDaylightSavings() {
-        final var lastSecondOfWinter = LocalDateTime.of(2019, 3, 31, 00, 59, 59);
+        final var lastSecondOfWinter = LocalDateTime.of(2019, 3, 31, 0, 59, 59);
         final var firstSecondOfSummer = lastSecondOfWinter.plusSeconds(1L);
         assertThat(OffenderEventsTransformer.xtagFudgedTimestampOf(lastSecondOfWinter)).isEqualTo(lastSecondOfWinter.minusHours(1L));
         assertThat(OffenderEventsTransformer.xtagFudgedTimestampOf(firstSecondOfSummer)).isEqualTo(firstSecondOfSummer);
@@ -51,7 +51,7 @@ public class OffenderEventsTransformerTest {
 
     @Test
     public void xtagEnqueueTimestampIsSeasonallyAdjustedIntoUTC() {
-        final var lastSecondOfSummer = LocalDateTime.of(2019, 10, 27, 01, 59, 59);
+        final var lastSecondOfSummer = LocalDateTime.of(2019, 10, 27, 1, 59, 59);
         final var firstSecondOfWinter = lastSecondOfSummer.plusSeconds(1L);
         assertThat(OffenderEventsTransformer.xtagFudgedTimestampOf(lastSecondOfSummer)).isEqualTo(lastSecondOfSummer);
         assertThat(OffenderEventsTransformer.xtagFudgedTimestampOf(firstSecondOfWinter)).isEqualTo(firstSecondOfWinter.minusHours(1L));
@@ -67,16 +67,16 @@ public class OffenderEventsTransformerTest {
 
     @Test
     public void localDateOfBehavesAppropriately() {
-        assertThat(OffenderEventsTransformer.localDateOf("2019-02-14 10:11:12")).isEqualTo(LocalDate.of(2019, 02, 14));
-        assertThat(OffenderEventsTransformer.localDateOf("14-FEB-2019")).isEqualTo(LocalDate.of(2019, 02, 14));
-        assertThat(OffenderEventsTransformer.localDateOf("14-FEB-19")).isEqualTo(LocalDate.of(2019, 02, 14));
+        assertThat(OffenderEventsTransformer.localDateOf("2019-02-14 10:11:12")).isEqualTo(LocalDate.of(2019, 2, 14));
+        assertThat(OffenderEventsTransformer.localDateOf("14-FEB-2019")).isEqualTo(LocalDate.of(2019, 2, 14));
+        assertThat(OffenderEventsTransformer.localDateOf("14-FEB-19")).isEqualTo(LocalDate.of(2019, 2, 14));
         assertThat(OffenderEventsTransformer.localDateOf(null)).isNull();
         assertThat(OffenderEventsTransformer.localDateOf("Some rubbish")).isNull();
     }
 
     @Test
     public void localDateTimeOfBehavesAppropriately() {
-        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 10:11:12")).isEqualTo(LocalDateTime.of(2019, 02, 14, 10, 11, 12));
+        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 10:11:12")).isEqualTo(LocalDateTime.of(2019, 2, 14, 10, 11, 12));
         assertThat(OffenderEventsTransformer.localDateOf(null)).isNull();
         assertThat(OffenderEventsTransformer.localDateOf("Some rubbish")).isNull();
     }
@@ -84,12 +84,12 @@ public class OffenderEventsTransformerTest {
 
     @Test
     public void localDateTimeOfDateAndTimeBehavesAppropriately() {
-        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 00:00:00", "1970-01-01 10:11:12")).isEqualTo(LocalDateTime.of(2019, 02, 14, 10, 11, 12));
+        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 00:00:00", "1970-01-01 10:11:12")).isEqualTo(LocalDateTime.of(2019, 2, 14, 10, 11, 12));
         assertThat(OffenderEventsTransformer.localDateTimeOf(null, "1970-01-01 10:11:12")).isNull();
         assertThat(OffenderEventsTransformer.localDateTimeOf(null, "Some rubbish")).isNull();
         assertThat(OffenderEventsTransformer.localDateTimeOf(null, null)).isNull();
-        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 00:00:00", "Some rubbish")).isEqualTo(LocalDateTime.of(2019, 02, 14, 00, 00, 00));
-        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 00:00:00", null)).isEqualTo(LocalDateTime.of(2019, 02, 14, 00, 00, 00));
+        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 00:00:00", "Some rubbish")).isEqualTo(LocalDateTime.of(2019, 2, 14, 0, 0, 0));
+        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 00:00:00", null)).isEqualTo(LocalDateTime.of(2019, 2, 14, 0, 0, 0));
     }
 
     @Test
@@ -123,6 +123,26 @@ public class OffenderEventsTransformerTest {
                 .eventType(NOT_A_CASE_NOTE)
                 .eventData1(CASE_NOTE_JSON)
                 .build())).isEqualTo(NOT_A_CASE_NOTE);
+    }
+
+    @Test
+    public void canCorrectlyDecodeCaseNoteId() {
+        final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+
+        assertThat(transformer.caseNoteIdOf(OffenderEvent.builder()
+                .eventType("CASE_NOTE")
+                .eventData1(CASE_NOTE_JSON)
+                .build())).isEqualTo(61342651);
+    }
+
+    @Test
+    public void nonCaseNoteIdsAreNotDecoded() {
+        final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+
+        assertThat(transformer.caseNoteIdOf(OffenderEvent.builder()
+                .eventType(NOT_A_CASE_NOTE)
+                .eventData1(CASE_NOTE_JSON)
+                .build())).isNull();
     }
 
     @Test

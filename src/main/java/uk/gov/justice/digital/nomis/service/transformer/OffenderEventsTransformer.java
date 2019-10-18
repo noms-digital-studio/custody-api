@@ -65,6 +65,7 @@ public class OffenderEventsTransformer {
     public OffenderEvent offenderEventOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent offenderEvent) {
         return Optional.ofNullable(offenderEvent)
                 .map(event -> OffenderEvent.builder()
+                        .caseNoteId(caseNoteIdOf(event))
                         .eventId(event.getEventId().toString())
                         .eventDatetime(typesTransformer.localDateTimeOf(event.getEventTimestamp()))
                         .eventType(caseNoteEventTypeOf(event))
@@ -872,9 +873,7 @@ public class OffenderEventsTransformer {
 
     public String caseNoteEventTypeOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent event) {
         if (event.getEventType().equalsIgnoreCase("CASE_NOTE")) {
-            final var eventData = event.getEventData1() +
-                    Optional.ofNullable(event.getEventData2()).orElse("") +
-                    Optional.ofNullable(event.getEventData3()).orElse("");
+            final var eventData = event.getEventData();
             final var typePattern = Pattern.compile("(?<=\\btype.{0,4}\\bcode.{0,4})(\\w+)");
             final var typeMatcher = typePattern.matcher(eventData);
 
@@ -887,6 +886,17 @@ public class OffenderEventsTransformer {
         }
 
         return event.getEventType();
+    }
+
+    public Long caseNoteIdOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent event) {
+        if (event.getEventType().equalsIgnoreCase("CASE_NOTE")) {
+            final var eventData = event.getEventData();
+            final var typePattern = Pattern.compile("(?<=\\bcase_note.{0,4}\\bid.{0,4})(\\w+)");
+            final var typeMatcher = typePattern.matcher(eventData);
+
+            return typeMatcher.find() ? longOf(typeMatcher.group()) : null;
+        }
+        return null;
     }
 
     private Long longOf(final String num) {
