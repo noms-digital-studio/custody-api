@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.Alert;
 import uk.gov.justice.digital.nomis.jpa.entity.Offender;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderAlert;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.filters.AlertsFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderAlertsRepository;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderRepository;
@@ -36,21 +35,21 @@ public class AlertsService {
     private final OffenderAlertsRepository offenderAlertsRepository;
 
     @Autowired
-    public AlertsService(OffenderRepository offenderRepository, AlertsTransformer alertsTransformer, OffenderAlertsRepository offenderAlertsRepository) {
+    public AlertsService(final OffenderRepository offenderRepository, final AlertsTransformer alertsTransformer, final OffenderAlertsRepository offenderAlertsRepository) {
         this.offenderRepository = offenderRepository;
         this.offenderAlertsRepository = offenderAlertsRepository;
         this.alertsTransformer = alertsTransformer;
     }
 
-    public Page<Alert> getAlerts(Pageable pageable, Optional<LocalDateTime> from, Optional<LocalDateTime> to) {
-        AlertsFilter alertsFilter = AlertsFilter.builder()
+    public Page<Alert> getAlerts(final Pageable pageable, final Optional<LocalDateTime> from, final Optional<LocalDateTime> to) {
+        final var alertsFilter = AlertsFilter.builder()
                 .from(from)
                 .to(to)
                 .build();
 
-        Page<OffenderAlert> rawOffenderAlertsPage = offenderAlertsRepository.findAll(alertsFilter, pageable);
+        final var rawOffenderAlertsPage = offenderAlertsRepository.findAll(alertsFilter, pageable);
 
-        List<Alert> alerts = rawOffenderAlertsPage.getContent()
+        final var alerts = rawOffenderAlertsPage.getContent()
                 .stream()
                 .sorted(BY_ALERT_DATE)
                 .map(alertsTransformer::alertOf)
@@ -59,11 +58,11 @@ public class AlertsService {
         return new PageImpl<>(alerts, pageable, rawOffenderAlertsPage.getTotalElements());
     }
 
-    public Optional<List<Alert>> getOffenderAlerts(Long offenderId, Optional<String> maybeAlertCode, Optional<String> maybeAlertStatus, Optional<String> maybeAlertType) {
+    public Optional<List<Alert>> getOffenderAlerts(final Long offenderId, final Optional<String> maybeAlertCode, final Optional<String> maybeAlertStatus, final Optional<String> maybeAlertType) {
 
-        final Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        final Optional<List<OffenderBooking>> maybeOffenderBookings = maybeOffender.map(Offender::getOffenderBookings);
+        final var maybeOffenderBookings = maybeOffender.map(Offender::getOffenderBookings);
 
         return maybeOffenderBookings.map(bookings -> bookings
                 .stream()
@@ -74,7 +73,7 @@ public class AlertsService {
                 .collect(Collectors.toList()));
     }
 
-    private boolean shouldInclude(OffenderAlert offenderAlert, Optional<String> maybeAlertCode, Optional<String> maybeAlertStatus, Optional<String> maybeAlertType) {
+    private boolean shouldInclude(final OffenderAlert offenderAlert, final Optional<String> maybeAlertCode, final Optional<String> maybeAlertStatus, final Optional<String> maybeAlertType) {
         return maybeAlertCode.map(
                 alertCode -> alertCode.equals(offenderAlert.getAlertCode())
         ).orElse(true)
@@ -89,8 +88,8 @@ public class AlertsService {
         ).orElse(true);
     }
 
-    public Optional<List<Alert>> offenderAlertsForOffenderIdAndBookingId(Long offenderId, Long bookingId, Optional<String> maybeAlertCode, Optional<String> maybeAlertStatus, Optional<String> maybeAlertType) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<Alert>> offenderAlertsForOffenderIdAndBookingId(final Long offenderId, final Long bookingId, final Optional<String> maybeAlertCode, final Optional<String> maybeAlertStatus, final Optional<String> maybeAlertType) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()

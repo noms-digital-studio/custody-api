@@ -14,12 +14,12 @@ public class ReleaseDetailsTransformer {
     private final TypesTransformer typesTransformer;
 
     @Autowired
-    public ReleaseDetailsTransformer(TypesTransformer typesTransformer) {
+    public ReleaseDetailsTransformer(final TypesTransformer typesTransformer) {
         this.typesTransformer = typesTransformer;
     }
 
-    public ReleaseDetails releaseDetailsOf(OffenderReleaseDetails ord) {
-        Optional<MovementReason> maybeMovementReason = Optional.ofNullable(ord.getMovementReason());
+    public ReleaseDetails releaseDetailsOf(final OffenderReleaseDetails ord) {
+        final var maybeMovementReason = Optional.ofNullable(ord.getMovementReason());
 
         return ReleaseDetails.builder()
                 .approvedReleaseDate(typesTransformer.localDateOf(ord.getApprovedReleaseDate()))

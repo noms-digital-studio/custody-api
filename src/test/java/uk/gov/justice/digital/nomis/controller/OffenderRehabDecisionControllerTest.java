@@ -45,7 +45,7 @@ public class OffenderRehabDecisionControllerTest {
 
     @Test
     public void canGetOffenderRehabDecisionsOrderedAppropriately() {
-        RehabDecision[] rehabDecisions = given()
+        final var rehabDecisions = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/rehabDecisions")

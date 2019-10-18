@@ -19,12 +19,12 @@ public class IEPTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public IEPTransformer(TypesTransformer typesTransformer, ReferenceCodesRepository referenceCodesRepository) {
+    public IEPTransformer(final TypesTransformer typesTransformer, final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public OffenderIepLevel offenderIepLevelOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderIepLevel offenderIepLevel) {
+    public OffenderIepLevel offenderIepLevelOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderIepLevel offenderIepLevel) {
         return Optional.ofNullable(offenderIepLevel)
                 .map(iep -> OffenderIepLevel.builder()
                         .bookingId(iep.getOffenderBookId())
@@ -36,7 +36,7 @@ public class IEPTransformer {
                 .orElse(null);
     }
 
-    private IepLevel iepLevelOf(uk.gov.justice.digital.nomis.jpa.entity.IepLevel iep) {
+    private IepLevel iepLevelOf(final uk.gov.justice.digital.nomis.jpa.entity.IepLevel iep) {
         return Optional.ofNullable(iep)
                 .map(iepLevel -> IepLevel.builder()
                         .active(typesTransformer.ynToBoolean(iep.getActiveFlag()))
@@ -52,7 +52,7 @@ public class IEPTransformer {
                 .orElse(null);
     }
 
-    private KeyValue getIepLevelOf(uk.gov.justice.digital.nomis.jpa.entity.IepLevel iep) {
+    private KeyValue getIepLevelOf(final uk.gov.justice.digital.nomis.jpa.entity.IepLevel iep) {
         return Optional.ofNullable(iep.getIepLevel() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(iep.getIepLevel())

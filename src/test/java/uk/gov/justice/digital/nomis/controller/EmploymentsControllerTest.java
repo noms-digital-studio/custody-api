@@ -44,7 +44,7 @@ public class EmploymentsControllerTest {
 
     @Test
     public void canGetOffenderEmployments() {
-        Employment[] employments = given()
+        final var employments = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/employments")

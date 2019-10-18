@@ -22,12 +22,12 @@ public class MilitaryRecordsTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public MilitaryRecordsTransformer(TypesTransformer typesTransformer, ReferenceCodesRepository referenceCodesRepository) {
+    public MilitaryRecordsTransformer(final TypesTransformer typesTransformer, final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public MilitaryRecord militaryRecordOf(OffenderMilitaryRecord omr) {
+    public MilitaryRecord militaryRecordOf(final OffenderMilitaryRecord omr) {
         return MilitaryRecord.builder()
                 .bookingId(omr.getId().getOffenderBooking().getOffenderBookId())
                 .militarySeq(omr.getId().getMilitarySeq())
@@ -47,7 +47,7 @@ public class MilitaryRecordsTransformer {
                 .build();
     }
 
-    private KeyValue getReferenceDataOf(String code, String domain) {
+    private KeyValue getReferenceDataOf(final String code, final String domain) {
         return Optional.ofNullable(code != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(code)

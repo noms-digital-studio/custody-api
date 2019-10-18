@@ -44,7 +44,7 @@ public class PhysicalsControllerTest {
 
     @Test
     public void canGetOffenderPhysicals() {
-        Physicals[] physicals = given()
+        final var physicals = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/physicals")

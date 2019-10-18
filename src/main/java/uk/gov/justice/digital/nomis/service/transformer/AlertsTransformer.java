@@ -18,12 +18,12 @@ public class AlertsTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public AlertsTransformer(TypesTransformer typesTransformer, ReferenceCodesRepository referenceCodesRepository) {
+    public AlertsTransformer(final TypesTransformer typesTransformer, final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public Alert alertOf(OffenderAlert offenderAlert) {
+    public Alert alertOf(final OffenderAlert offenderAlert) {
         return Optional.ofNullable(offenderAlert).map(
                 alert -> Alert.builder()
                         .alertCode(alertCodeOf(alert))
@@ -43,7 +43,7 @@ public class AlertsTransformer {
                         .build()).orElse(null);
     }
 
-    private KeyValue alertCodeOf(OffenderAlert alert) {
+    private KeyValue alertCodeOf(final OffenderAlert alert) {
         return Optional.ofNullable(alert.getAlertCode() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(alert.getAlertCode())

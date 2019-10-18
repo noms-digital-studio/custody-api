@@ -8,11 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -38,22 +34,22 @@ public class OffenderEventsFilter implements Specification<OffenderEvent> {
     private Optional<Long> offenderId = Optional.empty();
 
     @Override
-    public Predicate toPredicate(Root<OffenderEvent> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        Timestamp tsFrom = Timestamp.valueOf(from);
-        Timestamp tsTo = Timestamp.valueOf(to);
+    public Predicate toPredicate(final Root<OffenderEvent> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+        var tsFrom = Timestamp.valueOf(from);
+        var tsTo = Timestamp.valueOf(to);
 
         if (tsFrom.after(tsTo)) {
-            Timestamp tsTemp = tsFrom;
+            final var tsTemp = tsFrom;
             tsFrom = tsTo;
             tsTo = tsTemp;
         }
 
-        Root alertsTable = root;
-        Path eventTimestamp = alertsTable.get("eventTimestamp");
-        Path eventType = root.get("eventType");
-        Path rootOffenderId = root.get("rootOffenderId");
+        final Root alertsTable = root;
+        final var eventTimestamp = alertsTable.get("eventTimestamp");
+        final Path eventType = root.get("eventType");
+        final Path rootOffenderId = root.get("rootOffenderId");
 
-        ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
+        final ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
 
         predicateBuilder
                 .add(cb.greaterThanOrEqualTo(eventTimestamp, tsFrom))
@@ -66,13 +62,13 @@ public class OffenderEventsFilter implements Specification<OffenderEvent> {
 
         offenderId.ifPresent(id -> predicateBuilder.add(cb.equal(rootOffenderId, id)));
 
-        ImmutableList<Predicate> predicates = predicateBuilder.build();
+        final var predicates = predicateBuilder.build();
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 
-    private Predicate valueInList(CriteriaBuilder cb, Path eventType, Set<String> list) {
-        CriteriaBuilder.In inTypes = cb.in(eventType);
+    private Predicate valueInList(final CriteriaBuilder cb, final Path eventType, final Set<String> list) {
+        final var inTypes = cb.in(eventType);
         list.stream().map(String::toUpperCase).forEach(inTypes::value);
         return inTypes;
     }

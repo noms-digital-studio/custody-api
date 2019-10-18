@@ -8,12 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.digital.nomis.api.OffenderEvent;
 import uk.gov.justice.digital.nomis.service.OffenderEventsService;
 
@@ -37,7 +32,7 @@ public class OffenderEventsController {
     private final OffenderEventsService offenderEventsService;
 
     @Autowired
-    public OffenderEventsController(OffenderEventsService offenderEventsService) {
+    public OffenderEventsController(final OffenderEventsService offenderEventsService) {
         this.offenderEventsService = offenderEventsService;
     }
 
@@ -77,7 +72,7 @@ public class OffenderEventsController {
             @ApiImplicitParam(name = "sortBy", dataType = "string", paramType = "query", value = "Sort order")
     })
     @ApiOperation(value = "Get events by offender id", notes = NOTES)
-    public ResponseEntity<List<OffenderEvent>> getEventsByOffenderId(@PathVariable("offenderId") Long offenderId,
+    public ResponseEntity<List<OffenderEvent>> getEventsByOffenderId(@PathVariable("offenderId") final Long offenderId,
                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("to") Optional<LocalDateTime> maybeTo,
                                                                      final @RequestParam("type") Optional<Set<String>> maybeTypeFilter,
@@ -91,8 +86,9 @@ public class OffenderEventsController {
         TIMESTAMP_ASC ("TIMESTAMP_ASC"),
         TIMESTAMP_DESC("TIMESTAMP_DESC");
 
-        private String sortType;
-        SortTypes(String sortType) {
+        private final String sortType;
+
+        SortTypes(final String sortType) {
             this.sortType = sortType;
         }
     }

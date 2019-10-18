@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.ExternalMovement;
-import uk.gov.justice.digital.nomis.jpa.entity.Offender;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderExternalMovement;
 import uk.gov.justice.digital.nomis.jpa.filters.MovementsFilter;
@@ -38,26 +37,26 @@ public class MovementsService {
     private final MovementsTransformer movementsTransformer;
 
     @Autowired
-    public MovementsService(ExternalMovementsRepository externalMovementsRepository, OffenderRepository offenderRepository, MovementsTransformer movementsTransformer) {
+    public MovementsService(final ExternalMovementsRepository externalMovementsRepository, final OffenderRepository offenderRepository, final MovementsTransformer movementsTransformer) {
         this.externalMovementsRepository = externalMovementsRepository;
         this.offenderRepository = offenderRepository;
         this.movementsTransformer = movementsTransformer;
     }
 
     @Transactional
-    public Page<ExternalMovement> getMovements(Pageable pageable,
-                                               Optional<LocalDateTime> maybeFrom,
-                                               Optional<LocalDateTime> maybeTo,
-                                               Optional<Long> maybeBookingId) {
-        MovementsFilter movementsFilter = MovementsFilter.builder()
+    public Page<ExternalMovement> getMovements(final Pageable pageable,
+                                               final Optional<LocalDateTime> maybeFrom,
+                                               final Optional<LocalDateTime> maybeTo,
+                                               final Optional<Long> maybeBookingId) {
+        final var movementsFilter = MovementsFilter.builder()
                 .from(maybeFrom)
                 .to(maybeTo)
                 .bookingId(maybeBookingId)
                 .build();
 
-        Page<OffenderExternalMovement> externalMovements = externalMovementsRepository.findAll(movementsFilter, pageable);
+        final var externalMovements = externalMovementsRepository.findAll(movementsFilter, pageable);
 
-        List<ExternalMovement> movementList = externalMovements.getContent()
+        final var movementList = externalMovements.getContent()
                 .stream()
                 .sorted(BY_MOVEMENT_DATE)
                 .map(movementsTransformer::movementOf)
@@ -67,8 +66,8 @@ public class MovementsService {
     }
 
     @Transactional
-    public Optional<List<ExternalMovement>> getOffenderMovements(Long offenderId) {
-        Optional<List<uk.gov.justice.digital.nomis.jpa.entity.OffenderExternalMovement>> maybeOffenderMovements =
+    public Optional<List<ExternalMovement>> getOffenderMovements(final Long offenderId) {
+        final var maybeOffenderMovements =
                 offenderRepository.findById(offenderId)
                         .map(offender -> offender.getOffenderBookings().stream()
                                 .map(OffenderBooking::getOffenderExternalMovements).
@@ -82,8 +81,8 @@ public class MovementsService {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<ExternalMovement>> movementsForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<ExternalMovement>> movementsForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()
@@ -98,8 +97,8 @@ public class MovementsService {
 
     }
 
-    public Optional<ExternalMovement> movementForBookingIdAndSequence(Long bookingId, Long sequenceNumber) {
-        final OffenderExternalMovement.Pk pk = new OffenderExternalMovement.Pk();
+    public Optional<ExternalMovement> movementForBookingIdAndSequence(final Long bookingId, final Long sequenceNumber) {
+        final var pk = new OffenderExternalMovement.Pk();
         pk.setMovementSeq(sequenceNumber);
         pk.setOffenderBooking(OffenderBooking.builder().offenderBookId(bookingId).build());
 

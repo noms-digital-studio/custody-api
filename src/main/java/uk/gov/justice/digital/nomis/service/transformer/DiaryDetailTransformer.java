@@ -3,11 +3,7 @@ package uk.gov.justice.digital.nomis.service.transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.justice.digital.nomis.api.DiaryDetail;
-import uk.gov.justice.digital.nomis.jpa.entity.CourtEvent;
-import uk.gov.justice.digital.nomis.jpa.entity.MovementReason;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderIndSchedule;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderReleaseDetails;
-import uk.gov.justice.digital.nomis.jpa.entity.ReferenceCode;
+import uk.gov.justice.digital.nomis.jpa.entity.*;
 
 import java.util.Optional;
 
@@ -17,11 +13,11 @@ public class DiaryDetailTransformer {
     private final TypesTransformer typesTransformer;
 
     @Autowired
-    public DiaryDetailTransformer(TypesTransformer typesTransformer) {
+    public DiaryDetailTransformer(final TypesTransformer typesTransformer) {
         this.typesTransformer = typesTransformer;
     }
 
-    public DiaryDetail diaryDetailOf(CourtEvent courtEvent) {
+    public DiaryDetail diaryDetailOf(final CourtEvent courtEvent) {
         return DiaryDetail.builder()
                 .bookingId(courtEvent.getOffenderBookId())
                 .movementDateTime(typesTransformer.localDateTimeOf(courtEvent.getEventDate(), courtEvent.getStartTime()))
@@ -30,7 +26,7 @@ public class DiaryDetailTransformer {
                 .build();
     }
 
-    public DiaryDetail diaryDetailOf(OffenderIndSchedule offenderIndSchedule, ReferenceCode escort) {
+    public DiaryDetail diaryDetailOf(final OffenderIndSchedule offenderIndSchedule, final ReferenceCode escort) {
         return DiaryDetail.builder()
                 .bookingId(offenderIndSchedule.getOffenderBookId())
                 .movementDateTime(typesTransformer.localDateTimeOf(offenderIndSchedule.getEventDate(), offenderIndSchedule.getStartTime()))
@@ -40,8 +36,8 @@ public class DiaryDetailTransformer {
                 .build();
     }
 
-    public DiaryDetail diaryDetailOf(OffenderReleaseDetails offenderReleaseDetails) {
-        Optional<MovementReason> maybeMovementReason = Optional.ofNullable(offenderReleaseDetails.getMovementReason());
+    public DiaryDetail diaryDetailOf(final OffenderReleaseDetails offenderReleaseDetails) {
+        final var maybeMovementReason = Optional.ofNullable(offenderReleaseDetails.getMovementReason());
 
         return DiaryDetail.builder()
                 .bookingId(offenderReleaseDetails.getOffenderBookId())

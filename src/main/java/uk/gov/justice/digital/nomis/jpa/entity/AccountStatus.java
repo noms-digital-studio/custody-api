@@ -13,7 +13,7 @@ public enum AccountStatus {
 
     private final String code;
 
-    AccountStatus(String code) {
+    AccountStatus(final String code) {
         this.code = code;
     }
 
@@ -21,7 +21,7 @@ public enum AccountStatus {
         return code;
     }
 
-    public static AccountStatus get(String code) {
+    public static AccountStatus get(final String code) {
         return Arrays.stream(AccountStatus.values()).filter(s -> s.getCode().equals(code)).findFirst().orElse(null);
     }
 }

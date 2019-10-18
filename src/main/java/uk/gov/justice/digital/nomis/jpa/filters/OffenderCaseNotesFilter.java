@@ -7,11 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderCaseNote;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -23,38 +19,38 @@ public class OffenderCaseNotesFilter implements Specification<OffenderCaseNote> 
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Builder.Default
-    private LocalDateTime from = null;
+    private final LocalDateTime from = null;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Builder.Default
-    private LocalDateTime to = null;
+    private final LocalDateTime to = null;
 
     @Builder.Default
-    private Optional<Set<String>> types = Optional.empty();
+    private final Optional<Set<String>> types = Optional.empty();
 
     @Builder.Default
-    private Optional<Set<String>> subTypes = Optional.empty();
+    private final Optional<Set<String>> subTypes = Optional.empty();
 
-    private Long bookingId;
+    private final Long bookingId;
 
     @Override
-    public Predicate toPredicate(Root<OffenderCaseNote> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        Timestamp tsFrom = Timestamp.valueOf(from);
-        Timestamp tsTo = Timestamp.valueOf(to);
+    public Predicate toPredicate(final Root<OffenderCaseNote> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+        var tsFrom = Timestamp.valueOf(from);
+        var tsTo = Timestamp.valueOf(to);
 
         if (tsFrom.after(tsTo)) {
-            Timestamp tsTemp = tsFrom;
+            final var tsTemp = tsFrom;
             tsFrom = tsTo;
             tsTo = tsTemp;
         }
 
-        Root caseNotesTable = root;
-        Path offenderBookId = caseNotesTable.get("offenderBookId");
-        Path contactDate = caseNotesTable.get("contactDate");
-        Path caseNoteType = caseNotesTable.get("caseNoteType");
-        Path caseNoteSubType = caseNotesTable.get("caseNoteSubType");
+        final Root caseNotesTable = root;
+        final var offenderBookId = caseNotesTable.get("offenderBookId");
+        final var contactDate = caseNotesTable.get("contactDate");
+        final var caseNoteType = caseNotesTable.get("caseNoteType");
+        final var caseNoteSubType = caseNotesTable.get("caseNoteSubType");
 
-        ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
+        final ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
 
         predicateBuilder.add(cb.equal(offenderBookId, bookingId))
                 .add(cb.greaterThanOrEqualTo(contactDate, tsFrom))
@@ -64,13 +60,13 @@ public class OffenderCaseNotesFilter implements Specification<OffenderCaseNote> 
         types.ifPresent(filter -> predicateBuilder.add(valueInList(cb, caseNoteType, filter)));
         subTypes.ifPresent(filter -> predicateBuilder.add(valueInList(cb, caseNoteSubType, filter)));
 
-        ImmutableList<Predicate> predicates = predicateBuilder.build();
+        final var predicates = predicateBuilder.build();
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 
-    private Predicate valueInList(CriteriaBuilder cb, Path eventType, Set<String> list) {
-        CriteriaBuilder.In inTypes = cb.in(eventType);
+    private Predicate valueInList(final CriteriaBuilder cb, final Path eventType, final Set<String> list) {
+        final var inTypes = cb.in(eventType);
         list.stream().map(String::toUpperCase).forEach(inTypes::value);
         return inTypes;
     }

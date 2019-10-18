@@ -21,24 +21,24 @@ import java.util.Optional;
 public class AssessmentsFilter implements Specification<OffenderAssessment> {
 
     @Builder.Default
-    private Optional<List<String>> contactTypes = Optional.empty();
+    private final Optional<List<String>> contactTypes = Optional.empty();
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Builder.Default
-    private Optional<LocalDateTime> from = Optional.empty();
+    private final Optional<LocalDateTime> from = Optional.empty();
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Builder.Default
-    private Optional<LocalDateTime> to = Optional.empty();
-    private Long offenderId;
+    private final Optional<LocalDateTime> to = Optional.empty();
+    private final Long offenderId;
 
     @Override
-    public Predicate toPredicate(Root<OffenderAssessment> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
+    public Predicate toPredicate(final Root<OffenderAssessment> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+        final ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
 
         from.ifPresent(localDateTime -> predicateBuilder.add(cb.greaterThanOrEqualTo(root.get("assessmentDate"), Timestamp.valueOf(localDateTime))));
 
         to.ifPresent(localDateTime -> predicateBuilder.add(cb.lessThanOrEqualTo(root.get("assessmentDate"), Timestamp.valueOf(localDateTime))));
 
-        ImmutableList<Predicate> predicates = predicateBuilder.build();
+        final var predicates = predicateBuilder.build();
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }

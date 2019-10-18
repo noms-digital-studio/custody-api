@@ -15,12 +15,12 @@ public class ContactPersonsTransformer {
 
 
     @Autowired
-    public ContactPersonsTransformer(TypesTransformer typesTransformer, PersonTransformer personTransformer) {
+    public ContactPersonsTransformer(final TypesTransformer typesTransformer, final PersonTransformer personTransformer) {
         this.typesTransformer = typesTransformer;
         this.personTransformer = personTransformer;
     }
 
-    public uk.gov.justice.digital.nomis.api.OffenderContactPerson offenderContactPersonOf(OffenderContactPerson offenderContactPerson) {
+    public uk.gov.justice.digital.nomis.api.OffenderContactPerson offenderContactPersonOf(final OffenderContactPerson offenderContactPerson) {
         return Optional.ofNullable(offenderContactPerson)
                 .map(ocp -> uk.gov.justice.digital.nomis.api.OffenderContactPerson.builder()
                         .active(typesTransformer.ynToBoolean(ocp.getActiveFlag()))
@@ -42,7 +42,7 @@ public class ContactPersonsTransformer {
                 .orElse(null);
     }
 
-    private ContactPersonType contactPersonTypeOf(uk.gov.justice.digital.nomis.jpa.entity.ContactPersonType contactPersonType) {
+    private ContactPersonType contactPersonTypeOf(final uk.gov.justice.digital.nomis.jpa.entity.ContactPersonType contactPersonType) {
         return Optional.ofNullable(contactPersonType)
                 .map(cpt -> ContactPersonType.builder()
                         .contactType(cpt.getContactType())

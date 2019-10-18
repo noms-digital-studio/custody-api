@@ -19,11 +19,11 @@ public class HealthProblemsTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public HealthProblemsTransformer(ReferenceCodesRepository referenceCodesRepository) {
+    public HealthProblemsTransformer(final ReferenceCodesRepository referenceCodesRepository) {
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public HealthProblem healthProblemOf(OffenderHealthProblem offenderHealthProblem) {
+    public HealthProblem healthProblemOf(final OffenderHealthProblem offenderHealthProblem) {
         return HealthProblem.builder()
                 .bookingId(offenderHealthProblem.getOffenderBooking().getOffenderBookId())
                 .caseloadType(offenderHealthProblem.getCaseloadType())
@@ -38,7 +38,7 @@ public class HealthProblemsTransformer {
                 .build();
     }
 
-    private KeyValue problemCodeOf(OffenderHealthProblem offenderHealthProblem) {
+    private KeyValue problemCodeOf(final OffenderHealthProblem offenderHealthProblem) {
         return Optional.ofNullable(offenderHealthProblem.getProblemCode() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(offenderHealthProblem.getProblemCode())

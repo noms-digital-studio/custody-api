@@ -60,12 +60,12 @@ public class AddressesTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public AddressesTransformer(TypesTransformer typesTransformer, ReferenceCodesRepository referenceCodesRepository) {
+    public AddressesTransformer(final TypesTransformer typesTransformer, final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public Address addressOf(uk.gov.justice.digital.nomis.jpa.entity.Address address) {
+    public Address addressOf(final uk.gov.justice.digital.nomis.jpa.entity.Address address) {
         return Address.builder()
                 .addressId(address.getAddressId())
                 .addressType(address.getAddressType())
@@ -102,7 +102,7 @@ public class AddressesTransformer {
                 .build();
     }
 
-    private List<uk.gov.justice.digital.nomis.api.AddressUsage> addressUsagesOf(List<AddressUsage> addressUsages) {
+    private List<uk.gov.justice.digital.nomis.api.AddressUsage> addressUsagesOf(final List<AddressUsage> addressUsages) {
         return Optional.ofNullable(addressUsages).map(
                 usages -> usages.stream()
                         .sorted(BY_ADDRESS_USAGE_MODIFIED)
@@ -114,7 +114,7 @@ public class AddressesTransformer {
                 .orElse(null);
     }
 
-    private List<Phone> phonesOf(List<AddressPhone> phones) {
+    private List<Phone> phonesOf(final List<AddressPhone> phones) {
         return phones.stream()
                 .sorted(BY_ADDRESS_PHONE_MODIFIED)
                 .map(phone -> Phone.builder()
@@ -130,23 +130,23 @@ public class AddressesTransformer {
                 .collect(Collectors.toList());
     }
 
-    private KeyValue addressUsageOf(AddressUsage au) {
+    private KeyValue addressUsageOf(final AddressUsage au) {
         return referenceOf(au.getAddressUsage(), ADDRESS_TYPE);
     }
 
-    private KeyValue cityOf(uk.gov.justice.digital.nomis.jpa.entity.Address address) {
+    private KeyValue cityOf(final uk.gov.justice.digital.nomis.jpa.entity.Address address) {
         return referenceOf(address.getCityCode(), CITY);
     }
 
-    private KeyValue countyOf(uk.gov.justice.digital.nomis.jpa.entity.Address address) {
+    private KeyValue countyOf(final uk.gov.justice.digital.nomis.jpa.entity.Address address) {
         return referenceOf(address.getCountyCode(), COUNTY);
     }
 
-    private KeyValue countryOf(uk.gov.justice.digital.nomis.jpa.entity.Address address) {
+    private KeyValue countryOf(final uk.gov.justice.digital.nomis.jpa.entity.Address address) {
         return referenceOf(address.getCountryCode(), COUNTRY);
     }
 
-    private KeyValue referenceOf(String code, String domain) {
+    private KeyValue referenceOf(final String code, final String domain) {
         return referenceCodesRepository.findById(ReferenceCodePK.builder().code(code).domain(domain).build())
                 .map(rc -> KeyValue.builder().code(rc.getCode()).description(rc.getDescription()).build())
                 .orElse(null);

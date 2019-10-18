@@ -24,7 +24,7 @@ public class DiaryDetailsController {
     private final DiaryDetailService diaryDetailService;
 
     @Autowired
-    public DiaryDetailsController(DiaryDetailService diaryDetailService) {
+    public DiaryDetailsController(final DiaryDetailService diaryDetailService) {
         this.diaryDetailService = diaryDetailService;
     }
 
@@ -32,7 +32,7 @@ public class DiaryDetailsController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offender not found"),
             @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<DiaryDetail>> getOffenderDiaryDetails(@PathVariable("offenderId") Long offenderId) {
+    public ResponseEntity<List<DiaryDetail>> getOffenderDiaryDetails(@PathVariable("offenderId") final Long offenderId) {
 
         return diaryDetailService.diaryDetailsForOffenderId(offenderId)
                 .map(events -> new ResponseEntity<>(events, HttpStatus.OK))

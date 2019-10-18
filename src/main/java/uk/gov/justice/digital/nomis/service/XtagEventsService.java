@@ -21,18 +21,18 @@ public class XtagEventsService {
     private final OffenderEventsTransformer offenderEventsTransformer;
 
     @Autowired
-    public XtagEventsService(XtagEventsRepository xtagEventsRepository, OffenderEventsTransformer offenderEventsTransformer) {
+    public XtagEventsService(final XtagEventsRepository xtagEventsRepository, final OffenderEventsTransformer offenderEventsTransformer) {
         this.xtagEventsRepository = xtagEventsRepository;
         this.offenderEventsTransformer = offenderEventsTransformer;
     }
 
-    public List<uk.gov.justice.digital.nomis.api.OffenderEvent> findAll(OffenderEventsFilter oeFilter) {
+    public List<uk.gov.justice.digital.nomis.api.OffenderEvent> findAll(final OffenderEventsFilter oeFilter) {
         return xtagEventsRepository.findAll(fudgedXtagFilterOf(oeFilter)).stream()
                 .map(offenderEventsTransformer::offenderEventOf)
                 .collect(Collectors.toList());
     }
 
-    private OffenderEventsFilter fudgedXtagFilterOf(OffenderEventsFilter oeFilter) {
+    private OffenderEventsFilter fudgedXtagFilterOf(final OffenderEventsFilter oeFilter) {
         // Xtag events are in British Summer Time all year round at rest in Oracle.
         // So we have to compensate when filtering by date. The Nomis data set
         // is stored at rest as Europe/London and so is affected by daylight savings.
@@ -42,7 +42,7 @@ public class XtagEventsService {
                 .build();
     }
 
-    public static LocalDateTime asUtcPlusOne(LocalDateTime localDateTime) {
+    public static LocalDateTime asUtcPlusOne(final LocalDateTime localDateTime) {
         if (ZoneId.of("Europe/London").getRules().isDaylightSavings(localDateTime.toInstant(ZoneOffset.UTC))) {
             return localDateTime;
         }

@@ -31,32 +31,32 @@ public class IndividualSchedulesService {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public IndividualSchedulesService(IndividualScheduleTransformer individualScheduleTransformer, OffenderRepository offenderRepository, ReferenceCodesRepository referenceCodesRepository) {
+    public IndividualSchedulesService(final IndividualScheduleTransformer individualScheduleTransformer, final OffenderRepository offenderRepository, final ReferenceCodesRepository referenceCodesRepository) {
         this.individualScheduleTransformer = individualScheduleTransformer;
         this.offenderRepository = offenderRepository;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public Optional<List<IndividualSchedule>> individualSchedulesForOffenderId(Long offenderId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<IndividualSchedule>> individualSchedulesForOffenderId(final Long offenderId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.map(this::individualSchedulesOfOffender);
     }
 
-    public Optional<List<IndividualSchedule>> individualSchedulesForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<IndividualSchedule>> individualSchedulesForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.map(o -> this.individualScheduleOfOffender(o, bookingId));
     }
 
-    private List<IndividualSchedule> individualSchedulesOfOffender(Offender offender) {
+    private List<IndividualSchedule> individualSchedulesOfOffender(final Offender offender) {
         return offender.getOffenderBookings()
                 .stream()
                 .flatMap(this::individualSchedulesOfBooking)
                 .collect(Collectors.toList());
     }
 
-    private List<IndividualSchedule> individualScheduleOfOffender(Offender offender, Long bookingId) {
+    private List<IndividualSchedule> individualScheduleOfOffender(final Offender offender, final Long bookingId) {
         return offender.getOffenderBookings()
                 .stream()
                 .filter(ob -> ob.getOffenderBookId() == bookingId)
@@ -64,7 +64,7 @@ public class IndividualSchedulesService {
                 .collect(Collectors.toList());
     }
 
-    private Stream<IndividualSchedule> individualSchedulesOfBooking(OffenderBooking offenderBooking) {
+    private Stream<IndividualSchedule> individualSchedulesOfBooking(final OffenderBooking offenderBooking) {
         return offenderBooking.getOffenderIndSchedules()
                 .stream()
                 .filter(offenderIndSchedule -> SCH.equals(offenderIndSchedule.getEventStatus()))

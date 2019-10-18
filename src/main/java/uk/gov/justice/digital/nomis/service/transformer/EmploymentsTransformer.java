@@ -20,12 +20,12 @@ public class EmploymentsTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public EmploymentsTransformer(TypesTransformer typesTransformer, ReferenceCodesRepository referenceCodesRepository) {
+    public EmploymentsTransformer(final TypesTransformer typesTransformer, final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public Employment employmentOf(OffenderEmployment offenderEmployment) {
+    public Employment employmentOf(final OffenderEmployment offenderEmployment) {
         return Employment.builder()
                 .bookingId(offenderEmployment.getOffenderBookId())
                 .caseloadType(offenderEmployment.getCaseloadType())
@@ -59,7 +59,7 @@ public class EmploymentsTransformer {
                 .build();
     }
 
-    private KeyValue employmentPostCodeOf(OffenderEmployment offenderEmployment) {
+    private KeyValue employmentPostCodeOf(final OffenderEmployment offenderEmployment) {
         return Optional.ofNullable(offenderEmployment.getEmploymentPostCode() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(offenderEmployment.getEmploymentPostCode())
@@ -69,7 +69,7 @@ public class EmploymentsTransformer {
                 .orElse(null);
     }
 
-    private KeyValue occupationCodeOf(OffenderEmployment offenderEmployment) {
+    private KeyValue occupationCodeOf(final OffenderEmployment offenderEmployment) {
         return Optional.ofNullable(offenderEmployment.getOccupationsCode() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(offenderEmployment.getOccupationsCode())

@@ -24,7 +24,7 @@ public class EmploymentsController {
     private final EmploymentsService employmentsService;
 
     @Autowired
-    public EmploymentsController(EmploymentsService employmentsService) {
+    public EmploymentsController(final EmploymentsService employmentsService) {
         this.employmentsService = employmentsService;
     }
 
@@ -33,7 +33,7 @@ public class EmploymentsController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offender not found"),
             @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<Employment>> getOffenderEmployments(@PathVariable("offenderId") Long offenderId) {
+    public ResponseEntity<List<Employment>> getOffenderEmployments(@PathVariable("offenderId") final Long offenderId) {
 
         return employmentsService.employmentsForOffenderId(offenderId)
                 .map(employments -> new ResponseEntity<>(employments, HttpStatus.OK))

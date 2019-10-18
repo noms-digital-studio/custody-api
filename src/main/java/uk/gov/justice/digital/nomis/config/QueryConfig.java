@@ -11,15 +11,15 @@ import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver
 public class QueryConfig {
 
     @Bean
-    BeanPostProcessor pageablePostProcessor(@Value("${maxPageSize:#{T(Integer).MAX_VALUE}}") Integer maxPageSize) {
+    BeanPostProcessor pageablePostProcessor(@Value("${maxPageSize:#{T(Integer).MAX_VALUE}}") final Integer maxPageSize) {
         return new BeanPostProcessor() {
             @Override
-            public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+            public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
                 return bean;
             }
 
             @Override
-            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+            public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
                 if (bean instanceof HateoasPageableHandlerMethodArgumentResolver) {
                     ((HateoasPageableHandlerMethodArgumentResolver) bean).setMaxPageSize(maxPageSize);
                 }

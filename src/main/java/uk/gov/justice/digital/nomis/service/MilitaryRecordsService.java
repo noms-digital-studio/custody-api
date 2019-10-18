@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.MilitaryRecord;
 import uk.gov.justice.digital.nomis.jpa.entity.Offender;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderMilitaryRecord;
 import uk.gov.justice.digital.nomis.jpa.filters.OffenderMilitaryRecordFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderMilitaryRecordsRepository;
@@ -32,24 +31,24 @@ public class MilitaryRecordsService {
     private final MilitaryRecordsTransformer militaryRecordsTransformer;
 
     @Autowired
-    public MilitaryRecordsService(OffenderMilitaryRecordsRepository offenderMilitaryRecordsRepository,
-                                  OffenderRepository offenderRepository,
-                                  MilitaryRecordsTransformer militaryRecordsTransformer) {
+    public MilitaryRecordsService(final OffenderMilitaryRecordsRepository offenderMilitaryRecordsRepository,
+                                  final OffenderRepository offenderRepository,
+                                  final MilitaryRecordsTransformer militaryRecordsTransformer) {
         this.offenderMilitaryRecordsRepository = offenderMilitaryRecordsRepository;
         this.offenderRepository = offenderRepository;
         this.militaryRecordsTransformer = militaryRecordsTransformer;
     }
 
     @Transactional
-    public Page<MilitaryRecord> getMilitaryRecords(Pageable pageable,
-                                                   Optional<LocalDateTime> maybeFrom,
-                                                   Optional<LocalDateTime> maybeTo) {
-        Page<OffenderMilitaryRecord> offenderMilitaryRecords = offenderMilitaryRecordsRepository.findAll(OffenderMilitaryRecordFilter.builder()
+    public Page<MilitaryRecord> getMilitaryRecords(final Pageable pageable,
+                                                   final Optional<LocalDateTime> maybeFrom,
+                                                   final Optional<LocalDateTime> maybeTo) {
+        final var offenderMilitaryRecords = offenderMilitaryRecordsRepository.findAll(OffenderMilitaryRecordFilter.builder()
                 .from(maybeFrom)
                 .to(maybeTo)
                 .build(), pageable);
 
-        List<MilitaryRecord> offenderMilitaryRecordList = offenderMilitaryRecords.getContent()
+        final var offenderMilitaryRecordList = offenderMilitaryRecords.getContent()
                 .stream()
                 .sorted(BY_SEQUENCE)
                 .map(militaryRecordsTransformer::militaryRecordOf)
@@ -59,10 +58,10 @@ public class MilitaryRecordsService {
     }
 
     @Transactional
-    public Optional<List<MilitaryRecord>> getMilitaryRecordsForOffenderId(Long offenderId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<MilitaryRecord>> getMilitaryRecordsForOffenderId(final Long offenderId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        Optional<List<OffenderBooking>> maybeBookings = maybeOffender.map(o -> o.getOffenderBookings());
+        final var maybeBookings = maybeOffender.map(Offender::getOffenderBookings);
 
         return maybeBookings.map(bookings -> bookings.stream()
                 .flatMap(ob -> ob.getOffenderMilitaryRecords().stream())
@@ -71,10 +70,10 @@ public class MilitaryRecordsService {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<MilitaryRecord>> getMilitaryRecordsForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<MilitaryRecord>> getMilitaryRecordsForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        Optional<OffenderBooking> maybeBooking = maybeOffender
+        final var maybeBooking = maybeOffender
                 .flatMap(offender -> offender.getOffenderBookings()
                         .stream()
                         .filter(ob -> ob.getOffenderBookId().equals(bookingId))

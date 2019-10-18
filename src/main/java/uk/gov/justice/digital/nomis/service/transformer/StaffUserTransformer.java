@@ -13,12 +13,12 @@ public class StaffUserTransformer {
     private final CaseloadTransformer caseloadTransformer;
 
     @Autowired
-    public StaffUserTransformer(CaseloadTransformer caseloadTransformer) {
+    public StaffUserTransformer(final CaseloadTransformer caseloadTransformer) {
         this.caseloadTransformer = caseloadTransformer;
     }
 
-    public NomisStaffUser userOf(StaffUserAccount staffUserAccount) {
-        NomisStaffUser nomisStaffUser = NomisStaffUser.builder()
+    public NomisStaffUser userOf(final StaffUserAccount staffUserAccount) {
+        final var nomisStaffUser = NomisStaffUser.builder()
                 .username(staffUserAccount.getUsername())
                 .firstName(staffUserAccount.getStaff().getFirstName())
                 .lastName(staffUserAccount.getStaff().getLastName())

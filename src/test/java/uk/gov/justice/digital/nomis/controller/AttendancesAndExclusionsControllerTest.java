@@ -45,7 +45,7 @@ public class AttendancesAndExclusionsControllerTest {
 
     @Test
     public void canGetOffenderCourseAttendances() {
-        CourseAttendance[] courseAttendances = given()
+        final var courseAttendances = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/courseAttendances?from=2017-09-01T00:00&to=2017-09-28T00:00")
@@ -61,7 +61,7 @@ public class AttendancesAndExclusionsControllerTest {
 
     @Test
     public void canGetOffenderCourseAttendancesForBooking() {
-        CourseAttendance[] courseAttendances = given()
+        final var courseAttendances = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .param("bookingId", -1)
@@ -108,7 +108,7 @@ public class AttendancesAndExclusionsControllerTest {
 
     @Test
     public void canGetOffenderCourseExclusions() {
-        Exclusion[] exclusions = given()
+        final var exclusions = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1004/courseExclusions")
@@ -124,7 +124,7 @@ public class AttendancesAndExclusionsControllerTest {
 
     @Test
     public void canGetOffenderCourseExclusionsForBooking() {
-        Exclusion[] exclusions = given()
+        final var exclusions = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .param("bookingId", -4)

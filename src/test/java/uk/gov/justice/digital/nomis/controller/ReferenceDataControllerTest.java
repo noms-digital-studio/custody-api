@@ -87,7 +87,7 @@ public class ReferenceDataControllerTest {
 
     @Test
     public void embeddedHateoasLinksWorkForAgencyLocations() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -97,7 +97,7 @@ public class ReferenceDataControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()
@@ -112,7 +112,7 @@ public class ReferenceDataControllerTest {
 
     @Test
     public void embeddedHateoasLinksWorkForAgencyInternalLocations() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -122,7 +122,7 @@ public class ReferenceDataControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()

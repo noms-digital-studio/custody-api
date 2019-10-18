@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
@@ -25,7 +24,7 @@ public class ReferenceDataController {
     private final ReferenceDataService referenceDataService;
 
     @Autowired
-    public ReferenceDataController(ReferenceDataService referenceDataService) {
+    public ReferenceDataController(final ReferenceDataService referenceDataService) {
         this.referenceDataService = referenceDataService;
     }
 
@@ -38,7 +37,7 @@ public class ReferenceDataController {
                     value = "Number of records per page.", example = "20", defaultValue = "20")})
     public PagedResources<Resource<AgencyLocation>> getAgencyLocations(final @ApiIgnore Pageable pageable) {
 
-        Page<AgencyLocation> agencyLocations = referenceDataService.getLocations(pageable);
+        final var agencyLocations = referenceDataService.getLocations(pageable);
         return new PagedResourcesAssembler<AgencyLocation>(null, null).toResource(agencyLocations);
     }
 
@@ -51,7 +50,7 @@ public class ReferenceDataController {
                     value = "Number of records per page.", example = "20", defaultValue = "20")})
     public PagedResources<Resource<AgencyInternalLocation>> getAgencyInternalLocations(final @ApiIgnore Pageable pageable) {
 
-        Page<AgencyInternalLocation> agencyInternalLocations = referenceDataService.getInternalLocations(pageable);
+        final var agencyInternalLocations = referenceDataService.getInternalLocations(pageable);
         return new PagedResourcesAssembler<AgencyInternalLocation>(null, null).toResource(agencyInternalLocations);
     }
 

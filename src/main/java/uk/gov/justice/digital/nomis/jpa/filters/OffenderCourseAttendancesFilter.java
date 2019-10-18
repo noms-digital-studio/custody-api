@@ -20,23 +20,23 @@ public class OffenderCourseAttendancesFilter implements Specification<OffenderCo
 
     @Builder.Default
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime from = null;
+    private final LocalDateTime from = null;
 
     @Builder.Default
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime to = null;
+    private final LocalDateTime to = null;
 
-    private Long bookingId;
+    private final Long bookingId;
 
     @Override
-    public Predicate toPredicate(Root<OffenderCourseAttendance> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
+    public Predicate toPredicate(final Root<OffenderCourseAttendance> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+        final ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
 
-        Timestamp tsFrom = Timestamp.valueOf(from);
-        Timestamp tsTo = Timestamp.valueOf(to);
+        var tsFrom = Timestamp.valueOf(from);
+        var tsTo = Timestamp.valueOf(to);
 
         if (tsFrom.after(tsTo)) {
-            Timestamp tsTemp = tsFrom;
+            final var tsTemp = tsFrom;
             tsFrom = tsTo;
             tsTo = tsTemp;
         }
@@ -46,7 +46,7 @@ public class OffenderCourseAttendancesFilter implements Specification<OffenderCo
 
                 .add(cb.or(cb.greaterThanOrEqualTo(root.get("eventDate"), tsFrom), root.get("eventDate").isNull()));
 
-        ImmutableList<Predicate> predicates = predicateBuilder.build();
+        final var predicates = predicateBuilder.build();
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }

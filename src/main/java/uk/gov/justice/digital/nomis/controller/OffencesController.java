@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
@@ -24,7 +23,7 @@ public class OffencesController {
     private final OffencesService offencesService;
 
     @Autowired
-    public OffencesController(OffencesService offencesService) {
+    public OffencesController(final OffencesService offencesService) {
         this.offencesService = offencesService;
     }
 
@@ -37,7 +36,7 @@ public class OffencesController {
                     value = "Number of records per page.", example = "20", defaultValue = "20")})
     public PagedResources<Resource<Offence>> getOffences(final @ApiIgnore Pageable pageable) {
 
-        Page<Offence> offences = offencesService.getOffences(pageable);
+        final var offences = offencesService.getOffences(pageable);
         return new PagedResourcesAssembler<Offence>(null, null).toResource(offences);
     }
 

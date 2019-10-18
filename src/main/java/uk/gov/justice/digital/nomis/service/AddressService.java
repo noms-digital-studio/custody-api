@@ -75,17 +75,17 @@ public class AddressService {
     private final AddressesTransformer addressesTransformer;
 
     @Autowired
-    public AddressService(AddressRepository addressRepository, OffenderRepository offenderRepository, AddressesTransformer addressesTransformer) {
+    public AddressService(final AddressRepository addressRepository, final OffenderRepository offenderRepository, final AddressesTransformer addressesTransformer) {
         this.addressRepository = addressRepository;
         this.offenderRepository = offenderRepository;
         this.addressesTransformer = addressesTransformer;
     }
 
     @Transactional
-    public Page<Address> getAddresses(Pageable pageable) {
-        Page<uk.gov.justice.digital.nomis.jpa.entity.Address> rawAddressPage = addressRepository.findAll(pageable);
+    public Page<Address> getAddresses(final Pageable pageable) {
+        final var rawAddressPage = addressRepository.findAll(pageable);
 
-        List<Address> addresses = rawAddressPage.getContent().stream()
+        final var addresses = rawAddressPage.getContent().stream()
                 .map(addressesTransformer::addressOf)
                 .collect(Collectors.toList());
 
@@ -93,7 +93,7 @@ public class AddressService {
     }
 
     @Transactional
-    public Optional<List<Address>> getOffenderAddresses(Long offenderId) {
+    public Optional<List<Address>> getOffenderAddresses(final Long offenderId) {
 
         return offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderAddresses()

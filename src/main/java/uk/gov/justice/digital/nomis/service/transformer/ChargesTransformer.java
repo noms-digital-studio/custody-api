@@ -26,12 +26,12 @@ public class ChargesTransformer {
     private final OffenceResultsCodeRepository offenceResultsCodeRepository;
 
     @Autowired
-    public ChargesTransformer(TypesTransformer typesTransformer, OffenceResultsCodeRepository offenceResultsCodeRepository) {
+    public ChargesTransformer(final TypesTransformer typesTransformer, final OffenceResultsCodeRepository offenceResultsCodeRepository) {
         this.typesTransformer = typesTransformer;
         this.offenceResultsCodeRepository = offenceResultsCodeRepository;
     }
 
-    public Charge chargeOf(OffenderCharge oc) {
+    public Charge chargeOf(final OffenderCharge oc) {
         return Charge.builder()
                 .bookingId(oc.getOffenderBooking().getOffenderBookId())
                 .offenderId(oc.getOffenderBooking().getRootOffenderId())
@@ -57,7 +57,7 @@ public class ChargesTransformer {
                 .build();
     }
 
-    private List<String> offenceIndicatorCodesOf(OffenderCharge oc) {
+    private List<String> offenceIndicatorCodesOf(final OffenderCharge oc) {
         return Optional.ofNullable(oc.getOffence())
                 .map(o ->o.getOffenceIndicators()
                         .stream()
@@ -66,15 +66,15 @@ public class ChargesTransformer {
                 .orElse(null);
     }
 
-    private List<OffenceResult> resultCodesOf(OffenderCharge oc) {
-        String resultCode1 = oc.getResultCode1();
-        String resultCode2 = oc.getResultCode2();
+    private List<OffenceResult> resultCodesOf(final OffenderCharge oc) {
+        final var resultCode1 = oc.getResultCode1();
+        final var resultCode2 = oc.getResultCode2();
 
         if (resultCode1 == null && resultCode2 == null) {
             return null;
         }
 
-        ImmutableList.Builder<OffenceResult> builder = ImmutableList.builder();
+        final ImmutableList.Builder<OffenceResult> builder = ImmutableList.builder();
 
         if (resultCode1 != null) {
             builder.add(offenceResultOf(resultCode1));
@@ -87,7 +87,7 @@ public class ChargesTransformer {
         return builder.build();
     }
 
-    private OffenceResult offenceResultOf(String rc) {
+    private OffenceResult offenceResultOf(final String rc) {
         return rc != null ?
                 offenceResultsCodeRepository.findById(rc)
                 .map(orc -> OffenceResult.builder()
@@ -102,7 +102,7 @@ public class ChargesTransformer {
                 .orElse(null) : null;
     }
 
-    private Order orderOf(OffenderCharge oc) {
+    private Order orderOf(final OffenderCharge oc) {
         return Optional.ofNullable(oc.getOrder())
                 .map(o -> Order.builder()
                         .comments(o.getCommentText())
@@ -124,11 +124,11 @@ public class ChargesTransformer {
                 .orElse(null);
     }
 
-    private Map<String, String> cjitOffenceCodesMapOf(OffenderCharge oc) {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        String cjitOffenceCode1 = oc.getCjitOffenceCode1();
-        String cjitOffenceCode2 = oc.getCjitOffenceCode2();
-        String cjitOffenceCode3 = oc.getCjitOffenceCode3();
+    private Map<String, String> cjitOffenceCodesMapOf(final OffenderCharge oc) {
+        final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        final var cjitOffenceCode1 = oc.getCjitOffenceCode1();
+        final var cjitOffenceCode2 = oc.getCjitOffenceCode2();
+        final var cjitOffenceCode3 = oc.getCjitOffenceCode3();
 
         if (cjitOffenceCode1 == null && cjitOffenceCode2 == null && cjitOffenceCode3 == null) {
             return null;
@@ -149,7 +149,7 @@ public class ChargesTransformer {
         return builder.build();
     }
 
-    private Case caseOf(OffenderCase offenderCase) {
+    private Case caseOf(final OffenderCase offenderCase) {
         return Optional.ofNullable(offenderCase)
                 .map(oc -> Case.builder()
                         .agencyLocationId(oc.getAgyLocId())

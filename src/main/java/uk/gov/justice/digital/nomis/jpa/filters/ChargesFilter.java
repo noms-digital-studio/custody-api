@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderCharge;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderSentCalculation;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,16 +17,16 @@ import java.util.Set;
 @EqualsAndHashCode
 public class ChargesFilter implements Specification<OffenderCharge> {
 
-    private Set<Long> bookingIds;
+    private final Set<Long> bookingIds;
 
     @Override
-    public Predicate toPredicate(Root<OffenderCharge> table, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
+    public Predicate toPredicate(final Root<OffenderCharge> table, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+        final ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
 
         if (!CollectionUtils.isEmpty(bookingIds)) {
             predicateBuilder.add(table.get("offenderBooking").get("offenderBookId").in(bookingIds));
         }
-        ImmutableList<Predicate> predicates = predicateBuilder.build();
+        final var predicates = predicateBuilder.build();
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 }

@@ -18,11 +18,11 @@ public class OffenceTransformer {
     private final TypesTransformer typesTransformer;
 
     @Autowired
-    public OffenceTransformer(TypesTransformer typesTransformer) {
+    public OffenceTransformer(final TypesTransformer typesTransformer) {
         this.typesTransformer = typesTransformer;
     }
 
-    public Offence offenceOf(uk.gov.justice.digital.nomis.jpa.entity.Offence offence) {
+    public Offence offenceOf(final uk.gov.justice.digital.nomis.jpa.entity.Offence offence) {
         return Offence.builder()
                 .active(typesTransformer.ynToBoolean(offence.getActiveFlag()))
                 .defaultOffenceType(offence.getDefaultOffenceType())
@@ -43,7 +43,7 @@ public class OffenceTransformer {
                 .build();
     }
 
-    private List<String> offenceIndicatorsOf(List<OffenceIndicator> offenceIndicators) {
+    private List<String> offenceIndicatorsOf(final List<OffenceIndicator> offenceIndicators) {
         return Optional.ofNullable(offenceIndicators)
                 .map(ois -> ois.stream()
                         .map(OffenceIndicator::getIndicatorCode)
@@ -51,7 +51,7 @@ public class OffenceTransformer {
                 .orElse(null);
     }
 
-    private KeyValue statuteOf(Statute statute) {
+    private KeyValue statuteOf(final Statute statute) {
         return Optional.ofNullable(statute)
                 .map(s -> KeyValue.builder()
                         .code(s.getStatuteCode())
@@ -60,7 +60,7 @@ public class OffenceTransformer {
                 .orElse(null);
     }
 
-    private KeyValue hoCodeOf(HoCode hoCode) {
+    private KeyValue hoCodeOf(final HoCode hoCode) {
         return Optional.ofNullable(hoCode)
                 .map(hoc -> KeyValue.builder()
                         .code(hoc.getHoCode())

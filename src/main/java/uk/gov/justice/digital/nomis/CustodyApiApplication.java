@@ -24,7 +24,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @EnableResourceServer
 public class CustodyApiApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SpringApplication.run(CustodyApiApplication.class, args);
     }
 
@@ -41,8 +41,8 @@ public class CustodyApiApplication {
     }
 
     @Bean
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(@Qualifier("globalObjectMapper") ObjectMapper objectMapper) {
-        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(@Qualifier("globalObjectMapper") final ObjectMapper objectMapper) {
+        final var jsonConverter = new MappingJackson2HttpMessageConverter();
         jsonConverter.setObjectMapper(objectMapper);
         return jsonConverter;
     }
@@ -52,9 +52,9 @@ public class CustodyApiApplication {
         return event -> {
             try {
                 log.info("BUILD PROPERTIES:");
-                BuildProperties buildProperties = (BuildProperties) event.getApplicationContext().getBean("buildProperties");
+                final var buildProperties = (BuildProperties) event.getApplicationContext().getBean("buildProperties");
                 buildProperties.iterator().forEachRemaining(prop -> log.info("{} : {}", prop.getKey(), prop.getValue()));
-            } catch (NoSuchBeanDefinitionException nsbde) {
+            } catch (final NoSuchBeanDefinitionException nsbde) {
                 log.warn("No build info found! Is this a local build?");
             }
         };

@@ -58,7 +58,7 @@ public class ReleaseDetailsControllerTest {
 
     @Test
     public void canGetOffenderReleaseDetails() {
-        HealthProblem[] healthProblems = given()
+        final var healthProblems = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/releaseDetails")
@@ -91,7 +91,7 @@ public class ReleaseDetailsControllerTest {
 
     @Test
     public void embeddedHateoasLinksWork() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -101,7 +101,7 @@ public class ReleaseDetailsControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()

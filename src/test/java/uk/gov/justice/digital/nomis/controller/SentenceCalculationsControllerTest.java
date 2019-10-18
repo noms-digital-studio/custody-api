@@ -61,7 +61,7 @@ public class SentenceCalculationsControllerTest {
 
     @Test
     public void canGetOffenderSentenceCalculations() {
-        SentenceCalculation[] sentenceCalculations = given()
+        final var sentenceCalculations = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/sentenceCalculations")
@@ -76,7 +76,7 @@ public class SentenceCalculationsControllerTest {
 
     @Test
     public void canGetBookingIdSentenceCalculations() {
-        List<SentenceCalculation> sentenceCalculations = given()
+        final List<SentenceCalculation> sentenceCalculations = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/sentenceCalculations?bookingId=-6&bookingId=-5")
@@ -111,7 +111,7 @@ public class SentenceCalculationsControllerTest {
 
     @Test
     public void embeddedHateoasLinksWork() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -121,7 +121,7 @@ public class SentenceCalculationsControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()

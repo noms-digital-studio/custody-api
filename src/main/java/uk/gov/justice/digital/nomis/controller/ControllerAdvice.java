@@ -14,7 +14,7 @@ import javax.persistence.EntityNotFoundException;
 public class ControllerAdvice {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity handleNotFoundException(Exception e) {
+    public ResponseEntity handleNotFoundException(final Exception e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

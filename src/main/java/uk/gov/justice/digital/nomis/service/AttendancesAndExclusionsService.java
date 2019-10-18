@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.CourseAttendance;
 import uk.gov.justice.digital.nomis.api.Exclusion;
 import uk.gov.justice.digital.nomis.jpa.entity.Offender;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderCourseAttendance;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderExcludeActsSchds;
 import uk.gov.justice.digital.nomis.jpa.filters.OffenderCourseAttendancesFilter;
@@ -41,23 +40,23 @@ public class AttendancesAndExclusionsService {
     private final OffenderExcludeActsSchdsRepository offenderExcludeActsSchdsRepository;
 
     @Autowired
-    public AttendancesAndExclusionsService(OffenderRepository offenderRepository,
-                                           AttendanceAndExclusionTransformer attendanceAndExclusionTransformer,
-                                           OffenderCourseAttendancesRepository offenderCourseAttendancesRepository,
-                                           OffenderExcludeActsSchdsRepository offenderExcludeActsSchdsRepository) {
+    public AttendancesAndExclusionsService(final OffenderRepository offenderRepository,
+                                           final AttendanceAndExclusionTransformer attendanceAndExclusionTransformer,
+                                           final OffenderCourseAttendancesRepository offenderCourseAttendancesRepository,
+                                           final OffenderExcludeActsSchdsRepository offenderExcludeActsSchdsRepository) {
         this.offenderRepository = offenderRepository;
         this.attendanceAndExclusionTransformer = attendanceAndExclusionTransformer;
         this.offenderCourseAttendancesRepository = offenderCourseAttendancesRepository;
         this.offenderExcludeActsSchdsRepository = offenderExcludeActsSchdsRepository;
     }
 
-    public Optional<List<CourseAttendance>> offenderCourseAttendancesForOffenderId(Long offenderId, Optional<LocalDateTime> maybeFrom, Optional<LocalDateTime> maybeTo) {
-        final Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<CourseAttendance>> offenderCourseAttendancesForOffenderId(final Long offenderId, final Optional<LocalDateTime> maybeFrom, final Optional<LocalDateTime> maybeTo) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        final Optional<List<OffenderBooking>> maybeOffenderBookings = maybeOffender.map(Offender::getOffenderBookings);
+        final var maybeOffenderBookings = maybeOffender.map(Offender::getOffenderBookings);
 
-        LocalDateTime from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
-        LocalDateTime to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
+        final var from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
+        final var to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
 
         return maybeOffenderBookings.map(bookings -> bookings
                 .stream()
@@ -68,15 +67,15 @@ public class AttendancesAndExclusionsService {
                         .build())
                         .stream())
                 .sorted(BY_COURSE_ATTENDENCE_PRIORITY)
-                .map(oca -> attendanceAndExclusionTransformer.courseAttendanceOf(oca))
+                .map(attendanceAndExclusionTransformer::courseAttendanceOf)
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<CourseAttendance>> offenderCourseAttendancesForOffenderIdAndBookingId(Long offenderId, Long bookingId, Optional<LocalDateTime> maybeFrom, Optional<LocalDateTime> maybeTo) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<CourseAttendance>> offenderCourseAttendancesForOffenderIdAndBookingId(final Long offenderId, final Long bookingId, final Optional<LocalDateTime> maybeFrom, final Optional<LocalDateTime> maybeTo) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        LocalDateTime from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
-        LocalDateTime to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
+        final var from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
+        final var to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()
@@ -90,15 +89,15 @@ public class AttendancesAndExclusionsService {
                         .build())
                         .stream()
                         .sorted(BY_COURSE_ATTENDENCE_PRIORITY)
-                        .map(oca -> attendanceAndExclusionTransformer.courseAttendanceOf(oca))
+                        .map(attendanceAndExclusionTransformer::courseAttendanceOf)
                         .collect(Collectors.toList()));
     }
 
-    public Optional<List<Exclusion>> exclusionsForOffenderIdAndBookingId(Long offenderId, Long bookingId, Optional<LocalDateTime> maybeFrom, Optional<LocalDateTime> maybeTo) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<Exclusion>> exclusionsForOffenderIdAndBookingId(final Long offenderId, final Long bookingId, final Optional<LocalDateTime> maybeFrom, final Optional<LocalDateTime> maybeTo) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        LocalDateTime from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
-        LocalDateTime to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
+        final var from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
+        final var to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()
@@ -108,23 +107,23 @@ public class AttendancesAndExclusionsService {
                 .map(ob -> ob.getOffenderExcludeActsSchds()
                         .stream()
                         .sorted(BY_EXCLUSION_PRIORITY)
-                        .map(oce -> attendanceAndExclusionTransformer.exclusionOf(oce))
+                        .map(attendanceAndExclusionTransformer::exclusionOf)
                         .collect(Collectors.toList()));
     }
 
-    public Optional<List<Exclusion>> exclusionsForOffenderId(Long offenderId, Optional<LocalDateTime> maybeFrom, Optional<LocalDateTime> maybeTo) {
-        final Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<Exclusion>> exclusionsForOffenderId(final Long offenderId, final Optional<LocalDateTime> maybeFrom, final Optional<LocalDateTime> maybeTo) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        final Optional<List<OffenderBooking>> maybeOffenderBookings = maybeOffender.map(Offender::getOffenderBookings);
+        final var maybeOffenderBookings = maybeOffender.map(Offender::getOffenderBookings);
 
-        LocalDateTime from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
-        LocalDateTime to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
+        final var from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
+        final var to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
 
         return maybeOffenderBookings.map(bookings -> bookings
                 .stream()
                 .flatMap(ob -> ob.getOffenderExcludeActsSchds().stream())
                 .sorted(BY_EXCLUSION_PRIORITY)
-                .map(oce -> attendanceAndExclusionTransformer.exclusionOf(oce))
+                .map(attendanceAndExclusionTransformer::exclusionOf)
                 .collect(Collectors.toList()));
     }
 }

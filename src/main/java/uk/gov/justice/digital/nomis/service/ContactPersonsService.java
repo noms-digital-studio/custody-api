@@ -84,12 +84,12 @@ public class ContactPersonsService {
                     .reversed();
 
     @Autowired
-    public ContactPersonsService(ContactPersonsTransformer contactPersonsTransformer, OffenderRepository offenderRepository) {
+    public ContactPersonsService(final ContactPersonsTransformer contactPersonsTransformer, final OffenderRepository offenderRepository) {
         this.contactPersonsTransformer = contactPersonsTransformer;
         this.offenderRepository = offenderRepository;
     }
 
-    public Optional<List<OffenderContactPerson>> contactPersonsForOffender(Long offenderId) {
+    public Optional<List<OffenderContactPerson>> contactPersonsForOffender(final Long offenderId) {
 
         return offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderBookings()

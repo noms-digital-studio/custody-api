@@ -59,7 +59,7 @@ public class SentencesControllerTest {
 
     @Test
     public void canGetOffenderSentences() {
-        Sentence[] sentences = given()
+        final var sentences = given()
                 .when().auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/sentences")
                 .then()
@@ -91,7 +91,7 @@ public class SentencesControllerTest {
 
     @Test
     public void embeddedHateoasLinksWork() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -101,7 +101,7 @@ public class SentencesControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()

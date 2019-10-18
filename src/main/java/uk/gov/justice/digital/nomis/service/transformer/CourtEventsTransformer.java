@@ -26,7 +26,7 @@ public class CourtEventsTransformer {
     private final OffenceResultsCodeRepository offenceResultsCodeRepository;
 
     @Autowired
-    public CourtEventsTransformer(TypesTransformer typesTransformer, ChargesTransformer chargesTransformer, SentenceTransformer sentenceTransformer, ReferenceDataTransformer referenceDataTransformer, OffenceResultsCodeRepository offenceResultsCodeRepository) {
+    public CourtEventsTransformer(final TypesTransformer typesTransformer, final ChargesTransformer chargesTransformer, final SentenceTransformer sentenceTransformer, final ReferenceDataTransformer referenceDataTransformer, final OffenceResultsCodeRepository offenceResultsCodeRepository) {
         this.typesTransformer = typesTransformer;
         this.chargesTransformer = chargesTransformer;
         this.sentenceTransformer = sentenceTransformer;
@@ -34,7 +34,7 @@ public class CourtEventsTransformer {
         this.offenceResultsCodeRepository = offenceResultsCodeRepository;
     }
 
-    public CourtEvent courtEventOf(uk.gov.justice.digital.nomis.jpa.entity.CourtEvent courtEvent) {
+    public CourtEvent courtEventOf(final uk.gov.justice.digital.nomis.jpa.entity.CourtEvent courtEvent) {
         return CourtEvent.builder()
                 .agencyLocation(referenceDataTransformer.agencyLocationOf(courtEvent.getAgencyLocation()))
                 .bookingId(courtEvent.getOffenderBookId())
@@ -62,7 +62,7 @@ public class CourtEventsTransformer {
                 .build();
     }
 
-    private OutcomeReason outcomeReasonOf(uk.gov.justice.digital.nomis.jpa.entity.CourtEvent ce) {
+    private OutcomeReason outcomeReasonOf(final uk.gov.justice.digital.nomis.jpa.entity.CourtEvent ce) {
         return ce.getOutcomeReasonCode() != null ?
             offenceResultsCodeRepository.findById(ce.getOutcomeReasonCode())
                 .map(orc -> OutcomeReason.builder()
@@ -77,7 +77,7 @@ public class CourtEventsTransformer {
                 .orElse(null) : null;
     }
 
-    private List<Charge> courtEventChargesOf(List<CourtEventCharge> charges) {
+    private List<Charge> courtEventChargesOf(final List<CourtEventCharge> charges) {
         return Optional.ofNullable(charges).map(
                 courtEventCharges -> courtEventCharges.stream().map(
                         courtEventCharge -> chargeAndSentenceof(courtEventCharge.getOffenderCharge()))
@@ -86,7 +86,7 @@ public class CourtEventsTransformer {
 
     }
 
-    private Charge chargeAndSentenceof(OffenderCharge offenderCharge) {
+    private Charge chargeAndSentenceof(final OffenderCharge offenderCharge) {
         return Optional.ofNullable(offenderCharge).map(
                 oc -> chargesTransformer.chargeOf(oc).toBuilder()
                         .sentences(sentencesOf(oc.getSentences()))
@@ -94,7 +94,7 @@ public class CourtEventsTransformer {
                 .orElse(null);
     }
 
-    private List<Sentence> sentencesOf(List<OffenderSentence> sentences) {
+    private List<Sentence> sentencesOf(final List<OffenderSentence> sentences) {
         return Optional.ofNullable(sentences).map(
                 ss -> ss.stream()
                         .map(sentenceTransformer::sentenceOf)

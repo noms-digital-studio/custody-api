@@ -18,12 +18,12 @@ public class ImprisonStatusTransformer {
     private final ImprisonmentStatusesRepository imprisonmentStatusesRepository;
 
     @Autowired
-    public ImprisonStatusTransformer(TypesTransformer typesTransformer, ImprisonmentStatusesRepository imprisonmentStatusesRepository) {
+    public ImprisonStatusTransformer(final TypesTransformer typesTransformer, final ImprisonmentStatusesRepository imprisonmentStatusesRepository) {
         this.typesTransformer = typesTransformer;
         this.imprisonmentStatusesRepository = imprisonmentStatusesRepository;
     }
 
-    public List<OffenderImprisonmentStatus> offenderImprisonStatusesOf(List<uk.gov.justice.digital.nomis.jpa.entity.OffenderImprisonStatus> offenderImprisonStatuses) {
+    public List<OffenderImprisonmentStatus> offenderImprisonStatusesOf(final List<uk.gov.justice.digital.nomis.jpa.entity.OffenderImprisonStatus> offenderImprisonStatuses) {
         return Optional.ofNullable(offenderImprisonStatuses)
                 .map(oises -> oises
                         .stream()
@@ -33,7 +33,7 @@ public class ImprisonStatusTransformer {
                 .orElse(null);
     }
 
-    public OffenderImprisonmentStatus offenderImprisonStatusOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderImprisonStatus ois) {
+    public OffenderImprisonmentStatus offenderImprisonStatusOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderImprisonStatus ois) {
         return OffenderImprisonmentStatus.builder()
                 .agencyLocationId(ois.getAgyLocId())
                 .commentText(ois.getCommentText())
@@ -46,7 +46,7 @@ public class ImprisonStatusTransformer {
                 .build();
     }
 
-    private ImprisonmentStatus imprisonmentStatusOf(OffenderImprisonStatus ois) {
+    private ImprisonmentStatus imprisonmentStatusOf(final OffenderImprisonStatus ois) {
         return Optional.ofNullable(ois.getImprisonmentStatus() != null ?
                 imprisonmentStatusesRepository.findByImprisonmentStatus(ois.getImprisonmentStatus())
                         .stream().findFirst().orElse(null) : null)

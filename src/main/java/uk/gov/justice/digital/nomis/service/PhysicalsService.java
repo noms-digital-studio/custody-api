@@ -19,13 +19,13 @@ public class PhysicalsService {
     private final OffenderRepository offenderRepository;
 
     @Autowired
-    public PhysicalsService(PhysicalsTransformer physicalsTransformer, OffenderRepository offenderRepository) {
+    public PhysicalsService(final PhysicalsTransformer physicalsTransformer, final OffenderRepository offenderRepository) {
         this.physicalsTransformer = physicalsTransformer;
         this.offenderRepository = offenderRepository;
     }
 
 
-    public Optional<List<Physicals>> physicalsForOffenderId(Long offenderId) {
+    public Optional<List<Physicals>> physicalsForOffenderId(final Long offenderId) {
 
         return offenderRepository.findById(offenderId)
                 .map(offender ->

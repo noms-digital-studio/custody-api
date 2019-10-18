@@ -20,12 +20,12 @@ public class AssessmentsTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public AssessmentsTransformer(TypesTransformer typesTransformer, ReferenceCodesRepository referenceCodesRepository) {
+    public AssessmentsTransformer(final TypesTransformer typesTransformer, final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public OffenderAssessment assessmentOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderAssessment offenderAssessment) {
+    public OffenderAssessment assessmentOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderAssessment offenderAssessment) {
         return OffenderAssessment.builder()
                 .approvedSupLevelType(offenderAssessment.getApprovedSupLevelType())
                 .assessCommitteeCode(offenderAssessment.getAssessCommitteCode())
@@ -64,7 +64,7 @@ public class AssessmentsTransformer {
 
     }
 
-    private KeyValue getSecurityCategoryOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderAssessment oa) {
+    private KeyValue getSecurityCategoryOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderAssessment oa) {
         return Optional.ofNullable(oa.getReviewSupLevelType() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(oa.getReviewSupLevelType())
@@ -74,7 +74,7 @@ public class AssessmentsTransformer {
                 .orElse(null);
     }
 
-    private AssessmentType assessmentTypeOf(Assessment assessment) {
+    private AssessmentType assessmentTypeOf(final Assessment assessment) {
         return Optional.ofNullable(assessment)
                 .map(a -> AssessmentType.builder()
                         .assessmentClass(a.getAssessmentClass())

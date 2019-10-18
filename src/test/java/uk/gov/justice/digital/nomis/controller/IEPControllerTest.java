@@ -44,7 +44,7 @@ public class IEPControllerTest {
 
     @Test
     public void canGetOffenderIEPs() {
-        OffenderIepLevel[] ieps = given()
+        final var ieps = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/ieps")

@@ -24,7 +24,7 @@ public class IepLevelsController {
     private final IEPService iepService;
 
     @Autowired
-    public IepLevelsController(IEPService iepService) {
+    public IepLevelsController(final IEPService iepService) {
         this.iepService = iepService;
     }
 
@@ -33,7 +33,7 @@ public class IepLevelsController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offender not found"),
             @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<OffenderIepLevel>> getOffenderIEPs(@PathVariable("offenderId") Long offenderId) {
+    public ResponseEntity<List<OffenderIepLevel>> getOffenderIEPs(@PathVariable("offenderId") final Long offenderId) {
 
         return iepService.iepsForOffenderId(offenderId)
                 .map(iepList -> new ResponseEntity<>(iepList, HttpStatus.OK))

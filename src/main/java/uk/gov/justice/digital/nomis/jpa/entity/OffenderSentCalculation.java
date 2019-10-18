@@ -1,21 +1,9 @@
 package uk.gov.justice.digital.nomis.jpa.entity;
 
 import com.google.common.collect.ImmutableList;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.val;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PostLoad;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -170,31 +158,31 @@ public class OffenderSentCalculation {
 
     public LabelledTimestamp calculateDerivedReleaseDate() {
 
-        final val maybeConfirmedReleaseDate = Optional.ofNullable(confirmedReleaseDate);
+        final var maybeConfirmedReleaseDate = Optional.ofNullable(confirmedReleaseDate);
 
         if (maybeConfirmedReleaseDate.isPresent()) {
             return maybeConfirmedReleaseDate.get();
         }
 
-        final val maybeActualParoleDate = Optional.ofNullable(apdOverridedDate);
+        final var maybeActualParoleDate = Optional.ofNullable(apdOverridedDate);
 
         if (maybeActualParoleDate.isPresent()) {
             return new LabelledTimestamp("APD", maybeActualParoleDate.get());
         }
 
-        final val maybeHdcActualDate = Optional.ofNullable(hdcadOverridedDate);
+        final var maybeHdcActualDate = Optional.ofNullable(hdcadOverridedDate);
 
         if (maybeHdcActualDate.isPresent()) {
             return new LabelledTimestamp("HDCAD", maybeHdcActualDate.get());
         }
 
-        final val maybeNonDtoReleaseDate = Optional.ofNullable(nonDtoReleaseDate);
-        final val maybeMidTermDate = Optional.ofNullable(midTermDate);
+        final var maybeNonDtoReleaseDate = Optional.ofNullable(nonDtoReleaseDate);
+        final var maybeMidTermDate = Optional.ofNullable(midTermDate);
 
         return greaterOf(maybeNonDtoReleaseDate, maybeMidTermDate).orElse(null);
     }
 
-    public Optional<LabelledTimestamp> greaterOf(Optional<LabelledTimestamp> maybeDate1, Optional<LabelledTimestamp> maybeDate2) {
+    public Optional<LabelledTimestamp> greaterOf(final Optional<LabelledTimestamp> maybeDate1, final Optional<LabelledTimestamp> maybeDate2) {
 
         return Stream.of(maybeDate1, maybeDate2)
                 .filter(Optional::isPresent)
@@ -214,7 +202,7 @@ public class OffenderSentCalculation {
                         .orElse(null));
     }
 
-    public Optional<Timestamp> firstNonNullDateOf(Timestamp a, Timestamp b) {
+    public Optional<Timestamp> firstNonNullDateOf(final Timestamp a, final Timestamp b) {
         return Optional.ofNullable(Optional.ofNullable(a).orElse(b));
     }
 
@@ -233,7 +221,7 @@ public class OffenderSentCalculation {
 
     }
 
-    private Optional<LabelledTimestamp> labelledTimestampOf(String label, Optional<Timestamp> timestamp) {
+    private Optional<LabelledTimestamp> labelledTimestampOf(final String label, final Optional<Timestamp> timestamp) {
         return timestamp.map(t -> new LabelledTimestamp(label, t));
     }
 

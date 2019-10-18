@@ -20,13 +20,13 @@ public class OffenderActiveBookingTransformer {
 
 
     @Autowired
-    public OffenderActiveBookingTransformer(TypesTransformer typesTransformer, ReferenceDataTransformer referenceDataTransformer) {
+    public OffenderActiveBookingTransformer(final TypesTransformer typesTransformer, final ReferenceDataTransformer referenceDataTransformer) {
         this.typesTransformer = typesTransformer;
         this.referenceDataTransformer = referenceDataTransformer;
     }
 
 
-    private Booking bookingOf(OffenderBooking booking) {
+    private Booking bookingOf(final OffenderBooking booking) {
         return Booking.builder()
                 .bookingSequence(booking.getBookingSeq())
                 .startDate(booking.getBookingBeginDate().toLocalDateTime().toLocalDate())
@@ -45,13 +45,13 @@ public class OffenderActiveBookingTransformer {
                 .build();
     }
 
-    private String combinedMiddlenamesOf(Offender offender) {
+    private String combinedMiddlenamesOf(final Offender offender) {
         return String.join(" ", middleNamesOf(offender.getMiddleName(), offender.getMiddleName2()));
     }
 
-    private List<String> middleNamesOf(String secondName, String thirdName) {
-        Optional<String> maybeSecondName = Optional.ofNullable(secondName);
-        Optional<String> maybeThirdName = Optional.ofNullable(thirdName);
+    private List<String> middleNamesOf(final String secondName, final String thirdName) {
+        final var maybeSecondName = Optional.ofNullable(secondName);
+        final var maybeThirdName = Optional.ofNullable(thirdName);
 
         return ImmutableList.of(maybeSecondName, maybeThirdName)
                 .stream()
@@ -59,7 +59,7 @@ public class OffenderActiveBookingTransformer {
                 .collect(Collectors.toList());
     }
 
-    public uk.gov.justice.digital.nomis.api.OffenderActiveBooking offenderOf(OffenderBooking offenderBooking) {
+    public uk.gov.justice.digital.nomis.api.OffenderActiveBooking offenderOf(final OffenderBooking offenderBooking) {
         return uk.gov.justice.digital.nomis.api.OffenderActiveBooking.builder()
                 .dateOfBirth(offenderBooking.getOffender().getBirthDate().toLocalDateTime().toLocalDate())
                 .firstName(offenderBooking.getOffender().getFirstName())

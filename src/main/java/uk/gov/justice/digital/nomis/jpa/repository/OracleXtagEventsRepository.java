@@ -22,11 +22,11 @@ public class OracleXtagEventsRepository implements XtagEventsRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public OracleXtagEventsRepository(JdbcTemplate jdbcTemplate) {
+    public OracleXtagEventsRepository(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private Optional<XtagEventNonJpa> xtagEventOf(ResultSet rs) {
+    private Optional<XtagEventNonJpa> xtagEventOf(final ResultSet rs) {
 
         XtagEventNonJpa xtagEventNonJpaWithoutOracleTypes = null;
 
@@ -67,17 +67,17 @@ public class OracleXtagEventsRepository implements XtagEventsRepository {
                     .userProp((STRUCT) rs.getObject("USER_PROP"))
                     .build());
 
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log.error(e.getMessage());
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             log.error("Caught throwable building XtagEventNonJpa {}. Will return empty and continue! : {} {}",xtagEventNonJpaWithoutOracleTypes, t.getMessage(), t.getStackTrace());
         }
         return Optional.empty();
     }
 
     @Override
-    public List<XtagEventNonJpa> findAll(OffenderEventsFilter f) {
-        final List<Optional<XtagEventNonJpa>> results = jdbcTemplate.query("select * from XTAG.XTAG_LISTENER_TAB where enq_time >= ? and enq_time <= ?", (rs, rowNum) -> xtagEventOf(rs), Timestamp.valueOf(f.getFrom()), Timestamp.valueOf(f.getTo()));
+    public List<XtagEventNonJpa> findAll(final OffenderEventsFilter f) {
+        final var results = jdbcTemplate.query("select * from XTAG.XTAG_LISTENER_TAB where enq_time >= ? and enq_time <= ?", (rs, rowNum) -> xtagEventOf(rs), Timestamp.valueOf(f.getFrom()), Timestamp.valueOf(f.getTo()));
         return results.stream().filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
     }
 

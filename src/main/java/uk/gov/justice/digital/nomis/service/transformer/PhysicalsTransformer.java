@@ -5,12 +5,7 @@ import uk.gov.justice.digital.nomis.api.IdentifyingMark;
 import uk.gov.justice.digital.nomis.api.PhysicalAttribute;
 import uk.gov.justice.digital.nomis.api.Physicals;
 import uk.gov.justice.digital.nomis.api.ProfileDetails;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderIdentifyingMarks;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderPhysicalAttributes;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderProfileDetails;
-import uk.gov.justice.digital.nomis.jpa.entity.ProfileCode;
-import uk.gov.justice.digital.nomis.jpa.entity.ProfileCodePK;
+import uk.gov.justice.digital.nomis.jpa.entity.*;
 import uk.gov.justice.digital.nomis.jpa.repository.ProfileCodesRepository;
 
 import java.util.Collections;
@@ -23,11 +18,11 @@ public class PhysicalsTransformer {
 
     private final ProfileCodesRepository profileCodesRepository;
 
-    public PhysicalsTransformer(ProfileCodesRepository profileCodesRepository) {
+    public PhysicalsTransformer(final ProfileCodesRepository profileCodesRepository) {
         this.profileCodesRepository = profileCodesRepository;
     }
 
-    public Physicals physicalsOf(OffenderBooking offenderBooking) {
+    public Physicals physicalsOf(final OffenderBooking offenderBooking) {
         return Physicals.builder()
                 .bookingId(offenderBooking.getOffenderBookId())
                 .identifyingMarks(identifyingMarksOf(offenderBooking.getOffenderIdentifyingMarks()))
@@ -36,12 +31,12 @@ public class PhysicalsTransformer {
                 .build();
     }
 
-    private List<ProfileDetails> profileDetailsOf(List<OffenderProfileDetails> offenderProfileDetails) {
+    private List<ProfileDetails> profileDetailsOf(final List<OffenderProfileDetails> offenderProfileDetails) {
         return Optional.ofNullable(offenderProfileDetails)
                 .map(dets -> dets
                         .stream()
                         .map(det -> {
-                            Optional<ProfileCode> pc = Optional.ofNullable(det.getProfileCode() != null && det.getProfileType() != null ?
+                            var pc = Optional.ofNullable(det.getProfileCode() != null && det.getProfileType() != null ?
                                     profileCodesRepository.findById(ProfileCodePK.builder()
                                     .profileCode(det.getProfileCode())
                                     .profileType(det.getProfileType())
@@ -61,7 +56,7 @@ public class PhysicalsTransformer {
                 .orElse(Collections.emptyList());
     }
 
-    private List<PhysicalAttribute> physicalAttributesOf(List<OffenderPhysicalAttributes> offenderPhysicalAttributes) {
+    private List<PhysicalAttribute> physicalAttributesOf(final List<OffenderPhysicalAttributes> offenderPhysicalAttributes) {
         return Optional.ofNullable(offenderPhysicalAttributes)
                 .map(attrs -> attrs
                         .stream()
@@ -77,7 +72,7 @@ public class PhysicalsTransformer {
                 .orElse(Collections.emptyList());
     }
 
-    private List<IdentifyingMark> identifyingMarksOf(List<OffenderIdentifyingMarks> offenderIdentifyingMarks) {
+    private List<IdentifyingMark> identifyingMarksOf(final List<OffenderIdentifyingMarks> offenderIdentifyingMarks) {
         return Optional.ofNullable(offenderIdentifyingMarks)
                 .map(marks -> marks
                         .stream()

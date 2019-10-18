@@ -10,7 +10,6 @@ import uk.gov.justice.digital.nomis.api.Offence;
 import uk.gov.justice.digital.nomis.jpa.repository.OffencesRepository;
 import uk.gov.justice.digital.nomis.service.transformer.OffenceTransformer;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,15 +20,15 @@ public class OffencesService {
     private final OffenceTransformer offenceTransformer;
 
     @Autowired
-    public OffencesService(OffencesRepository offencesRepository, OffenceTransformer offenceTransformer) {
+    public OffencesService(final OffencesRepository offencesRepository, final OffenceTransformer offenceTransformer) {
         this.offencesRepository = offencesRepository;
         this.offenceTransformer = offenceTransformer;
     }
 
-    public Page<Offence> getOffences(Pageable pageable) {
-        Page<uk.gov.justice.digital.nomis.jpa.entity.Offence> rawOffencesPage = offencesRepository.findAll(pageable);
+    public Page<Offence> getOffences(final Pageable pageable) {
+        final var rawOffencesPage = offencesRepository.findAll(pageable);
 
-        List<Offence> offences = rawOffencesPage.getContent().stream()
+        final var offences = rawOffencesPage.getContent().stream()
                 .map(offenceTransformer::offenceOf)
                 .collect(Collectors.toList());
 

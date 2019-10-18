@@ -26,7 +26,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     private String apiBasePath;
 
     @Override
-    public void configure(HttpSecurity http) throws Exception {
+    public void configure(final HttpSecurity http) throws Exception {
         http
                 .csrf().disable().antMatcher("/**")
                 .cors().disable().antMatcher("/**")
@@ -43,7 +43,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     }
 
     @Override
-    public void configure(ResourceServerSecurityConfigurer config) {
+    public void configure(final ResourceServerSecurityConfigurer config) {
         config.tokenServices(tokenServices());
     }
 
@@ -54,7 +54,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        final var converter = new JwtAccessTokenConverter();
         converter.setVerifierKey(new String(Base64.decodeBase64(jwtPublicKey)));
         return converter;
     }
@@ -62,7 +62,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Bean
     @Primary
     public DefaultTokenServices tokenServices() {
-        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        final var defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
         return defaultTokenServices;
     }

@@ -55,13 +55,13 @@ public class OffenderEventsControllerTest {
 
     @Test
     public void canAccessBothOffenderAndXtagEvents() {
-        LocalDateTime from = LocalDateTime.of(2018,10,29,0,0);
-        LocalDateTime to = from.plusDays(1L);
+        final var from = LocalDateTime.of(2018, 10, 29, 0, 0);
+        final var to = from.plusDays(1L);
 
-        OffenderEventsFilter filter = OffenderEventsFilter.builder().from(from).to(to).build();
+        final var filter = OffenderEventsFilter.builder().from(from).to(to).build();
         Mockito.when(xtagEventsService.findAll(ArgumentMatchers.eq(filter))).thenReturn(someXtagEvents(from));
 
-        final OffenderEvent[] offenderEvents = given()
+        final var offenderEvents = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("from", from.toString())
@@ -73,7 +73,7 @@ public class OffenderEventsControllerTest {
                 .body()
                 .as(OffenderEvent[].class);
 
-        final ImmutableList<OffenderEvent> events = ImmutableList.<OffenderEvent>builder().add(offenderEvents).build();
+        final var events = ImmutableList.<OffenderEvent>builder().add(offenderEvents).build();
 
 
         assertThat(events).extracting("nomisEventType").contains("BOOK_UPD_OASYS");
@@ -84,13 +84,13 @@ public class OffenderEventsControllerTest {
 
     @Test
     public void defaultSortOrderIsByEventTimestampDesc() {
-        LocalDateTime from = LocalDateTime.of(2018, 10, 29, 0, 0);
-        LocalDateTime to = from.plusDays(1L);
+        final var from = LocalDateTime.of(2018, 10, 29, 0, 0);
+        final var to = from.plusDays(1L);
 
-        OffenderEventsFilter filter = OffenderEventsFilter.builder().from(from).to(to).build();
+        final var filter = OffenderEventsFilter.builder().from(from).to(to).build();
         Mockito.when(xtagEventsService.findAll(ArgumentMatchers.eq(filter))).thenReturn(someXtagEvents(from));
 
-        final OffenderEvent[] offenderEvents = given()
+        final var offenderEvents = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("from", from.toString())
@@ -108,13 +108,13 @@ public class OffenderEventsControllerTest {
 
     @Test
     public void canSpecifyOrderByEventTimestampDesc() {
-        LocalDateTime from = LocalDateTime.of(2018, 10, 29, 0, 0);
-        LocalDateTime to = from.plusDays(1L);
+        final var from = LocalDateTime.of(2018, 10, 29, 0, 0);
+        final var to = from.plusDays(1L);
 
-        OffenderEventsFilter filter = OffenderEventsFilter.builder().from(from).to(to).build();
+        final var filter = OffenderEventsFilter.builder().from(from).to(to).build();
         Mockito.when(xtagEventsService.findAll(ArgumentMatchers.eq(filter))).thenReturn(someXtagEvents(from));
 
-        final OffenderEvent[] offenderEvents = given()
+        final var offenderEvents = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("from", from.toString())
@@ -132,13 +132,13 @@ public class OffenderEventsControllerTest {
 
     @Test
     public void canSpecifyOrderByEventTimestampAsc() {
-        LocalDateTime from = LocalDateTime.of(2018, 10, 29, 0, 0);
-        LocalDateTime to = from.plusDays(1L);
+        final var from = LocalDateTime.of(2018, 10, 29, 0, 0);
+        final var to = from.plusDays(1L);
 
-        OffenderEventsFilter filter = OffenderEventsFilter.builder().from(from).to(to).build();
+        final var filter = OffenderEventsFilter.builder().from(from).to(to).build();
         Mockito.when(xtagEventsService.findAll(ArgumentMatchers.eq(filter))).thenReturn(someXtagEvents(from));
 
-        final OffenderEvent[] offenderEvents = given()
+        final var offenderEvents = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("from", from.toString())
@@ -156,10 +156,10 @@ public class OffenderEventsControllerTest {
 
     @Test
     public void cannotSpecifyMadeUpSortOrder() {
-        LocalDateTime from = LocalDateTime.of(2018, 10, 29, 0, 0);
-        LocalDateTime to = from.plusDays(1L);
+        final var from = LocalDateTime.of(2018, 10, 29, 0, 0);
+        final var to = from.plusDays(1L);
 
-        OffenderEventsFilter filter = OffenderEventsFilter.builder().from(from).to(to).build();
+        final var filter = OffenderEventsFilter.builder().from(from).to(to).build();
         Mockito.when(xtagEventsService.findAll(ArgumentMatchers.eq(filter))).thenReturn(someXtagEvents(from));
 
         given()
@@ -175,13 +175,13 @@ public class OffenderEventsControllerTest {
 
     @Test
     public void canFilterOffenderEvents() {
-        LocalDateTime from = LocalDateTime.of(2018,10,29,0,0);
-        LocalDateTime to = from.plusDays(1L);
+        final var from = LocalDateTime.of(2018, 10, 29, 0, 0);
+        final var to = from.plusDays(1L);
 
-        OffenderEventsFilter filter = OffenderEventsFilter.builder().from(from).to(to).build();
+        final var filter = OffenderEventsFilter.builder().from(from).to(to).build();
         Mockito.when(xtagEventsService.findAll(ArgumentMatchers.eq(filter))).thenReturn(someXtagEvents(from));
 
-        final OffenderEvent[] offenderEvents = given()
+        final var offenderEvents = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("from", from.toString())
@@ -194,20 +194,20 @@ public class OffenderEventsControllerTest {
                 .body()
                 .as(OffenderEvent[].class);
 
-        final ImmutableList<OffenderEvent> events = ImmutableList.<OffenderEvent>builder().add(offenderEvents).build();
+        final var events = ImmutableList.<OffenderEvent>builder().add(offenderEvents).build();
         assertThat(events).extracting("eventType").containsOnly("KA-KS");
 
     }
 
     @Test
     public void canAccessOffenderEventsForSpecificOffender() {
-        LocalDateTime from = LocalDateTime.of(2018,10,29,0,0);
-        LocalDateTime to = from.plusDays(1L);
+        final var from = LocalDateTime.of(2018, 10, 29, 0, 0);
+        final var to = from.plusDays(1L);
 
-        OffenderEventsFilter filter = OffenderEventsFilter.builder().from(from).to(to).offenderId(Optional.of(-1001L)).build();
+        final var filter = OffenderEventsFilter.builder().from(from).to(to).offenderId(Optional.of(-1001L)).build();
         Mockito.when(xtagEventsService.findAll(ArgumentMatchers.eq(filter))).thenReturn(someXtagEvents(from));
 
-        final OffenderEvent[] offenderEvents = given()
+        final var offenderEvents = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("from", from.toString())
@@ -219,7 +219,7 @@ public class OffenderEventsControllerTest {
                 .body()
                 .as(OffenderEvent[].class);
 
-        final ImmutableList<OffenderEvent> events = ImmutableList.<OffenderEvent>builder().add(offenderEvents).build();
+        final var events = ImmutableList.<OffenderEvent>builder().add(offenderEvents).build();
 
         assertThat(events).extracting("rootOffenderId").containsOnly(-1001L);
         assertThat(events).extracting("nomisEventType").contains("BOOK_UPD_OASYS");
@@ -228,7 +228,7 @@ public class OffenderEventsControllerTest {
 
     }
 
-    private List<OffenderEvent> someXtagEvents(LocalDateTime now) {
+    private List<OffenderEvent> someXtagEvents(final LocalDateTime now) {
         return ImmutableList.of(
                 OffenderEvent.builder()
                         .nomisEventType("BOOK_UPD_OASYS")

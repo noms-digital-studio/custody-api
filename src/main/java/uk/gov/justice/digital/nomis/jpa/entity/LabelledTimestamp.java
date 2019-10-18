@@ -12,7 +12,7 @@ public class LabelledTimestamp implements Comparable<LabelledTimestamp>{
     private final Timestamp timestamp;
 
     @Override
-    public int compareTo(LabelledTimestamp o) {
+    public int compareTo(final LabelledTimestamp o) {
         return timestamp.compareTo(o.timestamp);
     }
 }

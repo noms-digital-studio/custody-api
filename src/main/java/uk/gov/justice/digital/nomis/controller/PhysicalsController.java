@@ -24,7 +24,7 @@ public class PhysicalsController {
     private final PhysicalsService physicalsService;
 
     @Autowired
-    public PhysicalsController(PhysicalsService physicalsService) {
+    public PhysicalsController(final PhysicalsService physicalsService) {
         this.physicalsService = physicalsService;
     }
 
@@ -32,7 +32,7 @@ public class PhysicalsController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offender not found"),
             @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<Physicals>> getOffenderPhysicals(@PathVariable("offenderId") Long offenderId) {
+    public ResponseEntity<List<Physicals>> getOffenderPhysicals(@PathVariable("offenderId") final Long offenderId) {
 
         return physicalsService.physicalsForOffenderId(offenderId)
                 .map(physicalsList -> new ResponseEntity<>(physicalsList, HttpStatus.OK))

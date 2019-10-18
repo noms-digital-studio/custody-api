@@ -44,7 +44,7 @@ public class ImagesControllerTest {
 
     @Test
     public void canGetImagesByOffenderId() {
-        OffenderImage[] offenderImages = given()
+        final var offenderImages = given()
             .when()
             .auth().oauth2(validOauthToken)
             .get("/offenders/offenderId/-1001/images")
@@ -78,7 +78,7 @@ public class ImagesControllerTest {
 
     @Test
     public void canGetImagesByNomsId() {
-        OffenderImage[] offenderImages = given()
+        final var offenderImages = given()
             .when()
             .auth().oauth2(validOauthToken)
             .get("/offenders/nomsId/A1234AA/images")

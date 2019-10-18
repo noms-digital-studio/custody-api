@@ -13,11 +13,11 @@ public class CaseloadTransformer {
     private final ReferenceDataTransformer referenceDataTransformer;
 
     @Autowired
-    public CaseloadTransformer(ReferenceDataTransformer referenceDataTransformer) {
+    public CaseloadTransformer(final ReferenceDataTransformer referenceDataTransformer) {
         this.referenceDataTransformer = referenceDataTransformer;
     }
 
-    public NomisCaseload caseloadsOf(Caseload caseload) {
+    public NomisCaseload caseloadsOf(final Caseload caseload) {
         return NomisCaseload.builder()
                 .id(caseload.getId())
                 .name(caseload.getName())

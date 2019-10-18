@@ -23,12 +23,12 @@ public class RehabDecisionTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public RehabDecisionTransformer(TypesTransformer typesTransformer, ReferenceCodesRepository referenceCodesRepository) {
+    public RehabDecisionTransformer(final TypesTransformer typesTransformer, final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public RehabDecision rehabDecisionOf(OffenderRehabDecision offenderRehabDecision) {
+    public RehabDecision rehabDecisionOf(final OffenderRehabDecision offenderRehabDecision) {
         return Optional.ofNullable(offenderRehabDecision).map(
                 ord -> RehabDecision.builder()
                         .active(typesTransformer.ynToBoolean(ord.getActiveFlag()))
@@ -43,7 +43,7 @@ public class RehabDecisionTransformer {
                 .orElse(null);
     }
 
-    public RehabProvider rehabProviderOf(OffenderRehabProvider offenderRehabProvider) {
+    public RehabProvider rehabProviderOf(final OffenderRehabProvider offenderRehabProvider) {
         return Optional.ofNullable(offenderRehabProvider).map(
                 orp -> RehabProvider.builder()
                         .offenderRehabProviderId(orp.getOffenderRehabProviderId())
@@ -55,7 +55,7 @@ public class RehabDecisionTransformer {
                 .orElse(null);
     }
 
-    public RehabilitationDecisionProvider rehabilitationDecisionProviderOf(RehabilitationProvider rehabilitationProvider) {
+    public RehabilitationDecisionProvider rehabilitationDecisionProviderOf(final RehabilitationProvider rehabilitationProvider) {
         return Optional.ofNullable(rehabilitationProvider).map(
                 orp -> RehabilitationDecisionProvider.builder()
                         .active(typesTransformer.ynToBoolean(orp.getActiveFlag()))
@@ -68,7 +68,7 @@ public class RehabDecisionTransformer {
                 .orElse(null);
     }
 
-    private KeyValue getDecisionCodeOf(OffenderRehabDecision em) {
+    private KeyValue getDecisionCodeOf(final OffenderRehabDecision em) {
         return Optional.ofNullable(em.getDecisionCode() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(em.getDecisionCode())

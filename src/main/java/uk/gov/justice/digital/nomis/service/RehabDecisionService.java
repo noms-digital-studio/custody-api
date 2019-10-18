@@ -35,15 +35,15 @@ public class RehabDecisionService {
                     .reversed();
 
     @Autowired
-    public RehabDecisionService(RehabDecisionTransformer rehabDecisionTransformer, OffenderRepository offenderRepository, OffenderRehabProviderRepository offenderRehabProviderRepository) {
+    public RehabDecisionService(final RehabDecisionTransformer rehabDecisionTransformer, final OffenderRepository offenderRepository, final OffenderRehabProviderRepository offenderRehabProviderRepository) {
         this.rehabDecisionTransformer = rehabDecisionTransformer;
         this.offenderRepository = offenderRepository;
         this.offenderRehabProviderRepository = offenderRehabProviderRepository;
     }
 
-    public Optional<List<RehabDecision>> rehabDecisionsForOffenderId(Long offenderId) {
+    public Optional<List<RehabDecision>> rehabDecisionsForOffenderId(final Long offenderId) {
 
-        final Optional<List<RehabDecision>> maybeRehabDecisions = offenderRepository.findById(offenderId)
+        final var maybeRehabDecisions = offenderRepository.findById(offenderId)
                 .map(offender ->
                         offender.getOffenderBookings()
                                 .stream()
@@ -61,7 +61,7 @@ public class RehabDecisionService {
         );
     }
 
-    private List<RehabProvider> rehabProvidersOf(RehabDecision rehabDecision) {
+    private List<RehabProvider> rehabProvidersOf(final RehabDecision rehabDecision) {
         return Optional.ofNullable(rehabDecision).map(
                 rh -> offenderRehabProviderRepository.findByOffenderRehabDecisionId(rh.getOffenderRehabDecisionId())
                         .stream()

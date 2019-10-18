@@ -21,15 +21,15 @@ public class OffenderMilitaryRecordFilter implements Specification<OffenderMilit
 
     @Builder.Default
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Optional<LocalDateTime> from = Optional.empty();
+    private final Optional<LocalDateTime> from = Optional.empty();
 
     @Builder.Default
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Optional<LocalDateTime> to = Optional.empty();
+    private final Optional<LocalDateTime> to = Optional.empty();
 
     @Override
-    public Predicate toPredicate(Root<OffenderMilitaryRecord> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
+    public Predicate toPredicate(final Root<OffenderMilitaryRecord> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+        final ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
 
         from.ifPresent(localDateTime -> predicateBuilder.add(cb.greaterThanOrEqualTo(root.get("startDate"), Timestamp.valueOf(localDateTime))));
         from.ifPresent(localDateTime -> predicateBuilder.add(cb.lessThan(root.get("endDate"), Timestamp.valueOf(localDateTime))));
@@ -37,7 +37,7 @@ public class OffenderMilitaryRecordFilter implements Specification<OffenderMilit
         to.ifPresent(localDateTime -> predicateBuilder.add(cb.greaterThan(root.get("startDate"), Timestamp.valueOf(localDateTime))));
         to.ifPresent(localDateTime -> predicateBuilder.add(cb.lessThanOrEqualTo(root.get("endDate"), Timestamp.valueOf(localDateTime))));
 
-        ImmutableList<Predicate> predicates = predicateBuilder.build();
+        final var predicates = predicateBuilder.build();
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }

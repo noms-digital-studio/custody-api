@@ -1,19 +1,8 @@
 package uk.gov.justice.digital.nomis.jpa.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +38,11 @@ public class Staff {
     @JoinColumn(name = "STAFF_ID")
     private List<StaffIdentifier> identifiers;
 
-    public StaffIdentifier addIdentifier(String type, String identificationNumber) {
+    public StaffIdentifier addIdentifier(final String type, final String identificationNumber) {
         if (identifiers == null) {
             identifiers = new ArrayList<>();
         }
-        StaffIdentifier id = StaffIdentifier.builder()
+        final var id = StaffIdentifier.builder()
                 .id(StaffIdentifierIdentity.builder()
                         .type(type)
                         .identificationNumber(identificationNumber)
@@ -65,13 +54,13 @@ public class Staff {
         return id;
     }
 
-    public StaffIdentifier findIdentifier(String type) {
+    public StaffIdentifier findIdentifier(final String type) {
         return identifiers.stream()
                 .filter(r -> r.getId().getType().equals(type))
                 .findFirst().orElse(null);
     }
 
-    public StaffUserAccount getAccountByType(String type) {
+    public StaffUserAccount getAccountByType(final String type) {
         return users.stream()
                 .filter(r -> r.getType().equals(type))
                 .findFirst().orElse(null);

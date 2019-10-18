@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.gov.justice.digital.nomis.api.NomisCaseload;
 import uk.gov.justice.digital.nomis.api.NomisStaffUser;
 
 import static io.restassured.RestAssured.given;
@@ -48,7 +47,7 @@ public class NomisStaffUsersControllerTest {
 
     @Test
     public void canGetUserDetails() {
-        NomisStaffUser nomisStaffUser = given()
+        final var nomisStaffUser = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/nomis-staff-users/ITAG_USER")
@@ -64,9 +63,9 @@ public class NomisStaffUsersControllerTest {
         assertThat(nomisStaffUser.getLastName()).isEqualTo("USER");
         assertThat(nomisStaffUser.getStatus()).isEqualTo("ACTIVE");
         assertThat(nomisStaffUser.getNomisCaseloads().values().size()).isEqualTo(2);
-        String activeCaseload = nomisStaffUser.getActiveNomisCaseload();
+        final var activeCaseload = nomisStaffUser.getActiveNomisCaseload();
         assertThat(activeCaseload).isEqualTo("MDI");
-        NomisCaseload mdiNomisCaseload = nomisStaffUser.getNomisCaseloads().get(activeCaseload);
+        final var mdiNomisCaseload = nomisStaffUser.getNomisCaseloads().get(activeCaseload);
         assertThat(mdiNomisCaseload.getAgencies().size()).isEqualTo(1);
         assertThat(mdiNomisCaseload.isCurrentActive()).isTrue();
         assertThat(mdiNomisCaseload.getAgencies().get(0).getAgencyLocationId()).isEqualTo("MDI");
@@ -74,7 +73,7 @@ public class NomisStaffUsersControllerTest {
 
     @Test
     public void canGetUserDetailsMultipleAgencies() {
-        NomisStaffUser nomisStaffUser = given()
+        final var nomisStaffUser = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/nomis-staff-users/ITAG_USER_ADM")
@@ -90,9 +89,9 @@ public class NomisStaffUsersControllerTest {
         assertThat(nomisStaffUser.getLastName()).isEqualTo("USER");
         assertThat(nomisStaffUser.getStatus()).isEqualTo("ACTIVE");
         assertThat(nomisStaffUser.getNomisCaseloads().values().size()).isEqualTo(2);
-        String activeCaseload = nomisStaffUser.getActiveNomisCaseload();
+        final var activeCaseload = nomisStaffUser.getActiveNomisCaseload();
         assertThat(activeCaseload).isNull();
-        NomisCaseload mdiNomisCaseload = nomisStaffUser.getNomisCaseloads().get("CADM");
+        final var mdiNomisCaseload = nomisStaffUser.getNomisCaseloads().get("CADM");
         assertThat(mdiNomisCaseload.getAgencies().size()).isEqualTo(4);
     }
 
@@ -118,7 +117,7 @@ public class NomisStaffUsersControllerTest {
 
     @Test
     public void embeddedHateoasLinksWork() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -128,7 +127,7 @@ public class NomisStaffUsersControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()

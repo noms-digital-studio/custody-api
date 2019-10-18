@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.OffenderAssessment;
-import uk.gov.justice.digital.nomis.jpa.entity.Offender;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.filters.AssessmentsFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderAssessmentRepository;
@@ -40,22 +39,22 @@ public class AssessmentService {
     private final AssessmentsTransformer assessmentsTransformer;
 
     @Autowired
-    public AssessmentService(OffenderAssessmentRepository offenderAssessmentRepository, OffenderRepository offenderRepository, AssessmentsTransformer assessmentsTransformer) {
+    public AssessmentService(final OffenderAssessmentRepository offenderAssessmentRepository, final OffenderRepository offenderRepository, final AssessmentsTransformer assessmentsTransformer) {
         this.offenderAssessmentRepository = offenderAssessmentRepository;
         this.offenderRepository = offenderRepository;
         this.assessmentsTransformer = assessmentsTransformer;
     }
 
     @Transactional
-    public Page<OffenderAssessment> getAssessments(Pageable pageable, Optional<LocalDateTime> maybeFrom, Optional<LocalDateTime> maybeTo) {
-        AssessmentsFilter assessmentsFilter = AssessmentsFilter.builder()
+    public Page<OffenderAssessment> getAssessments(final Pageable pageable, final Optional<LocalDateTime> maybeFrom, final Optional<LocalDateTime> maybeTo) {
+        final var assessmentsFilter = AssessmentsFilter.builder()
                 .from(maybeFrom)
                 .to(maybeTo)
                 .build();
 
-        Page<uk.gov.justice.digital.nomis.jpa.entity.OffenderAssessment> rawOffenderAssessmentsPage = offenderAssessmentRepository.findAll(assessmentsFilter, pageable);
+        final var rawOffenderAssessmentsPage = offenderAssessmentRepository.findAll(assessmentsFilter, pageable);
 
-        List<OffenderAssessment> assessments = rawOffenderAssessmentsPage.getContent()
+        final var assessments = rawOffenderAssessmentsPage.getContent()
                 .stream()
                 .sorted(BY_ASSESSMENT_PRIORITY)
                 .map(assessmentsTransformer::assessmentOf)
@@ -65,8 +64,8 @@ public class AssessmentService {
     }
 
     @Transactional
-    public Optional<List<OffenderAssessment>> getOffenderAssessments(Long offenderId) {
-        Optional<List<uk.gov.justice.digital.nomis.jpa.entity.OffenderAssessment>> maybeOffenderAssessments = offenderRepository.findById(offenderId)
+    public Optional<List<OffenderAssessment>> getOffenderAssessments(final Long offenderId) {
+        final var maybeOffenderAssessments = offenderRepository.findById(offenderId)
                 .map(offender ->
                         offender.getOffenderBookings()
                                 .stream()
@@ -81,8 +80,8 @@ public class AssessmentService {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<OffenderAssessment>> assessmentsForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<OffenderAssessment>> assessmentsForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()

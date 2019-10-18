@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.Sentence;
-import uk.gov.justice.digital.nomis.jpa.entity.Offender;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderSentence;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderRepository;
@@ -32,18 +31,18 @@ public class SentencesService {
     private final SentenceTransformer sentenceTransformer;
 
     @Autowired
-    public SentencesService(OffenderSentencesRepository offenderSentencesRepository, OffenderRepository offenderRepository, SentenceTransformer sentenceTransformer) {
+    public SentencesService(final OffenderSentencesRepository offenderSentencesRepository, final OffenderRepository offenderRepository, final SentenceTransformer sentenceTransformer) {
         this.offenderSentencesRepository = offenderSentencesRepository;
         this.offenderRepository = offenderRepository;
         this.sentenceTransformer = sentenceTransformer;
     }
 
     @Transactional
-    public Page<Sentence> getSentences(Pageable pageable) {
+    public Page<Sentence> getSentences(final Pageable pageable) {
 
-        Page<OffenderSentence> offenderSentences = offenderSentencesRepository.findAll(pageable);
+        final var offenderSentences = offenderSentencesRepository.findAll(pageable);
 
-        List<Sentence> sentencesList = offenderSentences.getContent()
+        final var sentencesList = offenderSentences.getContent()
                 .stream()
                 .sorted(BY_SENTENCE_PRIORITY)
                 .map(sentenceTransformer::sentenceOf)
@@ -53,8 +52,8 @@ public class SentencesService {
     }
 
     @Transactional
-    public Optional<List<Sentence>> sentencesForOffenderId(Long offenderId) {
-        Optional<List<OffenderSentence>> maybeOffenderSentences = offenderRepository.findById(offenderId)
+    public Optional<List<Sentence>> sentencesForOffenderId(final Long offenderId) {
+        final var maybeOffenderSentences = offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderBookings().stream()
                         .map(OffenderBooking::getOffenderSentences).
                                 flatMap(Collection::stream).
@@ -68,8 +67,8 @@ public class SentencesService {
     }
 
     @Transactional
-    public Optional<List<Sentence>> sentencesForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<Sentence>> sentencesForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()

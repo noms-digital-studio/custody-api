@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.justice.digital.nomis.api.ExternalMovement;
 import uk.gov.justice.digital.nomis.api.KeyValue;
-import uk.gov.justice.digital.nomis.jpa.entity.MovementReason;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderExternalMovement;
 import uk.gov.justice.digital.nomis.jpa.entity.ReferenceCodePK;
 import uk.gov.justice.digital.nomis.jpa.repository.ReferenceCodesRepository;
@@ -21,16 +20,16 @@ public class MovementsTransformer {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public MovementsTransformer(TypesTransformer typesTransformer, ReferenceDataTransformer referenceDataTransformer, ReferenceCodesRepository referenceCodesRepository) {
+    public MovementsTransformer(final TypesTransformer typesTransformer, final ReferenceDataTransformer referenceDataTransformer, final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceDataTransformer = referenceDataTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
 
-    public ExternalMovement movementOf(OffenderExternalMovement em) {
+    public ExternalMovement movementOf(final OffenderExternalMovement em) {
 
-        MovementReason movementReason = em.getMovementReason();
+        final var movementReason = em.getMovementReason();
 
         return ExternalMovement.builder()
                 .active(typesTransformer.ynToBoolean(em.getActiveFlag()))
@@ -67,7 +66,7 @@ public class MovementsTransformer {
                 .build();
     }
 
-    private KeyValue getEscortCodeOf(OffenderExternalMovement em) {
+    private KeyValue getEscortCodeOf(final OffenderExternalMovement em) {
         return Optional.ofNullable(em.getEscortCode() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(em.getEscortCode())

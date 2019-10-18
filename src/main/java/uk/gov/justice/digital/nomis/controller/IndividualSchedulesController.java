@@ -6,11 +6,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.digital.nomis.api.IndividualSchedule;
 import uk.gov.justice.digital.nomis.service.IndividualSchedulesService;
 
@@ -26,7 +22,7 @@ public class IndividualSchedulesController {
     private final IndividualSchedulesService individualSchedulesService;
 
     @Autowired
-    public IndividualSchedulesController(IndividualSchedulesService individualSchedulesService) {
+    public IndividualSchedulesController(final IndividualSchedulesService individualSchedulesService) {
         this.individualSchedulesService = individualSchedulesService;
     }
 
@@ -35,8 +31,8 @@ public class IndividualSchedulesController {
             @ApiResponse(code = 404, message = "Offender or booking not found"),
             @ApiResponse(code = 200, message = "OK")
     })
-    public ResponseEntity<List<IndividualSchedule>> getOffenderIndividualSchedules(@PathVariable("offenderId") Long offenderId,
-                                                                                   @RequestParam("bookingId") Optional<Long> maybeBookingId) {
+    public ResponseEntity<List<IndividualSchedule>> getOffenderIndividualSchedules(@PathVariable("offenderId") final Long offenderId,
+                                                                                   @RequestParam("bookingId") final Optional<Long> maybeBookingId) {
 
         return maybeBookingId
                 .map(bookingId -> individualSchedulesService.individualSchedulesForOffenderIdAndBookingId(offenderId, bookingId))

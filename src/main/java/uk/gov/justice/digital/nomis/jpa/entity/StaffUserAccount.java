@@ -1,23 +1,8 @@
 package uk.gov.justice.digital.nomis.jpa.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,13 +43,13 @@ public class StaffUserAccount {
     @PrimaryKeyJoinColumn
     private AccountDetail accountDetail;
 
-    public List<UserCaseloadRole> filterRolesByCaseload(String caseload) {
+    public List<UserCaseloadRole> filterRolesByCaseload(final String caseload) {
         return roles.stream()
                 .filter(r -> r.getId().getCaseload().equals(caseload))
                 .collect(Collectors.toList());
     }
 
-    public List<UserAccessibleCaseload> filterByCaseload(String caseload) {
+    public List<UserAccessibleCaseload> filterByCaseload(final String caseload) {
         return caseloads.stream()
                 .filter(r -> r.getId().getCaseload().equals(caseload))
                 .collect(Collectors.toList());

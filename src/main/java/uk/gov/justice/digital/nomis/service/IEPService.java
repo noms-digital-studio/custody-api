@@ -25,13 +25,13 @@ public class IEPService {
     private final OffenderRepository offenderRepository;
 
     @Autowired
-    public IEPService(IEPTransformer iepTransformer, OffenderRepository offenderRepository) {
+    public IEPService(final IEPTransformer iepTransformer, final OffenderRepository offenderRepository) {
         this.iepTransformer = iepTransformer;
         this.offenderRepository = offenderRepository;
     }
 
 
-    public Optional<List<OffenderIepLevel>> iepsForOffenderId(Long offenderId) {
+    public Optional<List<OffenderIepLevel>> iepsForOffenderId(final Long offenderId) {
         return offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderBookings()
                         .stream()

@@ -17,13 +17,13 @@ public class AttendanceAndExclusionTransformer {
     private final ReferenceDataTransformer referenceDataTransformer;
 
     @Autowired
-    public AttendanceAndExclusionTransformer(TypesTransformer typesTransformer, OffenderProgrammeProfileTransformer offenderProgrammeProfileTransformer, ReferenceDataTransformer referenceDataTransformer) {
+    public AttendanceAndExclusionTransformer(final TypesTransformer typesTransformer, final OffenderProgrammeProfileTransformer offenderProgrammeProfileTransformer, final ReferenceDataTransformer referenceDataTransformer) {
         this.typesTransformer = typesTransformer;
         this.offenderProgrammeProfileTransformer = offenderProgrammeProfileTransformer;
         this.referenceDataTransformer = referenceDataTransformer;
     }
 
-    public CourseAttendance courseAttendanceOf(OffenderCourseAttendance offenderCourseAttendance) {
+    public CourseAttendance courseAttendanceOf(final OffenderCourseAttendance offenderCourseAttendance) {
         return Optional.ofNullable(offenderCourseAttendance)
                 .map(ca -> CourseAttendance.builder()
                         .actionCode(ca.getActionCode())
@@ -75,7 +75,7 @@ public class AttendanceAndExclusionTransformer {
                 .orElse(null);
     }
 
-    public Exclusion exclusionOf(OffenderExcludeActsSchds offenderExcludeActsSchds) {
+    public Exclusion exclusionOf(final OffenderExcludeActsSchds offenderExcludeActsSchds) {
         return Optional.ofNullable(offenderExcludeActsSchds).map(
                 exclude -> Exclusion.builder()
                         .bookingId(exclude.getOffenderBookId())

@@ -20,35 +20,35 @@ public class CourseSchedulesFilter implements Specification<CourseSchedule> {
 
     @Builder.Default
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime from = null;
+    private final LocalDateTime from = null;
 
     @Builder.Default
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime to = null;
+    private final LocalDateTime to = null;
 
-    private Long courseActivityId;
+    private final Long courseActivityId;
 
     @Override
-    public Predicate toPredicate(Root<CourseSchedule> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
+    public Predicate toPredicate(final Root<CourseSchedule> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+        final ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
 
-        Timestamp tsFrom = Timestamp.valueOf(from);
-        Timestamp tsTo = Timestamp.valueOf(to);
+        var tsFrom = Timestamp.valueOf(from);
+        var tsTo = Timestamp.valueOf(to);
 
         if (tsFrom.after(tsTo)) {
-            Timestamp tsTemp = tsFrom;
+            final var tsTemp = tsFrom;
             tsFrom = tsTo;
             tsTo = tsTemp;
         }
 
-        Root courseSchedulesTable = root;
+        final Root courseSchedulesTable = root;
 
         predicateBuilder.add(cb.equal(courseSchedulesTable.get("crsActyId"), courseActivityId))
                 .add(cb.or(cb.lessThanOrEqualTo(courseSchedulesTable.get("scheduleDate"), tsTo), courseSchedulesTable.get("scheduleDate").isNull()))
 
                 .add(cb.or(cb.greaterThanOrEqualTo(courseSchedulesTable.get("scheduleDate"), tsFrom), courseSchedulesTable.get("scheduleDate").isNull()));
 
-        ImmutableList<Predicate> predicates = predicateBuilder.build();
+        final var predicates = predicateBuilder.build();
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }

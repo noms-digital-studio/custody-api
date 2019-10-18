@@ -15,11 +15,11 @@ public class IndividualScheduleTransformer {
     private final TypesTransformer typesTransformer;
 
     @Autowired
-    public IndividualScheduleTransformer(TypesTransformer typesTransformer) {
+    public IndividualScheduleTransformer(final TypesTransformer typesTransformer) {
         this.typesTransformer = typesTransformer;
     }
 
-    public IndividualSchedule individualScheduleOf(OffenderIndSchedule ois, ReferenceCode escort) {
+    public IndividualSchedule individualScheduleOf(final OffenderIndSchedule ois, final ReferenceCode escort) {
         return IndividualSchedule.builder()
                 .eventId(ois.getEventId())
                 .eventType(ois.getEventType())
@@ -34,7 +34,7 @@ public class IndividualScheduleTransformer {
                 .build();
     }
 
-    private KeyValue referenceOf(ReferenceCode referenceCode) {
+    private KeyValue referenceOf(final ReferenceCode referenceCode) {
         return Optional.ofNullable(referenceCode)
                 .map(rc -> KeyValue.builder().code(rc.getCode()).description(rc.getDescription()).build())
                 .orElse(null);

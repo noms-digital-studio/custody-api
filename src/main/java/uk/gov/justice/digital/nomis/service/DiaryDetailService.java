@@ -29,40 +29,40 @@ public class DiaryDetailService {
     private final ReferenceCodesRepository referenceCodesRepository;
 
     @Autowired
-    public DiaryDetailService(DiaryDetailTransformer diaryDetailTransformer, OffenderRepository offenderRepository, ReferenceCodesRepository referenceCodesRepository) {
+    public DiaryDetailService(final DiaryDetailTransformer diaryDetailTransformer, final OffenderRepository offenderRepository, final ReferenceCodesRepository referenceCodesRepository) {
         this.diaryDetailTransformer = diaryDetailTransformer;
         this.offenderRepository = offenderRepository;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public Optional<List<DiaryDetail>> diaryDetailsForOffenderId(Long offenderId) {
+    public Optional<List<DiaryDetail>> diaryDetailsForOffenderId(final Long offenderId) {
 
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.map(this::diaryDetailsOfOffender);
     }
 
-    private List<DiaryDetail> diaryDetailsOfOffender(Offender offender) {
+    private List<DiaryDetail> diaryDetailsOfOffender(final Offender offender) {
         return offender.getOffenderBookings()
                 .stream()
                 .flatMap(this::diaryDetailsOfBooking)
                 .collect(Collectors.toList());
     }
 
-    private Stream<DiaryDetail> diaryDetailsOfBooking(OffenderBooking offenderBooking) {
+    private Stream<DiaryDetail> diaryDetailsOfBooking(final OffenderBooking offenderBooking) {
 
-        final Stream<DiaryDetail> courtEventDiaryDetailStream = offenderBooking.getCourtEvents()
+        final var courtEventDiaryDetailStream = offenderBooking.getCourtEvents()
                 .stream()
                 .filter(courtEvent -> SCH.equals(courtEvent.getEventStatus()))
                 .map(diaryDetailTransformer::diaryDetailOf);
 
-        final Stream<DiaryDetail> offenderReleaseDetailsDiaryDetailStream =
+        final var offenderReleaseDetailsDiaryDetailStream =
                 Optional.ofNullable(offenderBooking.getOffenderReleaseDetails())
                 .filter(offenderReleaseDetails -> SCH.equals(offenderReleaseDetails.getEventStatus()))
                 .map(diaryDetailTransformer::diaryDetailOf)
                 .map(Stream::of).orElse(Stream.empty());
 
-        final Stream<DiaryDetail> offenderIndSchedulesDiaryDetailStream = offenderBooking.getOffenderIndSchedules()
+        final var offenderIndSchedulesDiaryDetailStream = offenderBooking.getOffenderIndSchedules()
                 .stream()
                 .filter(offenderIndSchedule -> SCH.equals(offenderIndSchedule.getEventStatus()))
                 .map(offenderIndSchedule ->

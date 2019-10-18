@@ -15,6 +15,7 @@ import uk.gov.justice.digital.nomis.api.OffenderImage;
 import uk.gov.justice.digital.nomis.service.ImagesService;
 import uk.gov.justice.digital.nomis.service.OffenderService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class ImagesController {
     private final ImagesService imagesService;
 
     @Autowired
-    public ImagesController(OffenderService offenderService, ImagesService imagesService) {
+    public ImagesController(final OffenderService offenderService, final ImagesService imagesService) {
         this.offenderService = offenderService;
         this.imagesService = imagesService;
     }
@@ -79,10 +80,10 @@ public class ImagesController {
             .orElse(new ResponseEntity<>(NOT_FOUND));
     }
 
-    private List<OffenderImage> imagesForOffender(Offender offender) {
+    private List<OffenderImage> imagesForOffender(final Offender offender) {
         return offender.getBookings().stream()
             .map(booking -> imagesService.getImageMetaDataForBookingId(booking.getBookingId()))
-            .flatMap(offenderImages -> offenderImages.stream())
+                .flatMap(Collection::stream)
             .sorted((image1, image2) -> image2.getCaptureDateTime().compareTo(image1.getCaptureDateTime()))
             .collect(Collectors.toList());
     }

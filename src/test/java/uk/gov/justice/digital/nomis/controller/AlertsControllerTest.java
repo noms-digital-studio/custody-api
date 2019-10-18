@@ -46,7 +46,7 @@ public class AlertsControllerTest {
 
     @Test
     public void canGetOffenderAlerts() {
-        Alert[] alerts = given()
+        final var alerts = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/alerts")
@@ -62,7 +62,7 @@ public class AlertsControllerTest {
 
     @Test
     public void canGetOffenderAlertsForBooking() {
-        Alert[] alerts = given()
+        final var alerts = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .param("bookingId", -1)
@@ -109,7 +109,7 @@ public class AlertsControllerTest {
 
     @Test
     public void embeddedHateoasLinksWork() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -119,7 +119,7 @@ public class AlertsControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()

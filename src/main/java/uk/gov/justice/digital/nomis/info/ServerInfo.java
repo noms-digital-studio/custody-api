@@ -17,15 +17,15 @@ import java.util.Map;
 public class ServerInfo implements InfoContributor {
 
     @Override
-    public void contribute(Info.Builder builder) {
-        Map<String, Object> serverDetails = new HashMap<>();
+    public void contribute(final Info.Builder builder) {
+        final Map<String, Object> serverDetails = new HashMap<>();
 
-        InetAddress localHost;
-        InetAddress loopbackAddress;
+        final InetAddress localHost;
+        final InetAddress loopbackAddress;
         try {
             localHost = InetAddress.getLocalHost();
             loopbackAddress = InetAddress.getLoopbackAddress();
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             log.error(e.getMessage());
             return;
         }
@@ -40,7 +40,7 @@ public class ServerInfo implements InfoContributor {
         serverDetails.put("serverTimeMillis", System.currentTimeMillis());
         serverDetails.put("serverDateTime", LocalDateTime.now().toString());
 
-        ImmutableMap<String, Long> mem = ImmutableMap.of("memoryUsedByJVM", Runtime.getRuntime().totalMemory(),
+        final var mem = ImmutableMap.of("memoryUsedByJVM", Runtime.getRuntime().totalMemory(),
                 "remainingMemoryAvailableToJVM", Runtime.getRuntime().freeMemory());
 
         serverDetails.put("memory", mem);

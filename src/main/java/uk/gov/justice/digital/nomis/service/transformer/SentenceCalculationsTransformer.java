@@ -14,11 +14,11 @@ public class SentenceCalculationsTransformer {
     private final TypesTransformer typesTransformer;
 
     @Autowired
-    public SentenceCalculationsTransformer(TypesTransformer typesTransformer) {
+    public SentenceCalculationsTransformer(final TypesTransformer typesTransformer) {
         this.typesTransformer = typesTransformer;
     }
 
-    public SentenceCalculation sentenceCalculationOf(OffenderSentCalculation osc) {
+    public SentenceCalculation sentenceCalculationOf(final OffenderSentCalculation osc) {
         return SentenceCalculation.builder()
                 .apdCalculatedDate(typesTransformer.localDateTimeOf(osc.getApdCalculatedDate()))
                 .apdOverridedDate(typesTransformer.localDateTimeOf(osc.getApdOverridedDate()))

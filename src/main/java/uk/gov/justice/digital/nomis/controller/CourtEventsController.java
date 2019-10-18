@@ -24,7 +24,7 @@ public class CourtEventsController {
     private final CourtEventsService courtEventService;
 
     @Autowired
-    public CourtEventsController(CourtEventsService courtEventService) {
+    public CourtEventsController(final CourtEventsService courtEventService) {
         this.courtEventService = courtEventService;
     }
 
@@ -33,7 +33,7 @@ public class CourtEventsController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offender not found"),
             @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<CourtEvent>> getOffenderCourtEvents(@PathVariable("offenderId") Long offenderId) {
+    public ResponseEntity<List<CourtEvent>> getOffenderCourtEvents(@PathVariable("offenderId") final Long offenderId) {
 
         return courtEventService.courtEventsForOffenderId(offenderId)
                 .map(events -> new ResponseEntity<>(events, HttpStatus.OK))

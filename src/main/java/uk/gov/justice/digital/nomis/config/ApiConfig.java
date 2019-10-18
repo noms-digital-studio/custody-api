@@ -16,19 +16,19 @@ import java.lang.reflect.Method;
 @Slf4j
 public class ApiConfig implements WebMvcRegistrations {
 
-    private String apiBasePath;
+    private final String apiBasePath;
 
-    public ApiConfig(@Value("${api.base.path:api}") String apiBasePath) {
+    public ApiConfig(@Value("${api.base.path:api}") final String apiBasePath) {
         this.apiBasePath = apiBasePath;
     }
 
     public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
         return new RequestMappingHandlerMapping() {
             @Override
-            protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) {
-                Class<?> beanType = method.getDeclaringClass();
+            protected void registerHandlerMethod(final Object handler, final Method method, RequestMappingInfo mapping) {
+                final var beanType = method.getDeclaringClass();
                 if (AnnotationUtils.findAnnotation(beanType, RestController.class) != null) {
-                    PatternsRequestCondition apiPattern = new PatternsRequestCondition(apiBasePath)
+                    final var apiPattern = new PatternsRequestCondition(apiBasePath)
                             .combine(mapping.getPatternsCondition());
 
                     mapping = new RequestMappingInfo(mapping.getName(), apiPattern,

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.justice.digital.nomis.api.Sentence;
 import uk.gov.justice.digital.nomis.api.SentenceCalculationType;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderSentence;
 import uk.gov.justice.digital.nomis.jpa.entity.SentenceCalcTypePK;
 import uk.gov.justice.digital.nomis.jpa.repository.SentenceCalcTypeRepository;
@@ -16,14 +15,14 @@ public class SentenceTransformer {
     private final SentenceCalcTypeRepository sentenceCalcTypeRepository;
 
     @Autowired
-    public SentenceTransformer(TypesTransformer typesTransformer, SentenceCalcTypeRepository sentenceCalcTypeRepository) {
+    public SentenceTransformer(final TypesTransformer typesTransformer, final SentenceCalcTypeRepository sentenceCalcTypeRepository) {
         this.typesTransformer = typesTransformer;
         this.sentenceCalcTypeRepository = sentenceCalcTypeRepository;
     }
 
-    public Sentence sentenceOf(OffenderSentence offenderSentence) {
+    public Sentence sentenceOf(final OffenderSentence offenderSentence) {
 
-        OffenderBooking offenderBooking = offenderSentence.getOffenderBooking();
+        final var offenderBooking = offenderSentence.getOffenderBooking();
 
         return Sentence.builder()
                 .bookingId(offenderBooking.getOffenderBookId())
@@ -72,7 +71,7 @@ public class SentenceTransformer {
                 .build();
     }
 
-    private SentenceCalculationType sentenceCalculationTypeOf(OffenderSentence os) {
+    private SentenceCalculationType sentenceCalculationTypeOf(final OffenderSentence os) {
         return os.getSentenceCategory() != null && os.getSentenceCalcType() != null ?
         sentenceCalcTypeRepository.findById(SentenceCalcTypePK.builder()
                 .sentenceCalcType(os.getSentenceCalcType())

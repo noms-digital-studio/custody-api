@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.Charge;
 import uk.gov.justice.digital.nomis.jpa.entity.Offence;
-import uk.gov.justice.digital.nomis.jpa.entity.Offender;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderCharge;
 import uk.gov.justice.digital.nomis.jpa.filters.ChargesFilter;
@@ -16,11 +15,7 @@ import uk.gov.justice.digital.nomis.jpa.repository.OffenderChargesRepository;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderRepository;
 import uk.gov.justice.digital.nomis.service.transformer.ChargesTransformer;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,20 +34,20 @@ public class ChargesService {
 
     @Autowired
     public ChargesService(final OffenderChargesRepository offenderChargesRepository,
-                          final OffenderRepository offenderRepository, ChargesTransformer chargesTransformer) {
+                          final OffenderRepository offenderRepository, final ChargesTransformer chargesTransformer) {
         this.offenderChargesRepository = offenderChargesRepository;
         this.offenderRepository = offenderRepository;
         this.chargesTransformer = chargesTransformer;
     }
 
-    public Page<Charge> getCharges(Pageable pageable, Set<Long> bookingIds) {
-        Page<OffenderCharge> offenderCharges = offenderChargesRepository.findAll(
+    public Page<Charge> getCharges(final Pageable pageable, final Set<Long> bookingIds) {
+        final var offenderCharges = offenderChargesRepository.findAll(
                 ChargesFilter.builder()
                         .bookingIds(bookingIds)
                         .build(),
                 pageable);
 
-        List<Charge> chargesList = offenderCharges.getContent()
+        final var chargesList = offenderCharges.getContent()
                 .stream()
                 .map(chargesTransformer::chargeOf)
                 .collect(Collectors.toList());
@@ -60,9 +55,9 @@ public class ChargesService {
         return new PageImpl<>(chargesList, pageable, offenderCharges.getTotalElements());
     }
 
-    public Optional<List<Charge>> chargesForOffenderId(Long offenderId) {
+    public Optional<List<Charge>> chargesForOffenderId(final Long offenderId) {
 
-        Optional<List<OffenderCharge>> maybeOffenderCharges = offenderRepository.findById(offenderId)
+        final var maybeOffenderCharges = offenderRepository.findById(offenderId)
                 .map(offender ->
                         offender.getOffenderBookings()
                                 .stream()
@@ -77,8 +72,8 @@ public class ChargesService {
                         .collect(Collectors.toList()));
     }
 
-    public Optional<List<Charge>> chargesForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<Charge>> chargesForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()

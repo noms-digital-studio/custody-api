@@ -7,18 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.SentenceCalculation;
-import uk.gov.justice.digital.nomis.jpa.entity.Offender;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.filters.SentenceCalculationsFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderRepository;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderSentenceCalculationsRepository;
 import uk.gov.justice.digital.nomis.service.transformer.SentenceCalculationsTransformer;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,20 +28,20 @@ public class SentenceCalculationsService {
     private final OffenderRepository offenderRepository;
 
     @Autowired
-    public SentenceCalculationsService(SentenceCalculationsTransformer sentenceCalculationsTransformer, OffenderSentenceCalculationsRepository sentenceCalculationsRepository, OffenderRepository offenderRepository) {
+    public SentenceCalculationsService(final SentenceCalculationsTransformer sentenceCalculationsTransformer, final OffenderSentenceCalculationsRepository sentenceCalculationsRepository, final OffenderRepository offenderRepository) {
         this.sentenceCalculationsTransformer = sentenceCalculationsTransformer;
         this.sentenceCalculationsRepository = sentenceCalculationsRepository;
         this.offenderRepository = offenderRepository;
     }
 
-    public Page<SentenceCalculation> getSentenceCalculations(Pageable pageable, Set<Long> bookingIds) {
-        Page<uk.gov.justice.digital.nomis.jpa.entity.OffenderSentCalculation> rawSentenceCalcsPage = sentenceCalculationsRepository.findAll(
+    public Page<SentenceCalculation> getSentenceCalculations(final Pageable pageable, final Set<Long> bookingIds) {
+        final var rawSentenceCalcsPage = sentenceCalculationsRepository.findAll(
                 SentenceCalculationsFilter.builder()
                         .bookingIds(bookingIds)
                         .build(),
                 pageable);
 
-        List<SentenceCalculation> sentenceCalculations = rawSentenceCalcsPage.getContent()
+        final var sentenceCalculations = rawSentenceCalcsPage.getContent()
                 .stream()
                 .map(sentenceCalculationsTransformer::sentenceCalculationOf)
                 .sorted(BY_CALCULATION_DATE)
@@ -55,8 +50,8 @@ public class SentenceCalculationsService {
         return new PageImpl<>(sentenceCalculations, pageable, rawSentenceCalcsPage.getTotalElements());
     }
 
-    public Optional<List<SentenceCalculation>> sentenceCalculationsForOffenderId(Long offenderId) {
-        Optional<List<uk.gov.justice.digital.nomis.jpa.entity.OffenderSentCalculation>> maybeSentenceCalculations = offenderRepository.findById(offenderId)
+    public Optional<List<SentenceCalculation>> sentenceCalculationsForOffenderId(final Long offenderId) {
+        final var maybeSentenceCalculations = offenderRepository.findById(offenderId)
                 .map(offender ->
                         offender.getOffenderBookings()
                                 .stream()
@@ -73,8 +68,8 @@ public class SentenceCalculationsService {
                                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<SentenceCalculation>> sentenceCalculationsForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<SentenceCalculation>> sentenceCalculationsForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()

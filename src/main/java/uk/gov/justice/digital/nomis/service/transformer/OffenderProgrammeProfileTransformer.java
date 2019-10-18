@@ -28,14 +28,14 @@ public class OffenderProgrammeProfileTransformer {
     private final ReferenceDataTransformer referenceDataTransformer;
 
     @Autowired
-    public OffenderProgrammeProfileTransformer(TypesTransformer typesTransformer, CourseActivitiesRepository courseActivitiesRepository, CourseSchedulesRepository courseSchedulesRepository, ReferenceDataTransformer referenceDataTransformer) {
+    public OffenderProgrammeProfileTransformer(final TypesTransformer typesTransformer, final CourseActivitiesRepository courseActivitiesRepository, final CourseSchedulesRepository courseSchedulesRepository, final ReferenceDataTransformer referenceDataTransformer) {
         this.typesTransformer = typesTransformer;
         this.courseActivitiesRepository = courseActivitiesRepository;
         this.courseSchedulesRepository = courseSchedulesRepository;
         this.referenceDataTransformer = referenceDataTransformer;
     }
 
-    public ProgrammeProfile programmeProfileOf(OffenderProgramProfile offenderProgramProfile, LocalDateTime from, LocalDateTime to) {
+    public ProgrammeProfile programmeProfileOf(final OffenderProgramProfile offenderProgramProfile, final LocalDateTime from, final LocalDateTime to) {
         return ProgrammeProfile.builder()
                 .agencyLocation(referenceDataTransformer.agencyLocationOf(offenderProgramProfile.getAgencyLocation()))
                 .bookingId(offenderProgramProfile.getOffenderBookId())
@@ -53,7 +53,7 @@ public class OffenderProgrammeProfileTransformer {
                 .build();
     }
 
-    public Activity activityAndSchedulesOf(Optional<CourseActivity> courseActivity, LocalDateTime from, LocalDateTime to) {
+    public Activity activityAndSchedulesOf(final Optional<CourseActivity> courseActivity, final LocalDateTime from, final LocalDateTime to) {
         return courseActivity
                 .map(ca -> activityOf(ca).toBuilder()
                         .schedules(courseSchedulesRepository.findAll(CourseSchedulesFilter.builder()
@@ -68,7 +68,7 @@ public class OffenderProgrammeProfileTransformer {
                 .orElse(null);
     }
 
-    public Activity activityOf(CourseActivity courseActivity) {
+    public Activity activityOf(final CourseActivity courseActivity) {
         return Optional.ofNullable(courseActivity)
                 .map(ca -> Activity.builder()
                         .courseActivityId(ca.getCrsActyId())
@@ -83,7 +83,7 @@ public class OffenderProgrammeProfileTransformer {
                 .orElse(null);
     }
 
-    public Schedule scheduleOf(CourseSchedule courseSchedule) {
+    public Schedule scheduleOf(final CourseSchedule courseSchedule) {
         return Optional.ofNullable(courseSchedule)
                 .map(cs -> Schedule.builder()
                         .catchUpCourseScheduleId(cs.getCatchUpCrsSchId())

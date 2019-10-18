@@ -12,10 +12,10 @@ public class OffenderSentenceCalculationTest {
 
     @Test
     public void greaterOfBehavesAppropriately() {
-        final OffenderSentCalculation offenderSentenceCalculation = OffenderSentCalculation.builder().build();
+        final var offenderSentenceCalculation = OffenderSentCalculation.builder().build();
 
-        final LabelledTimestamp now = LabelledTimestamp.builder().label("X").timestamp(Timestamp.valueOf(LocalDateTime.now())).build();
-        final LabelledTimestamp later = LabelledTimestamp.builder().label("X").timestamp(Timestamp.valueOf(LocalDateTime.now().plusDays(1L))).build();
+        final var now = LabelledTimestamp.builder().label("X").timestamp(Timestamp.valueOf(LocalDateTime.now())).build();
+        final var later = LabelledTimestamp.builder().label("X").timestamp(Timestamp.valueOf(LocalDateTime.now().plusDays(1L))).build();
 
         assertThat(offenderSentenceCalculation.greaterOf(Optional.empty(), Optional.empty())).isEqualTo(Optional.empty());
         assertThat(offenderSentenceCalculation.greaterOf(Optional.of(now), Optional.empty())).isEqualTo(Optional.of(now));
@@ -26,10 +26,10 @@ public class OffenderSentenceCalculationTest {
 
     @Test
     public void firstNonNullDateOfBehavesAppropriately() {
-        final OffenderSentCalculation offenderSentenceCalculation = OffenderSentCalculation.builder().build();
+        final var offenderSentenceCalculation = OffenderSentCalculation.builder().build();
 
-        final Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-        final Timestamp later = Timestamp.valueOf(LocalDateTime.now().plusDays(1L));
+        final var now = Timestamp.valueOf(LocalDateTime.now());
+        final var later = Timestamp.valueOf(LocalDateTime.now().plusDays(1L));
 
         assertThat(offenderSentenceCalculation.firstNonNullDateOf(null, null)).isEqualTo(Optional.empty());
         assertThat(offenderSentenceCalculation.firstNonNullDateOf(null, now)).isEqualTo(Optional.of(now));
@@ -41,10 +41,10 @@ public class OffenderSentenceCalculationTest {
     @Test
     public void midTermDateIsCorrect() {
 
-        final Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-        final Timestamp later = Timestamp.valueOf(LocalDateTime.now().plusDays(1L));
+        final var now = Timestamp.valueOf(LocalDateTime.now());
+        final var later = Timestamp.valueOf(LocalDateTime.now().plusDays(1L));
 
-        OffenderSentCalculation offenderSentenceCalculation = OffenderSentCalculation.builder()
+        var offenderSentenceCalculation = OffenderSentCalculation.builder()
                 .mtdCalculatedDate(now)
                 .build();
 
@@ -62,10 +62,10 @@ public class OffenderSentenceCalculationTest {
     @Test
     public void confirmedReleaseDateIsCorrect() {
 
-        final Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-        final Timestamp later = Timestamp.valueOf(LocalDateTime.now().plusDays(1L));
+        final var now = Timestamp.valueOf(LocalDateTime.now());
+        final var later = Timestamp.valueOf(LocalDateTime.now().plusDays(1L));
 
-        final OffenderBooking offenderBooking = OffenderBooking.builder()
+        final var offenderBooking = OffenderBooking.builder()
                 .offenderReleaseDetails(OffenderReleaseDetails
                         .builder()
                         .autoReleaseDate(now)
@@ -73,7 +73,7 @@ public class OffenderSentenceCalculationTest {
                         .build())
                 .build();
 
-        final OffenderSentCalculation offenderSentence = OffenderSentCalculation.builder()
+        final var offenderSentence = OffenderSentCalculation.builder()
                 .offenderBooking(offenderBooking)
                 .build();
 

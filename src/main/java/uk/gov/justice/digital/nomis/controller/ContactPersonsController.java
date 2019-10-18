@@ -24,7 +24,7 @@ public class ContactPersonsController {
     private final ContactPersonsService contactPersonsService;
 
     @Autowired
-    public ContactPersonsController(ContactPersonsService contactPersonsService) {
+    public ContactPersonsController(final ContactPersonsService contactPersonsService) {
         this.contactPersonsService = contactPersonsService;
     }
 
@@ -32,7 +32,7 @@ public class ContactPersonsController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offender not found"),
             @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<OffenderContactPerson>> getOffenderContactPersons(@PathVariable("offenderId") Long offenderId) {
+    public ResponseEntity<List<OffenderContactPerson>> getOffenderContactPersons(@PathVariable("offenderId") final Long offenderId) {
 
         return contactPersonsService.contactPersonsForOffender(offenderId)
                 .map(iepList -> new ResponseEntity<>(iepList, HttpStatus.OK))

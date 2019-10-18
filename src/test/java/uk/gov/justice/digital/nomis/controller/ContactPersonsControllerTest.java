@@ -44,7 +44,7 @@ public class ContactPersonsControllerTest {
 
     @Test
     public void canGetOffenderContactPersons() {
-        OffenderContactPerson[] contactPeople = given()
+        final var contactPeople = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/contactPersons")

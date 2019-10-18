@@ -7,11 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.NomisStaffUser;
-import uk.gov.justice.digital.nomis.jpa.entity.StaffUserAccount;
 import uk.gov.justice.digital.nomis.jpa.repository.StaffUserAccountRepository;
 import uk.gov.justice.digital.nomis.service.transformer.StaffUserTransformer;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,22 +21,22 @@ public class StaffUsersService {
     private final StaffUserAccountRepository staffUserAccountRepository;
 
     @Autowired
-    public StaffUsersService(StaffUserTransformer staffUserTransformer, StaffUserAccountRepository staffUserAccountRepository) {
+    public StaffUsersService(final StaffUserTransformer staffUserTransformer, final StaffUserAccountRepository staffUserAccountRepository) {
         this.staffUserTransformer = staffUserTransformer;
         this.staffUserAccountRepository = staffUserAccountRepository;
     }
 
 
-    public Optional<NomisStaffUser> staffUserForUsername(String username) {
+    public Optional<NomisStaffUser> staffUserForUsername(final String username) {
 
         return staffUserAccountRepository.findById(username)
                 .map(staffUserTransformer::userOf);
     }
 
-    public Page<NomisStaffUser> getStaffUsers(Pageable pageable) {
-        Page<StaffUserAccount> staffUsers = staffUserAccountRepository.findAll(pageable);
+    public Page<NomisStaffUser> getStaffUsers(final Pageable pageable) {
+        final var staffUsers = staffUserAccountRepository.findAll(pageable);
 
-        List<NomisStaffUser> nomisStaffUserList = staffUsers.getContent()
+        final var nomisStaffUserList = staffUsers.getContent()
                 .stream()
                 .map(staffUserTransformer::userOf)
                 .collect(Collectors.toList());

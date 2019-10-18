@@ -18,7 +18,7 @@ public interface OffenderRepository extends JpaRepository<Offender, Long> {
 
     List<Offender> findByOffenderIdDisplay(String nomsId);
 
-    default Optional<Offender> findByNomsId(String nomsId) {
+    default Optional<Offender> findByNomsId(final String nomsId) {
         return findByOffenderIdDisplay(nomsId).stream()
                 .filter(o -> o.getOffenderId().equals(o.getRootOffenderId()))
                 .findFirst();

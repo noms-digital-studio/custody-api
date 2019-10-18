@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.ProgrammeProfile;
 import uk.gov.justice.digital.nomis.jpa.entity.Offender;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.filters.OffenderProgramProfilesFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderProgramProfilesRepository;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderRepository;
@@ -27,21 +26,21 @@ public class OffenderProgrammeProfilesService {
     private final OffenderProgramProfilesRepository offenderProgramProfilesRepository;
 
     @Autowired
-    public OffenderProgrammeProfilesService(OffenderRepository offenderRepository, OffenderProgrammeProfileTransformer offenderProgrammeProfileTransformer, OffenderProgramProfilesRepository offenderProgramProfilesRepository) {
+    public OffenderProgrammeProfilesService(final OffenderRepository offenderRepository, final OffenderProgrammeProfileTransformer offenderProgrammeProfileTransformer, final OffenderProgramProfilesRepository offenderProgramProfilesRepository) {
         this.offenderRepository = offenderRepository;
         this.offenderProgramProfilesRepository = offenderProgramProfilesRepository;
         this.offenderProgrammeProfileTransformer = offenderProgrammeProfileTransformer;
     }
 
-    public Optional<List<ProgrammeProfile>> offenderProgrammeProfilesForOffenderId(Long offenderId, Optional<LocalDateTime> maybeFrom, Optional<LocalDateTime> maybeTo) {
-        final Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<ProgrammeProfile>> offenderProgrammeProfilesForOffenderId(final Long offenderId, final Optional<LocalDateTime> maybeFrom, final Optional<LocalDateTime> maybeTo) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        final Optional<List<OffenderBooking>> maybeOffenderBookings = maybeOffender.map(Offender::getOffenderBookings);
+        final var maybeOffenderBookings = maybeOffender.map(Offender::getOffenderBookings);
 
-        LocalDateTime from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
-        LocalDateTime to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
+        final var from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
+        final var to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
 
-        Optional<List<ProgrammeProfile>> out = maybeOffenderBookings.map(bookings -> bookings
+        final Optional<List<ProgrammeProfile>> out = maybeOffenderBookings.map(bookings -> bookings
                 .stream()
                 .flatMap(ob -> offenderProgramProfilesRepository
                         .findAll(OffenderProgramProfilesFilter.builder()
@@ -56,11 +55,11 @@ public class OffenderProgrammeProfilesService {
         return out;
     }
 
-    public Optional<List<ProgrammeProfile>> offenderProgrammeProfilesForOffenderIdAndBookingId(Long offenderId, Long bookingId, Optional<LocalDateTime> maybeFrom, Optional<LocalDateTime> maybeTo) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<ProgrammeProfile>> offenderProgrammeProfilesForOffenderIdAndBookingId(final Long offenderId, final Long bookingId, final Optional<LocalDateTime> maybeFrom, final Optional<LocalDateTime> maybeTo) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
-        LocalDateTime from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
-        LocalDateTime to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
+        final var from = maybeFrom.orElse(maybeTo.orElse(LocalDate.now().atStartOfDay()));
+        final var to = maybeTo.orElse(from.toLocalDate().plusDays(1).atStartOfDay().minusNanos(1));
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()

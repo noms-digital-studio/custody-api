@@ -21,16 +21,16 @@ public class MovementsFilter implements Specification<OffenderExternalMovement> 
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Builder.Default
-    private Optional<LocalDateTime> from = Optional.empty();
+    private final Optional<LocalDateTime> from = Optional.empty();
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Builder.Default
-    private Optional<LocalDateTime> to = Optional.empty();
+    private final Optional<LocalDateTime> to = Optional.empty();
     @Builder.Default
-    private Optional<Long> bookingId = Optional.empty();
+    private final Optional<Long> bookingId = Optional.empty();
 
     @Override
-    public Predicate toPredicate(Root<OffenderExternalMovement> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
+    public Predicate toPredicate(final Root<OffenderExternalMovement> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+        final ImmutableList.Builder<Predicate> predicateBuilder = ImmutableList.builder();
 
         from.ifPresent(localDateTime -> predicateBuilder.add(cb.greaterThanOrEqualTo(root.get("movementTime"), Timestamp.valueOf(localDateTime))));
 
@@ -38,7 +38,7 @@ public class MovementsFilter implements Specification<OffenderExternalMovement> 
 
         bookingId.ifPresent(bookingId -> predicateBuilder.add(cb.equal(root.get("id").get("offenderBooking").get("offenderBookId"), bookingId)));
 
-        ImmutableList<Predicate> predicates = predicateBuilder.build();
+        final var predicates = predicateBuilder.build();
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }

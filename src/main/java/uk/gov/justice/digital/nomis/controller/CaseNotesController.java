@@ -1,19 +1,11 @@
 package uk.gov.justice.digital.nomis.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.digital.nomis.api.CaseNote;
 import uk.gov.justice.digital.nomis.service.CaseNotesService;
 
@@ -31,7 +23,7 @@ public class CaseNotesController {
     private final CaseNotesService caseNotesService;
 
     @Autowired
-    public CaseNotesController(CaseNotesService caseNotesService) {
+    public CaseNotesController(final CaseNotesService caseNotesService) {
 
         this.caseNotesService = caseNotesService;
     }
@@ -52,12 +44,12 @@ public class CaseNotesController {
             @ApiImplicitParam(name = "subtype", dataType = "string", paramType = "query", allowMultiple = true,
                     value = "Comma separated list of case note sub types to include")
     })
-    public ResponseEntity<List<CaseNote>> getOffenderCaseNotes(@PathVariable("offenderId") Long offenderId,
-                                                               @RequestParam("bookingId") Optional<Long> maybeBookingId,
+    public ResponseEntity<List<CaseNote>> getOffenderCaseNotes(@PathVariable("offenderId") final Long offenderId,
+                                                               @RequestParam("bookingId") final Optional<Long> maybeBookingId,
                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("to") Optional<LocalDateTime> maybeTo,
-                                                               @RequestParam("type") Optional<Set<String>> maybeTypes,
-                                                               @RequestParam("subtype") Optional<Set<String>> maybeSubTypes) {
+                                                               @RequestParam("type") final Optional<Set<String>> maybeTypes,
+                                                               @RequestParam("subtype") final Optional<Set<String>> maybeSubTypes) {
         return maybeBookingId
                 .map(bookingId -> caseNotesService.getCaseNotesForOffenderIdAndBookingId(offenderId, bookingId, maybeFrom, maybeTo, maybeTypes, maybeSubTypes))
                 .orElse(caseNotesService.getCaseNotesForOffenderId(offenderId, maybeFrom, maybeTo, maybeTypes, maybeSubTypes))

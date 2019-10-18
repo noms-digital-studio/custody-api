@@ -26,12 +26,12 @@ public class EmploymentsService {
     private final OffenderRepository offenderRepository;
 
     @Autowired
-    public EmploymentsService(EmploymentsTransformer employmentsTransformer, OffenderRepository offenderRepository) {
+    public EmploymentsService(final EmploymentsTransformer employmentsTransformer, final OffenderRepository offenderRepository) {
         this.employmentsTransformer = employmentsTransformer;
         this.offenderRepository = offenderRepository;
     }
 
-    public Optional<List<Employment>> employmentsForOffenderId(Long offenderId) {
+    public Optional<List<Employment>> employmentsForOffenderId(final Long offenderId) {
         return offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderBookings().stream()
                         .flatMap(offenderBooking -> offenderBooking.getOffenderEmployments().stream()

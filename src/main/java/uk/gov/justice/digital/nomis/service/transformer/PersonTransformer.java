@@ -68,12 +68,12 @@ public class PersonTransformer {
     private final TypesTransformer typesTransformer;
 
     @Autowired
-    public PersonTransformer(AddressesTransformer addressesTransformer, TypesTransformer typesTransformer) {
+    public PersonTransformer(final AddressesTransformer addressesTransformer, final TypesTransformer typesTransformer) {
         this.addressesTransformer = addressesTransformer;
         this.typesTransformer = typesTransformer;
     }
 
-    Person personOf(uk.gov.justice.digital.nomis.jpa.entity.Person person) {
+    Person personOf(final uk.gov.justice.digital.nomis.jpa.entity.Person person) {
         return Optional.ofNullable(person)
                 .map(p -> Person.builder()
                         .aliasPersonId(p.getAliasPersonId())
@@ -112,7 +112,7 @@ public class PersonTransformer {
                 .orElse(null);
     }
 
-    List<Address> addressesOf(uk.gov.justice.digital.nomis.jpa.entity.Person person) {
+    List<Address> addressesOf(final uk.gov.justice.digital.nomis.jpa.entity.Person person) {
         return Optional.ofNullable(person)
                 .map(p -> p.getAddresses().stream()
                         .sorted(BY_ADDRESS_MODIFIED)

@@ -44,7 +44,7 @@ public class DiaryDetailsControllerTest {
 
     @Test
     public void canGetOffenderDiaryDetails() {
-        DiaryDetail[] diaryDetails = given()
+        final var diaryDetails = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1004/diaryDetails")

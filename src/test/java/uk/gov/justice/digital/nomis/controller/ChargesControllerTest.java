@@ -61,7 +61,7 @@ public class ChargesControllerTest {
 
     @Test
     public void canGetOffenderCharges() {
-        Charge[] charges = given()
+        final var charges = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/charges")
@@ -76,7 +76,7 @@ public class ChargesControllerTest {
 
     @Test
     public void canGetBookingIdCharges() {
-        List<Charge> charges = given()
+        final List<Charge> charges = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/charges?bookingId=-2&bookingId=-3")
@@ -111,7 +111,7 @@ public class ChargesControllerTest {
 
     @Test
     public void embeddedHateoasLinksWorks() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -121,7 +121,7 @@ public class ChargesControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()

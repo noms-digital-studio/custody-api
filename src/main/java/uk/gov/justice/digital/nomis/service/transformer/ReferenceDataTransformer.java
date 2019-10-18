@@ -11,12 +11,12 @@ public class ReferenceDataTransformer {
 
     private final TypesTransformer typesTransformer;
 
-    public ReferenceDataTransformer(TypesTransformer typesTransformer) {
+    public ReferenceDataTransformer(final TypesTransformer typesTransformer) {
         this.typesTransformer = typesTransformer;
     }
 
 
-    public uk.gov.justice.digital.nomis.api.AgencyLocation agencyLocationOf(AgencyLocation agencyLocation) {
+    public uk.gov.justice.digital.nomis.api.AgencyLocation agencyLocationOf(final AgencyLocation agencyLocation) {
         return Optional.ofNullable(agencyLocation).map(
                 al -> uk.gov.justice.digital.nomis.api.AgencyLocation.builder()
                         .abbreviation(al.getAbbreviation())
@@ -53,7 +53,7 @@ public class ReferenceDataTransformer {
                 .orElse(null);
     }
 
-    public uk.gov.justice.digital.nomis.api.AgencyInternalLocation agencyInternalLocationOf(AgencyInternalLocation agencyInternalLocation) {
+    public uk.gov.justice.digital.nomis.api.AgencyInternalLocation agencyInternalLocationOf(final AgencyInternalLocation agencyInternalLocation) {
         return Optional.ofNullable(agencyInternalLocation).map(
                 ail -> uk.gov.justice.digital.nomis.api.AgencyInternalLocation.builder()
                         .acaCapRating(ail.getAcaCapRating())

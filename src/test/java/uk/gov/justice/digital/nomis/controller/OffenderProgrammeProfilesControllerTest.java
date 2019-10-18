@@ -44,7 +44,7 @@ public class OffenderProgrammeProfilesControllerTest {
 
     @Test
     public void canGetOffenderProgrammeProfiles() {
-        ProgrammeProfile[] programmeProfiles = given()
+        final var programmeProfiles = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/programmeProfiles?from=2010-01-01T00:00&to=2018-12-28T00:00")
@@ -60,7 +60,7 @@ public class OffenderProgrammeProfilesControllerTest {
 
     @Test
     public void canGetOffenderProgrammeProfilesForBooking() {
-        ProgrammeProfile[] programmeProfiles = given()
+        final var programmeProfiles = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .param("bookingId", -1)

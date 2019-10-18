@@ -7,11 +7,7 @@ import uk.gov.justice.digital.nomis.api.Booking;
 import uk.gov.justice.digital.nomis.api.Identifier;
 import uk.gov.justice.digital.nomis.api.KeyValue;
 import uk.gov.justice.digital.nomis.api.OffenderAlias;
-import uk.gov.justice.digital.nomis.jpa.entity.Offender;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderExternalMovement;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderIdentifier;
-import uk.gov.justice.digital.nomis.jpa.entity.ReferenceCodePK;
+import uk.gov.justice.digital.nomis.jpa.entity.*;
 import uk.gov.justice.digital.nomis.jpa.repository.ReferenceCodesRepository;
 
 import java.sql.Timestamp;
@@ -43,14 +39,14 @@ public class OffenderTransformer {
             .thenComparing(OffenderBooking::getBookingBeginDate, Comparator.reverseOrder());
 
     @Autowired
-    public OffenderTransformer(TypesTransformer typesTransformer, ReferenceDataTransformer referenceDataTransformer, ReferenceCodesRepository referenceCodesRepository, MovementsTransformer movementsTransformer) {
+    public OffenderTransformer(final TypesTransformer typesTransformer, final ReferenceDataTransformer referenceDataTransformer, final ReferenceCodesRepository referenceCodesRepository, final MovementsTransformer movementsTransformer) {
         this.typesTransformer = typesTransformer;
         this.referenceDataTransformer = referenceDataTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
         this.movementsTransformer = movementsTransformer;
     }
 
-    private List<OffenderAlias> aliasesOf(List<Offender> offenderList) {
+    private List<OffenderAlias> aliasesOf(final List<Offender> offenderList) {
         return Optional.ofNullable(offenderList)
                 .map(offenders -> offenders
                         .stream()
@@ -69,7 +65,7 @@ public class OffenderTransformer {
                 .orElse(Collections.emptyList());
     }
 
-    private List<Identifier> identifiersOf(List<OffenderIdentifier> offenderIdentifiers) {
+    private List<Identifier> identifiersOf(final List<OffenderIdentifier> offenderIdentifiers) {
         return Optional.ofNullable(offenderIdentifiers)
                 .map(identifiers -> identifiers
                         .stream()
@@ -84,14 +80,14 @@ public class OffenderTransformer {
                 .orElse(Collections.emptyList());
     }
 
-    private List<Booking> bookingsOf(List<OffenderBooking> offenderBookings) {
+    private List<Booking> bookingsOf(final List<OffenderBooking> offenderBookings) {
         return offenderBookings.stream()
                 .sorted(BY_BOOKING_SEQUENCE)
                 .map(this::bookingOf)
                 .collect(Collectors.toList());
     }
 
-    private Booking bookingOf(OffenderBooking booking) {
+    private Booking bookingOf(final OffenderBooking booking) {
         return Booking.builder()
                 .bookingSequence(booking.getBookingSeq())
                 .startDate(booking.getBookingBeginDate().toLocalDateTime().toLocalDate())
@@ -115,14 +111,14 @@ public class OffenderTransformer {
                 .build();
     }
 
-    private String combinedMiddlenamesOf(Offender offender) {
+    private String combinedMiddlenamesOf(final Offender offender) {
         return middleNamesOf(offender.getMiddleName(), offender.getMiddleName2()).stream()
                 .collect(Collectors.joining(" "));
     }
 
-    private List<String> middleNamesOf(String secondName, String thirdName) {
-        Optional<String> maybeSecondName = Optional.ofNullable(secondName);
-        Optional<String> maybeThirdName = Optional.ofNullable(thirdName);
+    private List<String> middleNamesOf(final String secondName, final String thirdName) {
+        final var maybeSecondName = Optional.ofNullable(secondName);
+        final var maybeThirdName = Optional.ofNullable(thirdName);
 
         return ImmutableList.of(maybeSecondName, maybeThirdName)
                 .stream()
@@ -130,7 +126,7 @@ public class OffenderTransformer {
                 .collect(Collectors.toList());
     }
 
-    public uk.gov.justice.digital.nomis.api.Offender offenderOf(uk.gov.justice.digital.nomis.jpa.entity.Offender offender) {
+    public uk.gov.justice.digital.nomis.api.Offender offenderOf(final uk.gov.justice.digital.nomis.jpa.entity.Offender offender) {
         return uk.gov.justice.digital.nomis.api.Offender.builder()
                 .dateOfBirth(offender.getBirthDate().toLocalDateTime().toLocalDate())
                 .firstName(offender.getFirstName())
@@ -146,7 +142,7 @@ public class OffenderTransformer {
                 .build();
     }
 
-    private KeyValue ethnicityOf(Offender o) {
+    private KeyValue ethnicityOf(final Offender o) {
         return Optional.ofNullable(o.getRaceCode() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(o.getRaceCode())
@@ -156,7 +152,7 @@ public class OffenderTransformer {
                 .orElse(null);
     }
 
-    private KeyValue genderOf(Offender o) {
+    private KeyValue genderOf(final Offender o) {
         return Optional.ofNullable(o.getSexCode() != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(o.getSexCode())

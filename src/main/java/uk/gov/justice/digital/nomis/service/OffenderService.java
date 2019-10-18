@@ -17,7 +17,6 @@ import uk.gov.justice.digital.nomis.service.transformer.OffenderActiveBookingTra
 import uk.gov.justice.digital.nomis.service.transformer.OffenderTransformer;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,7 @@ public class OffenderService {
     private final OffenderActiveBookingTransformer offenderActiveBookingTransformer;
 
     @Autowired
-    public OffenderService(OffenderRepository offenderRepository, AgencyLocationsRepository agencyLocationRepository, OffenderBookingRepository offenderBookingRepository, OffenderTransformer offenderTransformer, OffenderActiveBookingTransformer offenderActiveBookingTransformer) {
+    public OffenderService(final OffenderRepository offenderRepository, final AgencyLocationsRepository agencyLocationRepository, final OffenderBookingRepository offenderBookingRepository, final OffenderTransformer offenderTransformer, final OffenderActiveBookingTransformer offenderActiveBookingTransformer) {
         this.offenderRepository = offenderRepository;
         this.agencyLocationRepository = agencyLocationRepository;
         this.offenderBookingRepository = offenderBookingRepository;
@@ -42,12 +41,12 @@ public class OffenderService {
     }
 
     @Transactional
-    public Page<Offender> getOffenders(Pageable pageable) {
-        Page<uk.gov.justice.digital.nomis.jpa.entity.Offender> rootOffendersRawPage = offenderRepository.findAllRootOffenders(pageable);
+    public Page<Offender> getOffenders(final Pageable pageable) {
+        final var rootOffendersRawPage = offenderRepository.findAllRootOffenders(pageable);
 
-        List<uk.gov.justice.digital.nomis.jpa.entity.Offender> rootOffenders = rootOffendersRawPage.getContent();
+        final var rootOffenders = rootOffendersRawPage.getContent();
 
-        List<Offender> offenderList = rootOffenders
+        final var offenderList = rootOffenders
                 .stream()
                 .map(offenderTransformer::offenderOf)
                 .collect(Collectors.toList());
@@ -56,32 +55,32 @@ public class OffenderService {
     }
 
     @Transactional
-    public Optional<Offender> getOffenderByOffenderId(Long offenderId) {
-        Optional<uk.gov.justice.digital.nomis.jpa.entity.Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<Offender> getOffenderByOffenderId(final Long offenderId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.map(offenderTransformer::offenderOf);
     }
 
     @Transactional
-    public Optional<Offender> getOffenderByNomsId(String nomsId) {
-        final Optional<uk.gov.justice.digital.nomis.jpa.entity.Offender> maybeOffender = offenderRepository.findByNomsId(nomsId);
+    public Optional<Offender> getOffenderByNomsId(final String nomsId) {
+        final var maybeOffender = offenderRepository.findByNomsId(nomsId);
 
         return maybeOffender.map(offenderTransformer::offenderOf);
     }
 
-    public Page<OffenderActiveBooking> getOffendersByPrison(String agencyLocationId, Pageable pageable) {
+    public Page<OffenderActiveBooking> getOffendersByPrison(final String agencyLocationId, final Pageable pageable) {
         agencyLocationRepository.getByAgyLocId(agencyLocationId).orElseThrow(() -> new EntityNotFoundException(String.format("Agency location %s not found", agencyLocationId)));
 
-        OffenderBookingFilter offenderBookingFilter = OffenderBookingFilter.builder()
+        final var offenderBookingFilter = OffenderBookingFilter.builder()
                 .agencyLocationId(agencyLocationId)
                 .activeFlag("Y")
                 .build();
 
-        Page<uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking> rootOffendersRawPage = offenderBookingRepository.findAll(offenderBookingFilter, pageable);
+        final var rootOffendersRawPage = offenderBookingRepository.findAll(offenderBookingFilter, pageable);
 
-        List<uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking> rootOffenders = rootOffendersRawPage.getContent();
+        final var rootOffenders = rootOffendersRawPage.getContent();
 
-        List<OffenderActiveBooking> offenderList = rootOffenders
+        final var offenderList = rootOffenders
                 .stream()
                 .map(offenderActiveBookingTransformer::offenderOf)
                 .collect(Collectors.toList());

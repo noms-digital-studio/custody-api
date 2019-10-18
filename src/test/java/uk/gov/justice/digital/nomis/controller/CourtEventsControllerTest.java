@@ -44,7 +44,7 @@ public class CourtEventsControllerTest {
 
     @Test
     public void canGetOffenderCourtEvents() {
-        CourtEvent[] events = given()
+        final var events = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/courtEvents")

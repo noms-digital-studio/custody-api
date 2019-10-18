@@ -22,19 +22,19 @@ public class ImagesService {
     private final OffenderImageTransformer offenderImageTransformer;
 
     @Autowired
-    public ImagesService(OffenderImagesRepository offenderImagesRepository, OffenderImageTransformer offenderImageTransformer) {
+    public ImagesService(final OffenderImagesRepository offenderImagesRepository, final OffenderImageTransformer offenderImageTransformer) {
         this.offenderImagesRepository = offenderImagesRepository;
         this.offenderImageTransformer = offenderImageTransformer;
     }
 
-    public List<OffenderImage> getImageMetaDataForBookingId(Long bookingId) {
+    public List<OffenderImage> getImageMetaDataForBookingId(final Long bookingId) {
         return offenderImagesRepository.findByOffenderBookingId(bookingId).stream()
             .map(offenderImageTransformer::offenderImageMetaDataOf)
             .collect(toList());
     }
 
-    public Optional<byte[]> getImageForImageId(Long imageId) {
-        Optional<uk.gov.justice.digital.nomis.jpa.entity.OffenderImage> maybeOffender =
+    public Optional<byte[]> getImageForImageId(final Long imageId) {
+        final var maybeOffender =
             offenderImagesRepository.findById(imageId);
 
         return maybeOffender.map(offenderImageTransformer::thumbnailOf);

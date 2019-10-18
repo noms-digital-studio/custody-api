@@ -27,13 +27,13 @@ public class CourtEventsService {
 
 
     @Autowired
-    public CourtEventsService(CourtEventsTransformer courtEventsTransformer, OffenderRepository offenderRepository) {
+    public CourtEventsService(final CourtEventsTransformer courtEventsTransformer, final OffenderRepository offenderRepository) {
         this.courtEventsTransformer = courtEventsTransformer;
         this.offenderRepository = offenderRepository;
     }
 
 
-    public Optional<List<CourtEvent>> courtEventsForOffenderId(Long offenderId) {
+    public Optional<List<CourtEvent>> courtEventsForOffenderId(final Long offenderId) {
 
         return offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderBookings()

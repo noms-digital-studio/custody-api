@@ -24,7 +24,7 @@ public class RehabDecisionsController {
     private final RehabDecisionService rehabDecisionService;
 
     @Autowired
-    public RehabDecisionsController(RehabDecisionService rehabDecisionService) {
+    public RehabDecisionsController(final RehabDecisionService rehabDecisionService) {
         this.rehabDecisionService = rehabDecisionService;
     }
 
@@ -32,7 +32,7 @@ public class RehabDecisionsController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offender not found"),
             @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<RehabDecision>> getOffenderRehabDecisions(@PathVariable("offenderId") Long offenderId) {
+    public ResponseEntity<List<RehabDecision>> getOffenderRehabDecisions(@PathVariable("offenderId") final Long offenderId) {
 
         return rehabDecisionService.rehabDecisionsForOffenderId(offenderId)
                 .map(events -> new ResponseEntity<>(events, HttpStatus.OK))

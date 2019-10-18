@@ -18,8 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.justice.digital.nomis.api.ExternalMovement;
 
-import java.util.List;
-
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -61,7 +59,7 @@ public class MovementsControllerTest {
 
     @Test
     public void canFilterMovementsByBookingId() {
-        final List<ExternalMovement> externalMovements = given()
+        final var externalMovements = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("bookingId", -17)
@@ -76,7 +74,7 @@ public class MovementsControllerTest {
 
     @Test
     public void canGetOffenderMovements() {
-        ExternalMovement[] movements = given()
+        final var movements = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1017/movements")
@@ -109,7 +107,7 @@ public class MovementsControllerTest {
 
     @Test
     public void embeddedHateoasLinksWork() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -119,7 +117,7 @@ public class MovementsControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()
@@ -134,7 +132,7 @@ public class MovementsControllerTest {
 
     @Test
     public void canGetOffenderMovementForBookingNumberAndSequence() {
-        ExternalMovement movement = given()
+        final var movement = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/movements/bookingId/-17/sequence/4")

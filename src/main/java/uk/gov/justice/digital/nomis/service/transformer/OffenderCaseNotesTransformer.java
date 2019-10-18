@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
@@ -31,14 +30,14 @@ public class OffenderCaseNotesTransformer {
 
     @Autowired
     public OffenderCaseNotesTransformer(
-            TypesTransformer typesTransformer,
-            ReferenceCodesRepository referenceCodesRepository) {
+            final TypesTransformer typesTransformer,
+            final ReferenceCodesRepository referenceCodesRepository) {
         this.typesTransformer = typesTransformer;
         this.referenceCodesRepository = referenceCodesRepository;
     }
 
-    public CaseNote caseNoteOf(OffenderCaseNote ocn) {
-        List<CaseNoteAmendment> amendments = amendmentsOf(ocn.getCaseNoteText(), ocn.getStaffId(), typesTransformer.localDateTimeOf(ocn.getCreationDate(), ocn.getCreationTime()));
+    public CaseNote caseNoteOf(final OffenderCaseNote ocn) {
+        final var amendments = amendmentsOf(ocn.getCaseNoteText(), ocn.getStaffId(), typesTransformer.localDateTimeOf(ocn.getCreationDate(), ocn.getCreationTime()));
 
         return CaseNote.builder()
                 .caseNoteId(ocn.getCaseNoteId())
@@ -57,7 +56,7 @@ public class OffenderCaseNotesTransformer {
                 .build();
     }
 
-    private KeyValue subTypeOf(String caseNoteSubType) {
+    private KeyValue subTypeOf(final String caseNoteSubType) {
         return Optional.ofNullable(caseNoteSubType != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(caseNoteSubType)
@@ -67,7 +66,7 @@ public class OffenderCaseNotesTransformer {
                 .orElse(null);
     }
 
-    private KeyValue typeOf(String caseNoteType) {
+    private KeyValue typeOf(final String caseNoteType) {
         return Optional.ofNullable(caseNoteType != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(caseNoteType)
@@ -77,7 +76,7 @@ public class OffenderCaseNotesTransformer {
                 .orElse(null);
     }
 
-    private KeyValue sourceOf(String noteSourceCode) {
+    private KeyValue sourceOf(final String noteSourceCode) {
         return Optional.ofNullable(noteSourceCode != null ?
                 referenceCodesRepository.findById(ReferenceCodePK.builder()
                         .code(noteSourceCode)
@@ -87,14 +86,14 @@ public class OffenderCaseNotesTransformer {
                 .orElse(null);
     }
 
-    private List<CaseNoteAmendment> amendmentsOf(String caseNoteText, Long staffId, LocalDateTime creationDateTime) {
-        String[] breakUp = caseNoteText.split(AMEND_REGEX);
-        String workingText = caseNoteText;
+    private List<CaseNoteAmendment> amendmentsOf(final String caseNoteText, final Long staffId, final LocalDateTime creationDateTime) {
+        final var breakUp = caseNoteText.split(AMEND_REGEX);
+        var workingText = caseNoteText;
 
-        List<CaseNoteAmendment> amendments = new ArrayList<>();
+        final List<CaseNoteAmendment> amendments = new ArrayList<>();
 
-        for (int amendmentCount = 0; amendmentCount < breakUp.length; amendmentCount ++) {
-            final String amendmentText = breakUp[amendmentCount];
+        for (var amendmentCount = 0; amendmentCount < breakUp.length; amendmentCount++) {
+            final var amendmentText = breakUp[amendmentCount];
 
             if (amendmentCount == 0) {
                 amendments.add(CaseNoteAmendment.builder()
@@ -105,10 +104,10 @@ public class OffenderCaseNotesTransformer {
 
                 workingText = StringUtils.replace(workingText, amendmentText, StringUtils.EMPTY, 1);
             } else {
-                final int firstOcc = StringUtils.indexOf(workingText, amendmentText);
+                final var firstOcc = StringUtils.indexOf(workingText, amendmentText);
 
-                String amendmentDetails = StringUtils.substring(workingText, 0, firstOcc);
-                Matcher m = AMEND_CASE_NOTE_REGEX.matcher(amendmentDetails);
+                final var amendmentDetails = StringUtils.substring(workingText, 0, firstOcc);
+                final var m = AMEND_CASE_NOTE_REGEX.matcher(amendmentDetails);
 
                 if (m.find()) {
                     amendments.add(CaseNoteAmendment.builder()

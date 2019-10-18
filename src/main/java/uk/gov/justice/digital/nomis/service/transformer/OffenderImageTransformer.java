@@ -12,11 +12,11 @@ public class OffenderImageTransformer {
     private final TypesTransformer typesTransformer;
 
     @Autowired
-    public OffenderImageTransformer(TypesTransformer typesTransformer) {
+    public OffenderImageTransformer(final TypesTransformer typesTransformer) {
         this.typesTransformer = typesTransformer;
     }
 
-    public uk.gov.justice.digital.nomis.api.OffenderImage offenderImageMetaDataOf(OffenderImage offenderImage) {
+    public uk.gov.justice.digital.nomis.api.OffenderImage offenderImageMetaDataOf(final OffenderImage offenderImage) {
         return uk.gov.justice.digital.nomis.api.OffenderImage.builder()
             .activeFlag(typesTransformer.ynToBoolean(offenderImage.getActiveFlag()))
             .bookingId(offenderImage.getOffenderBookingId())
@@ -32,7 +32,7 @@ public class OffenderImageTransformer {
             .build();
     }
 
-    private String imageObjectTypeOf(String imageObjectType) {
+    private String imageObjectTypeOf(final String imageObjectType) {
         switch(imageObjectType) {
             case "OIC" : return "INCIDENT";
             case "OFF_IDM" : return "IDENTIFYING_MARK";
@@ -41,7 +41,7 @@ public class OffenderImageTransformer {
         return imageObjectType;
     }
 
-    private String imageViewTypeOf(String imageViewType) {
+    private String imageViewTypeOf(final String imageViewType) {
         switch(imageViewType) {
             case "OIC" : return "INCIDENT";
             case "FACE" : return "FACE";
@@ -55,7 +55,7 @@ public class OffenderImageTransformer {
     }
 
 
-    public byte[] thumbnailOf(OffenderImage offenderImage) {
+    public byte[] thumbnailOf(final OffenderImage offenderImage) {
         return offenderImage.getThumbnailImage();
     }
 }

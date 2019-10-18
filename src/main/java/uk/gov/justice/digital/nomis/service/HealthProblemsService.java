@@ -7,9 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.HealthProblem;
-import uk.gov.justice.digital.nomis.jpa.entity.Offender;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
-import uk.gov.justice.digital.nomis.jpa.entity.OffenderHealthProblem;
 import uk.gov.justice.digital.nomis.jpa.repository.HealthProblemsRepository;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderRepository;
 import uk.gov.justice.digital.nomis.service.transformer.HealthProblemsTransformer;
@@ -28,26 +26,26 @@ public class HealthProblemsService {
     private final OffenderRepository offenderRepository;
 
     @Autowired
-    public HealthProblemsService(HealthProblemsTransformer healthProblemsTransformer, HealthProblemsRepository healthProblemsRepository, OffenderRepository offenderRepository) {
+    public HealthProblemsService(final HealthProblemsTransformer healthProblemsTransformer, final HealthProblemsRepository healthProblemsRepository, final OffenderRepository offenderRepository) {
         this.healthProblemsTransformer = healthProblemsTransformer;
         this.healthProblemsRepository = healthProblemsRepository;
         this.offenderRepository = offenderRepository;
     }
 
     @Transactional
-    public Page<HealthProblem> getHealthProblems(Pageable pageable) {
-        Page<uk.gov.justice.digital.nomis.jpa.entity.OffenderHealthProblem> rawHealthProblemsPage = healthProblemsRepository.findAll(pageable);
+    public Page<HealthProblem> getHealthProblems(final Pageable pageable) {
+        final var rawHealthProblemsPage = healthProblemsRepository.findAll(pageable);
 
-        List<HealthProblem> healthProblems = rawHealthProblemsPage.getContent().stream().map(
+        final var healthProblems = rawHealthProblemsPage.getContent().stream().map(
                 healthProblemsTransformer::healthProblemOf
         ).collect(Collectors.toList());
 
         return new PageImpl<>(healthProblems, pageable, rawHealthProblemsPage.getTotalElements());
     }
 
-    public Optional<List<HealthProblem>> healthProblemsForOffenderId(Long offenderId) {
+    public Optional<List<HealthProblem>> healthProblemsForOffenderId(final Long offenderId) {
 
-        Optional<List<OffenderHealthProblem>> maybeOffenderHealthProblems = offenderRepository.findById(offenderId)
+        final var maybeOffenderHealthProblems = offenderRepository.findById(offenderId)
                 .map(offender ->
                         offender.getOffenderBookings().stream()
                                 .map(OffenderBooking::getOffenderHealthProblems)
@@ -57,8 +55,8 @@ public class HealthProblemsService {
         return maybeOffenderHealthProblems.map(healthProblems -> healthProblems.stream().map(healthProblemsTransformer::healthProblemOf).collect(Collectors.toList()));
     }
 
-    public Optional<List<HealthProblem>> healthProblemsForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<HealthProblem>> healthProblemsForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()

@@ -34,25 +34,25 @@ public class OffenderEventsTransformerTest {
     @Test
     public void canDeserializeIntoXtagContent() {
 
-        final ObjectMapper objectMapper = new CustodyApiApplication().objectMapper();
+        final var objectMapper = new CustodyApiApplication().objectMapper();
 
-        OffenderEventsTransformer transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), objectMapper);
+        final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), objectMapper);
 
         assertThat(transformer.xtagContentOf(ImmutableMap.of("x", "y"))).isNotNull();
     }
 
     @Test
     public void xtagEnqueueTimestampIsSeasonallyAdjustedIntoDaylightSavings() {
-        LocalDateTime lastSecondOfWinter = LocalDateTime.of(2019, 3, 31, 00, 59, 59);
-        LocalDateTime firstSecondOfSummer = lastSecondOfWinter.plusSeconds(1L);
+        final var lastSecondOfWinter = LocalDateTime.of(2019, 3, 31, 00, 59, 59);
+        final var firstSecondOfSummer = lastSecondOfWinter.plusSeconds(1L);
         assertThat(OffenderEventsTransformer.xtagFudgedTimestampOf(lastSecondOfWinter)).isEqualTo(lastSecondOfWinter.minusHours(1L));
         assertThat(OffenderEventsTransformer.xtagFudgedTimestampOf(firstSecondOfSummer)).isEqualTo(firstSecondOfSummer);
     }
 
     @Test
     public void xtagEnqueueTimestampIsSeasonallyAdjustedIntoUTC() {
-        LocalDateTime lastSecondOfSummer = LocalDateTime.of(2019, 10, 27, 01, 59, 59);
-        LocalDateTime firstSecondOfWinter = lastSecondOfSummer.plusSeconds(1L);
+        final var lastSecondOfSummer = LocalDateTime.of(2019, 10, 27, 01, 59, 59);
+        final var firstSecondOfWinter = lastSecondOfSummer.plusSeconds(1L);
         assertThat(OffenderEventsTransformer.xtagFudgedTimestampOf(lastSecondOfSummer)).isEqualTo(lastSecondOfSummer);
         assertThat(OffenderEventsTransformer.xtagFudgedTimestampOf(firstSecondOfWinter)).isEqualTo(firstSecondOfWinter.minusHours(1L));
     }
@@ -95,7 +95,7 @@ public class OffenderEventsTransformerTest {
     @Test
     public void externalMovementRecordEventOfHandlesAgyLocIdsAsStrings() {
 
-        var transformer = new OffenderEventsTransformer(null, null);
+        final var transformer = new OffenderEventsTransformer(null, null);
         assertThat(transformer.externalMovementRecordEventOf(Xtag.builder().content(
                 XtagContent.builder()
                         .p_from_agy_loc_id("BARBECUE")
@@ -107,7 +107,7 @@ public class OffenderEventsTransformerTest {
 
     @Test
     public void canCorrectlyDecodeCaseNoteEventTypes() {
-        OffenderEventsTransformer transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+        final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
 
         assertThat(transformer.caseNoteEventTypeOf(OffenderEvent.builder()
                 .eventType("CASE_NOTE")
@@ -117,7 +117,7 @@ public class OffenderEventsTransformerTest {
 
     @Test
     public void nonCaseNoteEventTypesAreNotDecoded() {
-        OffenderEventsTransformer transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+        final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
 
         assertThat(transformer.caseNoteEventTypeOf(OffenderEvent.builder()
                 .eventType(NOT_A_CASE_NOTE)
@@ -127,7 +127,7 @@ public class OffenderEventsTransformerTest {
 
     @Test
     public void unkownEventTypesAreHandledAppropriately() {
-        OffenderEventsTransformer transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+        final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
 
         assertThat(transformer.offenderEventOf((Xtag) null)).isNull();
         assertThat(transformer.offenderEventOf(Xtag.builder().build())).isNull();

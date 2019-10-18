@@ -32,21 +32,21 @@ public class CaseNotesService {
     private final OffenderRepository offenderRepository;
 
     @Autowired
-    public CaseNotesService(OffenderCaseNotesTransformer offenderCaseNotesTransformer,
-                            OffenderCaseNotesRepository offenderCaseNotesRepository,
-                            OffenderRepository offenderRepository) {
+    public CaseNotesService(final OffenderCaseNotesTransformer offenderCaseNotesTransformer,
+                            final OffenderCaseNotesRepository offenderCaseNotesRepository,
+                            final OffenderRepository offenderRepository) {
         this.offenderCaseNotesTransformer = offenderCaseNotesTransformer;
         this.offenderCaseNotesRepository = offenderCaseNotesRepository;
         this.offenderRepository = offenderRepository;
     }
 
-    public Optional<List<CaseNote>> getCaseNotesForOffenderId(Long offenderId,
-                                                              Optional<LocalDateTime> maybeFrom,
-                                                              Optional<LocalDateTime> maybeTo,
-                                                              Optional<Set<String>> maybeTypeFilter,
-                                                              Optional<Set<String>> maybeSubTypeFilter) {
-        LocalDateTime from = maybeFrom.orElse(maybeTo.map(to -> to.minusDays(1)).orElse(LocalDate.now().atStartOfDay()));
-        LocalDateTime to = maybeTo.orElse(from.plusDays(1));
+    public Optional<List<CaseNote>> getCaseNotesForOffenderId(final Long offenderId,
+                                                              final Optional<LocalDateTime> maybeFrom,
+                                                              final Optional<LocalDateTime> maybeTo,
+                                                              final Optional<Set<String>> maybeTypeFilter,
+                                                              final Optional<Set<String>> maybeSubTypeFilter) {
+        final var from = maybeFrom.orElse(maybeTo.map(to -> to.minusDays(1)).orElse(LocalDate.now().atStartOfDay()));
+        final var to = maybeTo.orElse(from.plusDays(1));
 
         return offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderBookings().stream()
@@ -62,14 +62,14 @@ public class CaseNotesService {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<CaseNote>> getCaseNotesForOffenderIdAndBookingId(Long offenderId,
-                                                              Long bookingId,
-                                                              Optional<LocalDateTime> maybeFrom,
-                                                              Optional<LocalDateTime> maybeTo,
-                                                              Optional<Set<String>> maybeTypeFilter,
-                                                              Optional<Set<String>> maybeSubTypeFilter) {
-        LocalDateTime from = maybeFrom.orElse(maybeTo.map(to -> to.minusDays(1)).orElse(LocalDate.now().atStartOfDay()));
-        LocalDateTime to = maybeTo.orElse(from.plusDays(1));
+    public Optional<List<CaseNote>> getCaseNotesForOffenderIdAndBookingId(final Long offenderId,
+                                                                          final Long bookingId,
+                                                                          final Optional<LocalDateTime> maybeFrom,
+                                                                          final Optional<LocalDateTime> maybeTo,
+                                                                          final Optional<Set<String>> maybeTypeFilter,
+                                                                          final Optional<Set<String>> maybeSubTypeFilter) {
+        final var from = maybeFrom.orElse(maybeTo.map(to -> to.minusDays(1)).orElse(LocalDate.now().atStartOfDay()));
+        final var to = maybeTo.orElse(from.plusDays(1));
 
         return offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderBookings().stream()

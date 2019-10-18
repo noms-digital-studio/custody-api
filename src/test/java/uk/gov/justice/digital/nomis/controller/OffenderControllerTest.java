@@ -20,11 +20,7 @@ import uk.gov.justice.digital.nomis.api.Offender;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -62,7 +58,7 @@ public class OffenderControllerTest {
 
     @Test
     public void canGetOffenderByOffenderId() {
-        Offender offender = given()
+        final var offender = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001")
@@ -105,7 +101,7 @@ public class OffenderControllerTest {
 
     @Test
     public void canGetOffenderByNomsId() {
-        Offender offender = given()
+        final var offender = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/nomsId/A1234AA")
@@ -171,7 +167,7 @@ public class OffenderControllerTest {
 
     @Test
     public void embeddedHateoasLinksWorkForOffenders() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -181,7 +177,7 @@ public class OffenderControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()
@@ -196,7 +192,7 @@ public class OffenderControllerTest {
 
     @Test
     public void embeddedHateoasLinksWorkForOffenderActiveBookings() {
-        final String response = given()
+        final var response = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .queryParam("page", 1)
@@ -206,7 +202,7 @@ public class OffenderControllerTest {
                 .statusCode(200)
                 .extract().asString();
 
-        JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
+        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
 
         hrefs.forEach(href -> given()
                 .when()

@@ -3,7 +3,6 @@ package uk.gov.justice.digital.nomis.service.transformer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
-import oracle.sql.Datum;
 import oracle.sql.RAW;
 import oracle.sql.STRUCT;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -39,21 +37,21 @@ public class OffenderEventsTransformer {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public OffenderEventsTransformer(TypesTransformer typesTransformer, @Qualifier("globalObjectMapper") ObjectMapper objectMapper) {
+    public OffenderEventsTransformer(final TypesTransformer typesTransformer, @Qualifier("globalObjectMapper") final ObjectMapper objectMapper) {
         this.typesTransformer = typesTransformer;
         this.objectMapper = objectMapper;
     }
 
-    public static LocalDateTime xtagFudgedTimestampOf(LocalDateTime xtagEnqueueTime) {
-        final ZoneId london = ZoneId.of("Europe/London");
+    public static LocalDateTime xtagFudgedTimestampOf(final LocalDateTime xtagEnqueueTime) {
+        final var london = ZoneId.of("Europe/London");
         if (london.getRules().isDaylightSavings(xtagEnqueueTime.atZone(london).toInstant())) {
             return xtagEnqueueTime;
         }
         return xtagEnqueueTime.minusHours(1L);
     }
 
-    public static String externalMovementEventOf(Xtag xtag) {
-        String del = Optional.ofNullable(xtag.getContent().getP_record_deleted()).orElse("");
+    public static String externalMovementEventOf(final Xtag xtag) {
+        final var del = Optional.ofNullable(xtag.getContent().getP_record_deleted()).orElse("");
         switch (del) {
             case "N":
                 return "EXTERNAL_MOVEMENT_RECORD-INSERTED";
@@ -64,7 +62,7 @@ public class OffenderEventsTransformer {
         }
     }
 
-    public OffenderEvent offenderEventOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent offenderEvent) {
+    public OffenderEvent offenderEventOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent offenderEvent) {
         return Optional.ofNullable(offenderEvent)
                 .map(event -> OffenderEvent.builder()
                         .eventId(event.getEventId().toString())
@@ -76,36 +74,36 @@ public class OffenderEventsTransformer {
                         .build()).orElse(null);
     }
 
-    public OffenderEvent offenderEventOf(XtagEventNonJpa xtagEvent) {
-        final STRUCT s = xtagEvent.getUserData();
+    public OffenderEvent offenderEventOf(final XtagEventNonJpa xtagEvent) {
+        final var s = xtagEvent.getUserData();
         try {
             return getOffenderEvent(s, xtagEvent.getEnqTime());
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log.error("Failed to convert STRUCT {} to OffenderEvent: {}", s, e.getMessage());
             return null;
         }
     }
 
-    private OffenderEvent getOffenderEvent(STRUCT s, Timestamp enqTime) throws SQLException {
-        final Optional<Datum> maybeStruct = Arrays.stream(s.getOracleAttributes()).filter(a -> a instanceof STRUCT).findFirst();
-        final Optional<Datum> maybeRaw = Arrays.stream(s.getOracleAttributes()).filter(a -> a instanceof RAW).findFirst();
+    private OffenderEvent getOffenderEvent(final STRUCT s, final Timestamp enqTime) throws SQLException {
+        final var maybeStruct = Arrays.stream(s.getOracleAttributes()).filter(STRUCT.class::isInstance).findFirst();
+        final var maybeRaw = Arrays.stream(s.getOracleAttributes()).filter(RAW.class::isInstance).findFirst();
 
         Optional<String> maybeType = Optional.empty();
         {
-            final Optional<STRUCT> struct = maybeStruct.filter(d -> d instanceof STRUCT).map(datum -> (STRUCT) datum);
+            final var struct = maybeStruct.filter(STRUCT.class::isInstance).map(STRUCT.class::cast);
 
             if (struct.isPresent()) {
-                final Object[] attributes = struct.get().getAttributes();
+                final var attributes = struct.get().getAttributes();
                 if (attributes.length >= 2) {
                     maybeType = Optional.ofNullable(attributes[1].toString());
                 }
             }
         }
 
-        final Optional<Map<String, String>> maybeMap = maybeRaw.flatMap(d -> {
+        final var maybeMap = maybeRaw.flatMap(d -> {
             try {
                 return Optional.ofNullable(deserialize(d.getBytes()));
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (final IOException | ClassNotFoundException e) {
                 log.error("Failed to derive Map from Datum {} : {}", d, e.getMessage());
                 return Optional.empty();
             }
@@ -118,24 +116,24 @@ public class OffenderEventsTransformer {
                 .build());
     }
 
-    public XtagContent xtagContentOf(Map<String, String> map) {
+    public XtagContent xtagContentOf(final Map<String, String> map) {
         try {
-            String stringValue = objectMapper.writeValueAsString(map);
+            final var stringValue = objectMapper.writeValueAsString(map);
             return objectMapper.readValue(stringValue, XtagContent.class);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Failed to deserialize Map {} into XtagContent: {}", map.toString(), e.getMessage());
             return null;
         }
     }
 
-    private Map<String, String> deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+    private Map<String, String> deserialize(final byte[] bytes) throws IOException, ClassNotFoundException {
 
         if (bytes == null) {
             log.warn("No bytes to deserialize!");
             return null;
         }
 
-        final Object o = new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
+        final var o = new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
 
         if (o instanceof Map) {
             return (Map<String, String>) o;
@@ -146,7 +144,7 @@ public class OffenderEventsTransformer {
         return null;
     }
 
-    public OffenderEvent offenderEventOf(Xtag xtag) {
+    public OffenderEvent offenderEventOf(final Xtag xtag) {
         if (xtag == null || xtag.getEventType() == null) {
             log.warn("Bad xtag: {}", xtag);
             return null;
@@ -278,13 +276,13 @@ public class OffenderEventsTransformer {
                             .eventDatetime(xtag.getNomisTimestamp())
                             .build();
             }
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             log.error("Caught throwable {} {}", t.getMessage(), t.getStackTrace());
             throw t;
         }
     }
 
-    private OffenderEvent offenderTransferOutOfLidsEventOf(Xtag xtag) {
+    private OffenderEvent offenderTransferOutOfLidsEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_TRANSFER-OUT_OF_LIDS")
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
@@ -293,7 +291,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent courtSentenceChangedEventOf(Xtag xtag) {
+    private OffenderEvent courtSentenceChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("COURT_SENTENCE-CHANGED")
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
@@ -302,7 +300,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent alertDeletedEventOf(Xtag xtag) {
+    private OffenderEvent alertDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ALERT-DELETED")
                 .offenderId(longOf(xtag.getContent().getP_offender_id()))
@@ -316,7 +314,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent personAddressUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent personAddressUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("PERSON_ADDRESS-UPDATED")
                 .addressId(longOf(xtag.getContent().getP_address_id()))
@@ -331,7 +329,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderAddressUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent offenderAddressUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_ADDRESS-UPDATED")
                 .addressId(longOf(xtag.getContent().getP_address_id()))
@@ -346,7 +344,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent addressUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent addressUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ADDRESS-UPDATED")
                 .addressId(longOf(xtag.getContent().getP_address_id()))
@@ -361,7 +359,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent personAddressDeletedEventOf(Xtag xtag) {
+    private OffenderEvent personAddressDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("PERSON_ADDRESS-DELETED")
                 .addressId(longOf(xtag.getContent().getP_address_id()))
@@ -376,7 +374,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderAddressDeletedEventOf(Xtag xtag) {
+    private OffenderEvent offenderAddressDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_ADDRESS-DELETED")
                 .addressId(longOf(xtag.getContent().getP_address_id()))
@@ -391,7 +389,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent addressDeletedEventOf(Xtag xtag) {
+    private OffenderEvent addressDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ADDRESS-DELETED")
                 .addressId(longOf(xtag.getContent().getP_address_id()))
@@ -406,7 +404,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent personAddressInserted(Xtag xtag) {
+    private OffenderEvent personAddressInserted(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("PERSON_ADDRESS-INSERTED")
                 .rootOffenderId(longOf(xtag.getContent().getP_root_offender_id()))
@@ -422,7 +420,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent hdcFineInserted(Xtag xtag) {
+    private OffenderEvent hdcFineInserted(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("HDC_FINE-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -432,7 +430,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent hdcConditionChanged(Xtag xtag) {
+    private OffenderEvent hdcConditionChanged(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("HDC_CONDITION-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -444,7 +442,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderEmploymentInsertedEventOf(Xtag xtag) {
+    private OffenderEvent offenderEmploymentInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_EMPLOYMENT-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -453,7 +451,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderEmploymentUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent offenderEmploymentUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_EMPLOYMENT-UPDATED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -462,7 +460,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderEmploymentDeletedEventOf(Xtag xtag) {
+    private OffenderEvent offenderEmploymentDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_EMPLOYMENT-DELETED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -471,7 +469,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent phoneInsertedEventOf(Xtag xtag) {
+    private OffenderEvent phoneInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("PHONE-INSERTED")
                 .ownerId(longOf(xtag.getContent().getP_owner_id()))
@@ -481,7 +479,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent phoneUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent phoneUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("PHONE-UPDATED")
                 .ownerId(longOf(xtag.getContent().getP_owner_id()))
@@ -491,7 +489,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent phoneDeletedEventOf(Xtag xtag) {
+    private OffenderEvent phoneDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("PHONE-DELETED")
                 .ownerId(longOf(xtag.getContent().getP_owner_id()))
@@ -501,7 +499,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent hearingResultChangedEventOf(Xtag xtag) {
+    private OffenderEvent hearingResultChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("HEARING_RESULT-CHANGED")
                 .oicHearingId(longOf(xtag.getContent().getP_oic_hearing_id()))
@@ -513,7 +511,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent hearingResultDeletedEventOf(Xtag xtag) {
+    private OffenderEvent hearingResultDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("HEARING_RESULT-DELETED")
                 .oicHearingId(longOf(xtag.getContent().getP_oic_hearing_id()))
@@ -528,7 +526,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent hearingDateChangedEventOf(Xtag xtag) {
+    private OffenderEvent hearingDateChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("HEARING_DATE-CHANGED")
                 .oicHearingId(longOf(xtag.getContent().getP_oic_hearing_id()))
@@ -537,7 +535,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent sentenceCaclulationDateChangedEventOf(Xtag xtag) {
+    private OffenderEvent sentenceCaclulationDateChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("SENTENCE_CALCULATION_DATES-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -547,7 +545,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderProfileUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent offenderProfileUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_PROFILE_DETAILS-UPDATED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -556,7 +554,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderProfileDetailInsertedEventOf(Xtag xtag) {
+    private OffenderEvent offenderProfileDetailInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_PROFILE_DETAILS-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -565,7 +563,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent alertInsertedEventOf(Xtag xtag) {
+    private OffenderEvent alertInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ALERT-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -576,7 +574,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent alertUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent alertUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ALERT-UPDATED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -588,7 +586,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent assessmentChangedEventOf(Xtag xtag) {
+    private OffenderEvent assessmentChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ASSESSMENT-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -598,7 +596,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent imprisonmentStatusChangedEventOf(Xtag xtag) {
+    private OffenderEvent imprisonmentStatusChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("IMPRISONMENT_STATUS-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -608,7 +606,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderIdentifierInsertedEventOf(Xtag xtag) {
+    private OffenderEvent offenderIdentifierInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_IDENTIFIER-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -620,7 +618,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderIdentifierDeletedEventOf(Xtag xtag) {
+    private OffenderEvent offenderIdentifierDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_IDENTIFIER-DELETED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -631,7 +629,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent educationLevelInsertedEventOf(Xtag xtag) {
+    private OffenderEvent educationLevelInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("EDUCATION_LEVEL-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -640,7 +638,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent educationLevelUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent educationLevelUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("EDUCATION_LEVEL-UPDATED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -649,7 +647,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent educationLevelDeletedEventOf(Xtag xtag) {
+    private OffenderEvent educationLevelDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("EDUCATION_LEVEL-DELETED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -658,7 +656,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent contactPersonInsertedEventOf(Xtag xtag) {
+    private OffenderEvent contactPersonInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("CONTACT_PERSON-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -668,7 +666,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent contactPersonUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent contactPersonUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("CONTACT_PERSON-UPDATED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -678,7 +676,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent contactPersonDeletedEventOf(Xtag xtag) {
+    private OffenderEvent contactPersonDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("CONTACT_PERSON-DELETED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -688,7 +686,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent offenderUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER-UPDATED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -698,7 +696,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderAliasChangedEventOf(Xtag xtag) {
+    private OffenderEvent offenderAliasChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_ALIAS-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -709,7 +707,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent addressUsageInsertedEventOf(Xtag xtag) {
+    private OffenderEvent addressUsageInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ADDRESS_USAGE-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -719,7 +717,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent addressUsageUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent addressUsageUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ADDRESS_USAGE-UPDATED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -729,7 +727,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent addressUsageDeletedEventOf(Xtag xtag) {
+    private OffenderEvent addressUsageDeletedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("ADDRESS_USAGE-DELETED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -739,7 +737,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderDetailsChangedEventOf(Xtag xtag) {
+    private OffenderEvent offenderDetailsChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_DETAILS-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -750,7 +748,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderBookingInsertedEventOf(Xtag xtag) {
+    private OffenderEvent offenderBookingInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_BOOKING-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -761,7 +759,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderBookingChangedEventOf(Xtag xtag) {
+    private OffenderEvent offenderBookingChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_BOOKING-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -772,7 +770,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderBookingReassignedEventOf(Xtag xtag) {
+    private OffenderEvent offenderBookingReassignedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_BOOKING-REASSIGNED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -783,7 +781,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    public OffenderEvent externalMovementRecordEventOf(Xtag xtag) {
+    public OffenderEvent externalMovementRecordEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType(externalMovementEventOf(xtag))
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -800,7 +798,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderMovementDischargeEventOf(Xtag xtag) {
+    private OffenderEvent offenderMovementDischargeEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_MOVEMENT-DISCHARGE")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -810,7 +808,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderMovementReceptionEventOf(Xtag xtag) {
+    private OffenderEvent offenderMovementReceptionEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_MOVEMENT-RECEPTION")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -820,7 +818,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent maternityStatusInsertedEventOf(Xtag xtag) {
+    private OffenderEvent maternityStatusInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("MATERNITY_STATUS-INSERTED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -829,7 +827,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent maternityStatusUpdatedEventOf(Xtag xtag) {
+    private OffenderEvent maternityStatusUpdatedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("MATERNITY_STATUS-UPDATED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -838,7 +836,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent riskScoreEventOf(Xtag xtag) {
+    private OffenderEvent riskScoreEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("RISK_SCORE-" + (xtag.getContent().getP_delete_flag().equals("Y") ? "CHANGED" : "DELETED"))
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -848,7 +846,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent offenderSanctionEventOf(Xtag xtag) {
+    private OffenderEvent offenderSanctionEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_SANCTION-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -858,7 +856,7 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent bookingNumberEventOf(Xtag xtag) {
+    private OffenderEvent bookingNumberEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("BOOKING_NUMBER-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
@@ -872,16 +870,16 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    public String caseNoteEventTypeOf(uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent event) {
+    public String caseNoteEventTypeOf(final uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent event) {
         if (event.getEventType().equalsIgnoreCase("CASE_NOTE")) {
-            final String eventData = event.getEventData1() +
+            final var eventData = event.getEventData1() +
                     Optional.ofNullable(event.getEventData2()).orElse("") +
                     Optional.ofNullable(event.getEventData3()).orElse("");
-            final Pattern typePattern = Pattern.compile("(?<=\\btype.{0,4}\\bcode.{0,4})(\\w+)");
-            final Matcher typeMatcher = typePattern.matcher(eventData);
+            final var typePattern = Pattern.compile("(?<=\\btype.{0,4}\\bcode.{0,4})(\\w+)");
+            final var typeMatcher = typePattern.matcher(eventData);
 
-            final Pattern subtypePattern = Pattern.compile("(?<=\\bsub_type.{0,4}\\bcode.{0,4})(\\w+)");
-            final Matcher subtypeMatcher = subtypePattern.matcher(eventData);
+            final var subtypePattern = Pattern.compile("(?<=\\bsub_type.{0,4}\\bcode.{0,4})(\\w+)");
+            final var subtypeMatcher = subtypePattern.matcher(eventData);
 
             if (typeMatcher.find() && subtypeMatcher.find()) {
                 return String.format("%s-%s", typeMatcher.group(), subtypeMatcher.group());
@@ -891,38 +889,38 @@ public class OffenderEventsTransformer {
         return event.getEventType();
     }
 
-    private Long longOf(String num) {
+    private Long longOf(final String num) {
         return Optional.ofNullable(num).map(Long::valueOf).orElse(null);
     }
 
-    public static LocalDate localDateOf(String date) {
-        final String pattern = "[yyyy-MM-dd HH:mm:ss][dd-MMM-yyyy][dd-MMM-yy]";
+    public static LocalDate localDateOf(final String date) {
+        final var pattern = "[yyyy-MM-dd HH:mm:ss][dd-MMM-yyyy][dd-MMM-yy]";
         try {
             return Optional.ofNullable(date)
                     .map(d -> LocalDate.parse(d, new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(pattern).toFormatter()))
                     .orElse(null);
-        } catch (DateTimeParseException dtpe) {
+        } catch (final DateTimeParseException dtpe) {
             log.error("Unable to parse {} into a LocalDate using pattern {}", date, pattern);
         }
         return null;
     }
 
-    public static LocalDateTime localDateTimeOf(String date) {
-        final String pattern = "yyyy-MM-dd HH:mm:ss";
+    public static LocalDateTime localDateTimeOf(final String date) {
+        final var pattern = "yyyy-MM-dd HH:mm:ss";
         try {
             return Optional.ofNullable(date)
                     .map(d -> LocalDateTime.parse(d, DateTimeFormatter.ofPattern(pattern)))
                     .orElse(null);
-        } catch (DateTimeParseException dtpe) {
+        } catch (final DateTimeParseException dtpe) {
             log.error("Unable to parse {} into a LocalDateTime using pattern {}", date, pattern);
         }
         return null;
     }
 
-    public static LocalDateTime localDateTimeOf(String date, String time) {
+    public static LocalDateTime localDateTimeOf(final String date, final String time) {
 
-        var maybeLocalDate = Optional.ofNullable(localDateOf(date));
-        var maybeLocalTime = Optional.ofNullable((localDateTimeOf(time)));
+        final var maybeLocalDate = Optional.ofNullable(localDateOf(date));
+        final var maybeLocalTime = Optional.ofNullable((localDateTimeOf(time)));
 
         return maybeLocalDate
                 .map(ld -> maybeLocalTime.map(lt -> lt.toLocalTime().atDate(ld)).orElse(ld.atStartOfDay()))

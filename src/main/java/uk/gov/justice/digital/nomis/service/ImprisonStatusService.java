@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.OffenderImprisonmentStatus;
-import uk.gov.justice.digital.nomis.jpa.entity.Offender;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderImprisonStatus;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderImprisonStatusesRepository;
@@ -20,7 +19,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,7 +38,7 @@ public class ImprisonStatusService {
     private final TypesTransformer typesTransformer;
 
     @Autowired
-    public ImprisonStatusService(ImprisonStatusTransformer imprisonStatusTransformer, OffenderImprisonStatusesRepository offenderImprisonStatusesRepository, OffenderRepository offenderRepository, TypesTransformer typesTransformer) {
+    public ImprisonStatusService(final ImprisonStatusTransformer imprisonStatusTransformer, final OffenderImprisonStatusesRepository offenderImprisonStatusesRepository, final OffenderRepository offenderRepository, final TypesTransformer typesTransformer) {
         this.imprisonStatusTransformer = imprisonStatusTransformer;
         this.offenderImprisonStatusesRepository = offenderImprisonStatusesRepository;
         this.offenderRepository = offenderRepository;
@@ -49,10 +47,10 @@ public class ImprisonStatusService {
 
 
     @Transactional
-    public Page<OffenderImprisonmentStatus> getOffenderImprisonStatuses(Pageable pageable) {
-        Page<uk.gov.justice.digital.nomis.jpa.entity.OffenderImprisonStatus> rawImprisonStatusesPage = offenderImprisonStatusesRepository.findAll(pageable);
+    public Page<OffenderImprisonmentStatus> getOffenderImprisonStatuses(final Pageable pageable) {
+        final var rawImprisonStatusesPage = offenderImprisonStatusesRepository.findAll(pageable);
 
-        List<OffenderImprisonmentStatus> offenderImprisonmentStatuses = rawImprisonStatusesPage.getContent()
+        final var offenderImprisonmentStatuses = rawImprisonStatusesPage.getContent()
                 .stream()
                 .sorted(BY_EFFECTIVE_STATUS)
                 .map(imprisonStatusTransformer::offenderImprisonStatusOf)
@@ -62,9 +60,9 @@ public class ImprisonStatusService {
     }
 
     @Transactional
-    public Optional<List<OffenderImprisonmentStatus>> offenderImprisonStatusForOffenderId(Long offenderId) {
+    public Optional<List<OffenderImprisonmentStatus>> offenderImprisonStatusForOffenderId(final Long offenderId) {
 
-        Optional<Stream<OffenderImprisonStatus>> maybeImprisonStatuses = offenderRepository.findById(offenderId)
+        final var maybeImprisonStatuses = offenderRepository.findById(offenderId)
                 .map(offender -> offender.getOffenderBookings()
                         .stream()
                         .map(OffenderBooking::getOffenderImprisonStatuses)
@@ -76,8 +74,8 @@ public class ImprisonStatusService {
                 .collect(Collectors.toList()));
     }
 
-    public Optional<List<OffenderImprisonmentStatus>> offenderImprisonStatusForOffenderIdAndBookingId(Long offenderId, Long bookingId) {
-        Optional<Offender> maybeOffender = offenderRepository.findById(offenderId);
+    public Optional<List<OffenderImprisonmentStatus>> offenderImprisonStatusForOffenderIdAndBookingId(final Long offenderId, final Long bookingId) {
+        final var maybeOffender = offenderRepository.findById(offenderId);
 
         return maybeOffender.flatMap(
                 offender -> offender.getOffenderBookings()

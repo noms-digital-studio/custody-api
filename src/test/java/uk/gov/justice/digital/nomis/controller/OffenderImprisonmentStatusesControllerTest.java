@@ -56,7 +56,7 @@ public class OffenderImprisonmentStatusesControllerTest {
 
     @Test
     public void canGetOffenderImprisonmentStatuses() {
-        HealthProblem[] healthProblems = given()
+        final var healthProblems = given()
                 .when()
                 .auth().oauth2(validOauthToken)
                 .get("/offenders/offenderId/-1001/imprisonmentStatuses")
