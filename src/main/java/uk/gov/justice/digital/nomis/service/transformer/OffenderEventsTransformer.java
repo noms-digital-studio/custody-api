@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -217,6 +218,12 @@ public class OffenderEventsTransformer {
                                     !Strings.isNullOrEmpty(xtag.getContent().getP_alert_date()) ?
                                             alertUpdatedEventOf(xtag) :
                                             alertInsertedEventOf(xtag);
+                case "OFF_ALERT_INSERT":
+                    return alertInsertedEventOf(xtag);
+                case "OFF_ALERT_UPDATE":
+                    return alertUpdatedEventOf(xtag);
+                case "OFF_ALERT_DELETE":
+                    return alertDeletedEventOf(xtag);
                 case "OFF_IMP_STAT_OASYS":
                     return imprisonmentStatusChangedEventOf(xtag);
                 case "OFF_PROF_DETAIL_INS":
@@ -306,7 +313,7 @@ public class OffenderEventsTransformer {
                 .eventType("ALERT-DELETED")
                 .offenderId(longOf(xtag.getContent().getP_offender_id()))
                 .rootOffenderId(longOf(xtag.getContent().getP_root_offender_id()))
-                .alertDateTime(localDateTimeOf(xtag.getContent().getP_old_alert_date(), xtag.getContent().getP_old_alert_time()))
+                .alertDateTime(localDateTimeOf(xtag.getContent().getP_alert_date(), xtag.getContent().getP_alert_time()))
                 .alertType(xtag.getContent().getP_alert_type())
                 .alertCode(xtag.getContent().getP_alert_code())
                 .expiryDateTime(localDateTimeOf(xtag.getContent().getP_expiry_date(), xtag.getContent().getP_expiry_time()))
@@ -571,6 +578,9 @@ public class OffenderEventsTransformer {
                 .rootOffenderId(longOf(xtag.getContent().getP_root_offender_id()))
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
                 .alertSeq(longOf(xtag.getContent().getP_alert_seq()))
+                .alertDateTime(localDateTimeOf(xtag.getContent().getP_alert_date(), xtag.getContent().getP_alert_time())) //** missing from xtag
+                .alertType(xtag.getContent().getP_alert_type())
+                .alertCode(xtag.getContent().getP_alert_code())
                 .nomisEventType(xtag.getEventType())
                 .build();
     }
@@ -583,6 +593,8 @@ public class OffenderEventsTransformer {
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
                 .alertSeq(longOf(xtag.getContent().getP_alert_seq()))
                 .alertDateTime(localDateTimeOf(xtag.getContent().getP_old_alert_date(), xtag.getContent().getP_old_alert_time()))
+                .alertType(xtag.getContent().getP_alert_type())
+                .alertCode(xtag.getContent().getP_alert_code())
                 .nomisEventType(xtag.getEventType())
                 .build();
     }
@@ -904,7 +916,7 @@ public class OffenderEventsTransformer {
     }
 
     public static LocalDate localDateOf(final String date) {
-        final var pattern = "[yyyy-MM-dd HH:mm:ss][dd-MMM-yyyy][dd-MMM-yy]";
+        final var pattern = "[yyyy-MM-dd HH:mm:ss][yyyy-MM-dd][dd-MMM-yyyy][dd-MMM-yy]";
         try {
             return Optional.ofNullable(date)
                     .map(d -> LocalDate.parse(d, new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(pattern).toFormatter()))
@@ -915,14 +927,14 @@ public class OffenderEventsTransformer {
         return null;
     }
 
-    public static LocalDateTime localDateTimeOf(final String date) {
-        final var pattern = "yyyy-MM-dd HH:mm:ss";
+    public static LocalTime localTimeOf(final String dateTime) {
+        final var pattern = "[yyyy-MM-dd ]HH:mm:ss";
         try {
-            return Optional.ofNullable(date)
-                    .map(d -> LocalDateTime.parse(d, DateTimeFormatter.ofPattern(pattern)))
+            return Optional.ofNullable(dateTime)
+                    .map(d -> LocalTime.parse(d, DateTimeFormatter.ofPattern(pattern)))
                     .orElse(null);
         } catch (final DateTimeParseException dtpe) {
-            log.error("Unable to parse {} into a LocalDateTime using pattern {}", date, pattern);
+            log.error("Unable to parse {} into a LocalTime using pattern {}", dateTime, pattern);
         }
         return null;
     }
@@ -930,12 +942,10 @@ public class OffenderEventsTransformer {
     public static LocalDateTime localDateTimeOf(final String date, final String time) {
 
         final var maybeLocalDate = Optional.ofNullable(localDateOf(date));
-        final var maybeLocalTime = Optional.ofNullable((localDateTimeOf(time)));
+        final var maybeLocalTime = Optional.ofNullable((localTimeOf(time)));
 
         return maybeLocalDate
-                .map(ld -> maybeLocalTime.map(lt -> lt.toLocalTime().atDate(ld)).orElse(ld.atStartOfDay()))
+                .map(ld -> maybeLocalTime.map(lt -> lt.atDate(ld)).orElse(ld.atStartOfDay()))
                 .orElse(null);
     }
-
-
 }

@@ -11,6 +11,7 @@ import uk.gov.justice.digital.nomis.xtag.XtagContent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,12 +76,12 @@ public class OffenderEventsTransformerTest {
     }
 
     @Test
-    public void localDateTimeOfBehavesAppropriately() {
-        assertThat(OffenderEventsTransformer.localDateTimeOf("2019-02-14 10:11:12")).isEqualTo(LocalDateTime.of(2019, 2, 14, 10, 11, 12));
-        assertThat(OffenderEventsTransformer.localDateOf(null)).isNull();
-        assertThat(OffenderEventsTransformer.localDateOf("Some rubbish")).isNull();
+    public void localTimeOfBehavesAppropriately() {
+        assertThat(OffenderEventsTransformer.localTimeOf("2019-02-14 10:11:12")).isEqualTo(LocalTime.of(10, 11, 12));
+        assertThat(OffenderEventsTransformer.localTimeOf("09:10:11")).isEqualTo(LocalTime.of(9, 10, 11));
+        assertThat(OffenderEventsTransformer.localTimeOf(null)).isNull();
+        assertThat(OffenderEventsTransformer.localTimeOf("Some rubbish")).isNull();
     }
-
 
     @Test
     public void localDateTimeOfDateAndTimeBehavesAppropriately() {
@@ -102,7 +103,6 @@ public class OffenderEventsTransformerTest {
                         .p_to_agy_loc_id("SAUCE")
                         .build()
         ).build())).extracting("fromAgencyLocationId", "toAgencyLocationId").containsOnly("BARBECUE", "SAUCE");
-
     }
 
     @Test
@@ -146,12 +146,11 @@ public class OffenderEventsTransformerTest {
     }
 
     @Test
-    public void unkownEventTypesAreHandledAppropriately() {
+    public void unknownEventTypesAreHandledAppropriately() {
         final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
 
         assertThat(transformer.offenderEventOf((Xtag) null)).isNull();
         assertThat(transformer.offenderEventOf(Xtag.builder().build())).isNull();
         assertThat(transformer.offenderEventOf(Xtag.builder().eventType("meh").build())).isNotNull();
     }
-
 }
