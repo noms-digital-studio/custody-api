@@ -24,7 +24,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class OffenderEventsController {
 
     public static final String NOTES = "**from** and **to** query params are optional.\n" +
-            "An awful lot of events occur occur every day. To guard against unintentionally heavy queries, the following rules are applied:\n" +
+            "An awful lot of events occur every day. To guard against unintentionally heavy queries, the following rules are applied:\n" +
             "If **both** are absent, scope will be limited to 24 hours starting from midnight yesterday.\n" +
             "If **to** is present but **from** is absent, **from** will be defaulted to 24 hours before **to**.\n" +
             "If **from** is present but **to** is absent, **to** will be defaulted to 24 hours after **from**.";
