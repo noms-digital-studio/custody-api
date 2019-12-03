@@ -578,7 +578,7 @@ public class OffenderEventsTransformer {
                 .rootOffenderId(longOf(xtag.getContent().getP_root_offender_id()))
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
                 .alertSeq(longOf(xtag.getContent().getP_alert_seq()))
-                .alertDateTime(localDateTimeOf(xtag.getContent().getP_alert_date(), xtag.getContent().getP_alert_time())) //** missing from xtag
+                .alertDateTime(localDateTimeOf(xtag.getContent().getP_alert_date(), xtag.getContent().getP_alert_time()))
                 .alertType(xtag.getContent().getP_alert_type())
                 .alertCode(xtag.getContent().getP_alert_code())
                 .nomisEventType(xtag.getEventType())
