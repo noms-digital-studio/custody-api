@@ -34,6 +34,13 @@ import java.util.regex.Pattern;
 @Component
 public class OffenderEventsTransformer {
 
+    private static final Map<String, String> INCIDENT_TABLE_MAP = Map.of(
+            "incident_cases", "CASES",
+            "incident_case_parties", "PARTIES",
+            "incident_case_responses", "RESPONSES",
+            "incident_case_requirements", "REQUIREMENTS"
+    );
+
     private final TypesTransformer typesTransformer;
     private final ObjectMapper objectMapper;
 
@@ -224,6 +231,10 @@ public class OffenderEventsTransformer {
                     return alertUpdatedEventOf(xtag);
                 case "OFF_ALERT_DELETE":
                     return alertDeletedEventOf(xtag);
+                case "INCIDENT-INSERTED":
+                    return incidentInsertedEventOf(xtag);
+                case "INCIDENT-UPDATED":
+                    return incidentUpdatedEventOf(xtag);
                 case "OFF_IMP_STAT_OASYS":
                     return imprisonmentStatusChangedEventOf(xtag);
                 case "OFF_PROF_DETAIL_INS":
@@ -619,6 +630,29 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
+    private OffenderEvent incidentInsertedEventOf(final Xtag xtag) {
+        return OffenderEvent.builder()
+                .eventType("INCIDENT-INSERTED")
+                .eventDatetime(xtag.getNomisTimestamp())
+                .incidentCaseId(longOf(xtag.getContent().getP_incident_case_id()))
+                .nomisEventType(xtag.getEventType())
+                .build();
+    }
+
+    private OffenderEvent incidentUpdatedEventOf(final Xtag xtag) {
+        return OffenderEvent.builder()
+                .eventType("INCIDENT-" + (xtag.getContent().getP_delete_flag().equals("N") ? "CHANGED-" : "DELETED-")
+                        + INCIDENT_TABLE_MAP.get(xtag.getContent().getP_table_name()))
+                .eventDatetime(xtag.getNomisTimestamp())
+                .incidentCaseId(longOf(xtag.getContent().getP_incident_case_id()))
+                .incidentPartySeq(longOf(xtag.getContent().getP_party_seq()))
+                .incidentRequirementSeq(longOf(xtag.getContent().getP_requirement_seq()))
+                .incidentQuestionSeq(longOf(xtag.getContent().getP_question_seq()))
+                .incidentResponseSeq(longOf(xtag.getContent().getP_response_seq()))
+                .nomisEventType(xtag.getEventType())
+                .build();
+    }
+
     private OffenderEvent offenderIdentifierInsertedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_IDENTIFIER-INSERTED")
@@ -851,7 +885,7 @@ public class OffenderEventsTransformer {
 
     private OffenderEvent riskScoreEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
-                .eventType("RISK_SCORE-" + (xtag.getContent().getP_delete_flag().equals("Y") ? "CHANGED" : "DELETED"))
+                .eventType("RISK_SCORE-" + (xtag.getContent().getP_delete_flag().equals("N") ? "CHANGED" : "DELETED"))
                 .eventDatetime(xtag.getNomisTimestamp())
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
                 .riskPredictorId(longOf(xtag.getContent().getP_offender_risk_predictor_id()))

@@ -82,6 +82,13 @@ public class XtagContent {
     private String p_movement_date;
     private String p_movement_time;
 
+    private String p_incident_case_id;
+    private String p_party_seq;
+    private String p_requirement_seq;
+    private String p_question_seq;
+    private String p_response_seq;
+    private String p_table_name;
+
     private String p_alert_type;
     private String p_movement_type;
     private String p_identifier_type;

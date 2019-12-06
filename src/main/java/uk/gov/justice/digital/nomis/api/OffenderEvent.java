@@ -63,12 +63,17 @@ public class OffenderEvent {
     private String conditionCode;
     private Long offenderSentenceConditionId;
 
-
     private LocalDate addressEndDate;
     private String primaryAddressFlag;
     private String mailAddressFlag;
-
     private String addressUsage;
+
+    // incident event data
+    private Long incidentCaseId;
+    private Long incidentPartySeq;
+    private Long incidentRequirementSeq;
+    private Long incidentQuestionSeq;
+    private Long incidentResponseSeq;
 
     // external movement event data
     private LocalDateTime movementDateTime;
