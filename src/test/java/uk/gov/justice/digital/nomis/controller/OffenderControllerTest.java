@@ -1,11 +1,9 @@
 package uk.gov.justice.digital.nomis.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
-import net.minidev.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.justice.digital.nomis.api.Offender;
@@ -25,6 +24,7 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("dev")
+@DirtiesContext
 public class OffenderControllerTest {
 
     @LocalServerPort
@@ -43,17 +43,6 @@ public class OffenderControllerTest {
         RestAssured.config = RestAssuredConfig.config().objectMapperConfig(new ObjectMapperConfig().jackson2ObjectMapperFactory(
                 (aClass, s) -> objectMapper
         ));
-    }
-
-    @Test
-    public void canGetAllOffenders() {
-        given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .get("/offenders")
-                .then()
-                .statusCode(200)
-                .body("page.totalElements", greaterThan(0));
     }
 
     @Test
@@ -100,21 +89,6 @@ public class OffenderControllerTest {
     }
 
     @Test
-    public void canGetOffenderByNomsId() {
-        final var offender = given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .get("/offenders/nomsId/A1234AA")
-                .then()
-                .statusCode(200)
-                .extract()
-                .body()
-                .as(Offender.class);
-
-        assertThat(offender).extracting("offenderId").containsOnly(-1001L);
-    }
-
-    @Test
     public void getOffenderByNomsIdReturns404WhenOffenderNotFound() {
         given()
                 .when()
@@ -150,9 +124,10 @@ public class OffenderControllerTest {
                 .get("/offenders/prison/MDI")
                 .then()
                 .statusCode(200)
-                .body("page.totalElements", greaterThan(0))
-                .body("_embedded.offenders[0].surname", equalTo("TRESCOTHICK"))
-                .body("_embedded.offenders.activeBooking.activeFlag", not(contains(is(false))));
+                .body("totalElements", greaterThan(0))
+                .body("content[0].surname", equalTo("TRESCOTHICK"))
+                .body("content.activeBooking.activeFlag", not(contains(is(false))));
+
     }
 
     @Test
@@ -164,56 +139,4 @@ public class OffenderControllerTest {
                 .then()
                 .statusCode(404);
     }
-
-    @Test
-    public void embeddedHateoasLinksWorkForOffenders() {
-        final var response = given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .queryParam("page", 1)
-                .queryParam("size", 1)
-                .get("/offenders")
-                .then()
-                .statusCode(200)
-                .extract().asString();
-
-        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
-
-        hrefs.forEach(href -> given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .log()
-                .all()
-                .get(href.toString())
-                .then()
-                .statusCode(200));
-
-    }
-
-    @Test
-    public void embeddedHateoasLinksWorkForOffenderActiveBookings() {
-        final var response = given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .queryParam("page", 1)
-                .queryParam("size", 1)
-                .get("/offenders/prison/MDI")
-                .then()
-                .statusCode(200)
-                .extract().asString();
-
-        final JSONArray hrefs = JsonPath.parse(response).read("_links.*.href");
-
-        hrefs.forEach(href -> given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .log()
-                .all()
-                .get(href.toString())
-                .then()
-                .statusCode(200));
-
-    }
-
-
 }

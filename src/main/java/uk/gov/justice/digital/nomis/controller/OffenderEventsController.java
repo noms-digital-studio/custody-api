@@ -23,11 +23,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Api(description = "Offender case record events", tags = "Offender Events")
 public class OffenderEventsController {
 
-    public static final String NOTES = "**from** and **to** query params are optional.\n" +
-            "An awful lot of events occur every day. To guard against unintentionally heavy queries, the following rules are applied:\n" +
-            "If **both** are absent, scope will be limited to 24 hours starting from midnight yesterday.\n" +
-            "If **to** is present but **from** is absent, **from** will be defaulted to 24 hours before **to**.\n" +
-            "If **from** is present but **to** is absent, **to** will be defaulted to 24 hours after **from**.";
+   ;
 
     private final OffenderEventsService offenderEventsService;
 
@@ -49,35 +45,16 @@ public class OffenderEventsController {
             @ApiImplicitParam(name = "sortBy", dataType = "string", paramType = "query", value = "Sort order")
 
     })
-    @ApiOperation(value = "Get events", notes = NOTES)
+    @ApiOperation(value = "Get events", notes = "**from** and **to** query params are optional.\n" +
+            "An awful lot of events occur every day. To guard against unintentionally heavy queries, the following rules are applied:\n" +
+            "If **both** are absent, scope will be limited to 24 hours starting from midnight yesterday.\n" +
+            "If **to** is present but **from** is absent, **from** will be defaulted to 24 hours before **to**.\n" +
+            "If **from** is present but **to** is absent, **to** will be defaulted to 24 hours after **from**.")
     public ResponseEntity<List<OffenderEvent>> getEvents(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("to") Optional<LocalDateTime> maybeTo,
                                                          final @RequestParam("type") Optional<Set<String>> maybeTypeFilter,
                                                          final @RequestParam("sortBy") Optional<SortTypes> maybeSortBy) {
         return offenderEventsService.getEvents(maybeFrom, maybeTo, maybeTypeFilter, maybeSortBy)
-                .map(events -> new ResponseEntity<>(events, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(NOT_FOUND));
-    }
-
-    @RequestMapping(path = "/offenders/offenderId/{offenderId}/events", method = RequestMethod.GET)
-    @ResponseBody
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "from", dataType = "date", paramType = "query",
-                    value = "ISO 8601 Date Time without zone or offset (local date time), eg 2017-07-24T09:18:15"),
-            @ApiImplicitParam(name = "to", dataType = "date", paramType = "query",
-                    value = "ISO 8601 Date Time without zone or offset (local date time), eg 2017-07-24T09:18:15"),
-            @ApiImplicitParam(name = "type", dataType = "string", paramType = "query", allowMultiple = true,
-                    value = "Comma separated list of event types to filter inclusively:\n" +
-                            "BALANCE_UPDATE\nALERT-DELETED\nOFFENDER_ADDRESS-UPDATED\nOFFENDER_ADDRESS-DELETED\nPHONE-INSERTED\nPHONE-UPDATED\nPHONE-DELETED\nALERT-INSERTED\nALERT-UPDATED\nOFFENDER-UPDATED\nOFFENDER_DETAILS-CHANGED\nOFFENDER_BOOKING-INSERTED\nOFFENDER_BOOKING-CHANGED\nOFFENDER_BOOKING-REASSIGNED\nBOOKING_NUMBER-CHANGED"),
-            @ApiImplicitParam(name = "sortBy", dataType = "string", paramType = "query", value = "Sort order")
-    })
-    @ApiOperation(value = "Get events by offender id", notes = NOTES)
-    public ResponseEntity<List<OffenderEvent>> getEventsByOffenderId(@PathVariable("offenderId") final Long offenderId,
-                                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("from") Optional<LocalDateTime> maybeFrom,
-                                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final @RequestParam("to") Optional<LocalDateTime> maybeTo,
-                                                                     final @RequestParam("type") Optional<Set<String>> maybeTypeFilter,
-                                                                     final @RequestParam("sortBy") Optional<SortTypes> maybeSortBy) {
-        return offenderEventsService.getEventsForOffenderId(offenderId, maybeFrom, maybeTo, maybeTypeFilter, maybeSortBy)
                 .map(events -> new ResponseEntity<>(events, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(NOT_FOUND));
     }

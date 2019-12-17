@@ -5,6 +5,9 @@ defaults: &defaults
 
 version: 2.1
 
+orbs:
+  owasp: entur/owasp@0.0.6
+
 executors:
   builder:
     <<: *defaults
@@ -104,3 +107,14 @@ workflows:
           filters:
             branches:
               only: master
+  scheduled:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 1-5"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - owasp/gradle_owasp_dependency_check:
+          executor: builder

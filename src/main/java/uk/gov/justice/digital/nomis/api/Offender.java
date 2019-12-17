@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.core.Relation;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @Builder
-@Relation(collectionRelation = "offenders")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Offender {

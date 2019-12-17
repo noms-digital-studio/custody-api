@@ -34,17 +34,6 @@ public class ImagesController {
         this.imagesService = imagesService;
     }
 
-    @RequestMapping(path = "/offenders/offenderId/{offenderId}/images", method = RequestMethod.GET)
-    @ApiResponses({
-        @ApiResponse(code = 404, message = "Offender not found"),
-        @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<OffenderImage>> getImageMetaDataByOffenderId(@PathVariable("offenderId") final Long offenderId) {
-
-        return offenderService.getOffenderByOffenderId(offenderId).
-            map(offender -> new ResponseEntity<>(imagesForOffender(offender), HttpStatus.OK))
-            .orElse(new ResponseEntity<>(NOT_FOUND));
-    }
-
     @RequestMapping(path = "/offenders/nomsId/{nomsId}/images", method = RequestMethod.GET)
     @ApiResponses({
         @ApiResponse(code = 404, message = "Offender not found"),
@@ -53,18 +42,6 @@ public class ImagesController {
 
         return offenderService.getOffenderByNomsId(nomsId).
             map(offender -> new ResponseEntity<>(imagesForOffender(offender), HttpStatus.OK))
-            .orElse(new ResponseEntity<>(NOT_FOUND));
-    }
-
-    @RequestMapping(path = "/offenders/offenderId/{offenderId}/images/{imageId}/thumbnail", method = RequestMethod.GET, produces = "image/jpeg")
-    @ApiResponses({
-        @ApiResponse(code = 404, message = "Offender or image not found"),
-        @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<byte[]> getImageData(@PathVariable("offenderId") final Long offenderId, @PathVariable("imageId") final Long imageId) {
-
-         return offenderService.getOffenderByOffenderId(offenderId)
-            .flatMap(ignored -> imagesService.getImageForImageId(imageId))
-            .map(bytes -> new ResponseEntity<>(bytes, HttpStatus.OK))
             .orElse(new ResponseEntity<>(NOT_FOUND));
     }
 

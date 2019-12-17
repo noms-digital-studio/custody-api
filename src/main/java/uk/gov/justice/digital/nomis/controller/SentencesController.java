@@ -1,15 +1,12 @@
 package uk.gov.justice.digital.nomis.controller;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 import uk.gov.justice.digital.nomis.api.Sentence;
 import uk.gov.justice.digital.nomis.service.SentencesService;
 
@@ -17,6 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+//import org.springframework.hateoas.PagedResources;
+//import org.springframework.hateoas.Resource;
 
 @RestController
 @Api(description = "Sentence resources", tags = "Offender Sentences")
@@ -27,19 +27,6 @@ public class SentencesController {
     @Autowired
     public SentencesController(final SentencesService sentencesService) {
         this.sentencesService = sentencesService;
-    }
-
-    @RequestMapping(path = "/sentences", method = RequestMethod.GET)
-    @ResponseBody
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)", example = "0", defaultValue = "0"),
-            @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
-                    value = "Number of records per page.", example = "20", defaultValue = "20")})
-    public PagedResources<Resource<Sentence>> getSentences(final @ApiIgnore Pageable pageable) {
-
-        final var sentences = sentencesService.getSentences(pageable);
-        return new PagedResourcesAssembler<Sentence>(null, null).toResource(sentences);
     }
 
     @RequestMapping(path = "/offenders/offenderId/{offenderId}/sentences", method = RequestMethod.GET)

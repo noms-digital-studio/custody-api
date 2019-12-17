@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.justice.digital.nomis.api.OffenderImage;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("dev")
+@DirtiesContext
 public class ImagesControllerTest {
 
     @LocalServerPort
@@ -40,21 +42,6 @@ public class ImagesControllerTest {
         RestAssured.config = RestAssuredConfig.config().objectMapperConfig(new ObjectMapperConfig().jackson2ObjectMapperFactory(
                 (aClass, s) -> objectMapper
         ));
-    }
-
-    @Test
-    public void canGetImagesByOffenderId() {
-        final var offenderImages = given()
-            .when()
-            .auth().oauth2(validOauthToken)
-            .get("/offenders/offenderId/-1001/images")
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(OffenderImage[].class);
-
-        assertThat(offenderImages.length).isGreaterThan(0);
     }
 
     @Test
@@ -108,16 +95,6 @@ public class ImagesControllerTest {
             .get("/offenders/nomsId/A66666ZZ/images")
             .then()
             .statusCode(401);
-    }
-
-    @Test
-    public void canGetThumbnailByOffenderIdAndImageId() {
-        given()
-            .when()
-            .auth().oauth2(validOauthToken)
-            .get("/offenders/offenderId/-1001/images/-1/thumbnail")
-            .then()
-            .statusCode(200);
     }
 
     @Test

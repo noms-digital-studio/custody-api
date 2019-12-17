@@ -2,12 +2,10 @@ package uk.gov.justice.digital.nomis.controller;
 
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,19 +26,6 @@ public class OffenderController {
         this.offenderService = offenderService;
     }
 
-    @RequestMapping(path = "/offenders", method = RequestMethod.GET)
-    @ResponseBody
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", dataType = "int", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)", example = "0", defaultValue = "0"),
-            @ApiImplicitParam(name = "size", dataType = "int", paramType = "query",
-                    value = "Number of records per page.", example = "20", defaultValue = "20")})
-    public PagedResources<Resource<Offender>> getOffenders(final Pageable pageable) {
-        final var offenders = offenderService.getOffenders(pageable);
-
-        return new PagedResourcesAssembler<Offender>(null, null).toResource(offenders);
-    }
-
     @RequestMapping(path = "/offenders/offenderId/{offenderId}", method = RequestMethod.GET)
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offender or booking not found"),
@@ -48,17 +33,6 @@ public class OffenderController {
     public ResponseEntity<Offender> getOffender(@PathVariable("offenderId") final Long offenderId) {
 
         return offenderService.getOffenderByOffenderId(offenderId)
-                .map(offender -> new ResponseEntity<>(offender, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(NOT_FOUND));
-    }
-
-    @RequestMapping(path = "/offenders/nomsId/{nomsId}", method = RequestMethod.GET)
-    @ApiResponses({
-            @ApiResponse(code = 404, message = "Offender or booking not found"),
-            @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<Offender> getOffender(@PathVariable("nomsId") final String nomsId) {
-
-        return offenderService.getOffenderByNomsId(nomsId)
                 .map(offender -> new ResponseEntity<>(offender, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(NOT_FOUND));
     }
@@ -77,11 +51,10 @@ public class OffenderController {
                     value = "Number of records per page.", example = "20", defaultValue = "20"),
             @ApiImplicitParam(name = "sort", dataType = "string", paramType = "query",
                     value = "Sort column and direction, eg sort=offender.lastName,asc. Multiple sort params allowed.")})
-    public PagedResources<Resource<OffenderActiveBooking>> getOffendersByPrison(@PathVariable("agencyLocationId") final String agencyLocationId,
-                                                                                @PageableDefault(page = 0, size = 10, sort = {"offender.lastName", "offender.firstName"}, direction = Sort.Direction.ASC) final Pageable pageable) {
+    public Page<OffenderActiveBooking> getOffendersByPrison(@PathVariable("agencyLocationId") final String agencyLocationId,
+                                                            @PageableDefault(page = 0, size = 10, sort = {"offender.lastName", "offender.firstName"}, direction = Sort.Direction.ASC) final Pageable pageable) {
 
-        final var offenders = offenderService.getOffendersByPrison(agencyLocationId, pageable);
-        return new PagedResourcesAssembler<OffenderActiveBooking>(null, null).toResource(offenders);
+        return offenderService.getOffendersByPrison(agencyLocationId, pageable);
     }
 
 }
