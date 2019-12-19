@@ -1,0 +1,17 @@
+[
+  {
+    "offenderId": -1001,
+    "bookingId": -1,
+    "sentenceSequenceNumber": 1,
+    "isActive": true,
+    "sentenceCategory": "LICENCE",
+    "fineAmount": 120,
+    "sentenceLevel": "IND",
+    "startDate": "2017-07-05",
+    "endDate": "2017-11-04",
+    "ardCalculatedDate": "2017-09-04",
+    "sedCalculatedDate": "2017-11-04",
+    "dischargeDate": "2017-11-04",
+    "hdcExclusion": false
+  }
+]

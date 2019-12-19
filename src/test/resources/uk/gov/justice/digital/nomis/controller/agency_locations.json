@@ -1,0 +1,133 @@
+{
+  "content": [
+    {
+      "agencyLocationId": "BXI",
+      "description": "BRIXTON",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "BMI",
+      "description": "BIRMINGHAM",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "LEI",
+      "description": "LEEDS",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "WAI",
+      "description": "THE WEARE",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "OUT",
+      "description": "OUTSIDE",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "TRN",
+      "description": "TRANSFER",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "MUL",
+      "description": "MUL",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "ZZGHI",
+      "description": "GHOST",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": false
+    },
+    {
+      "agencyLocationId": "COURT1",
+      "description": "Court 1",
+      "agencyLocationType": "CRT",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "ABDRCT",
+      "description": "Court 2",
+      "agencyLocationType": "CRT",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "TRO",
+      "description": "TROOM",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "MDI",
+      "description": "MOORLAND",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "SYI",
+      "description": "SHREWSBURY",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": false,
+      "unsorted": true,
+      "empty": true
+    },
+    "pageSize": 20,
+    "pageNumber": 0,
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalPages": 1,
+  "totalElements": 13,
+  "last": true,
+  "number": 0,
+  "size": 20,
+  "numberOfElements": 13,
+  "sort": {
+    "sorted": false,
+    "unsorted": true,
+    "empty": true
+  },
+  "first": true,
+  "empty": false
+}

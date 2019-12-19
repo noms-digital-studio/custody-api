@@ -1,0 +1,45 @@
+{
+  "nomsId": "A1234AA",
+  "offenderId": -1001,
+  "firstName": "ARTHUR",
+  "middleNames": "BORIS",
+  "surname": "ANDERSON",
+  "dateOfBirth": "1969-12-30",
+  "gender": {
+    "code": "M",
+    "description": "Male"
+  },
+  "ethnicity": {
+    "code": "W1",
+    "description": "White: British"
+  },
+  "bookings": [
+    {
+      "bookingId": -1,
+      "bookingNo": "A00111",
+      "offenderId": -1001,
+      "rootOffenderId": -1001,
+      "agencyLocation": {
+        "agencyLocationId": "LEI",
+        "description": "LEEDS",
+        "agencyLocationType": "INST",
+        "bailOffice": false,
+        "serviceRequired": false,
+        "active": true
+      },
+      "livingUnit": {
+        "internalLocationId": -3,
+        "internalLocationCode": "1",
+        "agencyLocationId": "LEI",
+        "internalLocationType": "CELL",
+        "description": "LEI-A-1-1",
+        "parentInternalLocationId": -2,
+        "active": false,
+        "certified": false
+      },
+      "activeFlag": true,
+      "inOutStatus": "IN",
+      "startDate": "2019-12-01"
+    }
+  ]
+}

@@ -11,14 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.gov.justice.digital.nomis.api.Sentence;
+
+import java.util.Objects;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.core.ResolvableType.forType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -54,9 +57,9 @@ public class SentencesControllerTest {
                 .statusCode(200)
                 .extract()
                 .body()
-                .as(Sentence[].class);
+                .asString();
 
-        assertThat(sentences.length).isGreaterThan(0);
+        assertThatJsonFile(sentences, "sentences.json");
     }
 
     @Test
@@ -66,5 +69,15 @@ public class SentencesControllerTest {
                 .get("/offenders/offenderId/-1001/sentences")
                 .then()
                 .statusCode(401);
+    }
+
+
+    <T> void assertThatJsonFile(final String response, final String jsonFile) {
+        final var responseAsJson = getBodyAsJsonContent(response);
+        assertThat(responseAsJson).isEqualToJson(jsonFile);
+    }
+
+    private <T> JsonContent<T> getBodyAsJsonContent(final String response) {
+        return new JsonContent<T>(getClass(), forType(String.class), Objects.requireNonNull(response));
     }
 }

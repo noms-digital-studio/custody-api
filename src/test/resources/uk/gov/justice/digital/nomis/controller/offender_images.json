@@ -1,0 +1,67 @@
+[
+  {
+    "offenderImageId": -5,
+    "bookingId": -1,
+    "captureDateTime": "2017-05-05T00:00:00",
+    "orientationType": "FRONT",
+    "imageObjectType": "BOOKING",
+    "imageViewType": "FACE",
+    "imageObjectId": -5,
+    "imageObjectSeq": 1,
+    "activeFlag": true,
+    "createDatetime": "2006-12-10T13:11:29.380262",
+    "modifyDatetime": "2006-12-10T13:11:29.380262"
+  },
+  {
+    "offenderImageId": -4,
+    "bookingId": -1,
+    "captureDateTime": "2017-05-04T00:00:00",
+    "orientationType": "FRONT",
+    "imageObjectType": "BOOKING",
+    "imageViewType": "FACE",
+    "imageObjectId": -4,
+    "imageObjectSeq": 1,
+    "activeFlag": false,
+    "createDatetime": "2006-12-10T13:11:29.380262",
+    "modifyDatetime": "2006-12-10T13:11:29.380262"
+  },
+  {
+    "offenderImageId": -3,
+    "bookingId": -1,
+    "captureDateTime": "2017-05-03T00:00:00",
+    "orientationType": "FRONT",
+    "imageObjectType": "BOOKING",
+    "imageViewType": "FACE",
+    "imageObjectId": -3,
+    "imageObjectSeq": 1,
+    "activeFlag": false,
+    "createDatetime": "2006-12-10T13:11:29.380262",
+    "modifyDatetime": "2006-12-10T13:11:29.380262"
+  },
+  {
+    "offenderImageId": -2,
+    "bookingId": -1,
+    "captureDateTime": "2017-05-02T00:00:00",
+    "orientationType": "FRONT",
+    "imageObjectType": "INCIDENT",
+    "imageViewType": "SCAR",
+    "imageObjectId": -2,
+    "imageObjectSeq": 1,
+    "activeFlag": false,
+    "createDatetime": "2006-12-10T13:11:29.380262",
+    "modifyDatetime": "2006-12-10T13:11:29.380262"
+  },
+  {
+    "offenderImageId": -1,
+    "bookingId": -1,
+    "captureDateTime": "2017-05-01T00:00:00",
+    "orientationType": "FRONT",
+    "imageObjectType": "IDENTIFYING_MARK",
+    "imageViewType": "TATTOO",
+    "imageObjectId": -1,
+    "imageObjectSeq": 1,
+    "activeFlag": false,
+    "createDatetime": "2006-12-10T13:11:29.380262",
+    "modifyDatetime": "2006-12-10T13:11:29.380262"
+  }
+]

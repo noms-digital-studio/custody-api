@@ -3,14 +3,7 @@ package uk.gov.justice.digital.nomis.jpa.entity;
 import lombok.Data;
 import org.hibernate.annotations.BatchSize;
 
-import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -135,11 +128,6 @@ public class Offender {
     public List<Offender> getOffenderAliases() {
         return offenderAliases.stream().filter(alias -> !alias.getOffenderId().equals(this.offenderId)).collect(Collectors.toList());
     }
-
-    @OneToMany
-    @BatchSize(size = 1000)
-    @JoinColumn(name = "OWNER_ID", insertable = false, updatable = false, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private List<OffenderAddress> offenderAddresses;
 
     @OneToMany
     @BatchSize(size = 1000)

@@ -1,0 +1,77 @@
+{
+  "content": [
+    {
+      "nomsId": "A1182BS",
+      "offenderId": -1038,
+      "firstName": "BEN",
+      "surname": "STOKES",
+      "dateOfBirth": "1991-06-04",
+      "activeBooking": {
+        "bookingId": -38,
+        "bookingNo": "Z00038",
+        "offenderId": -1038,
+        "rootOffenderId": -1038,
+        "agencyLocation": {
+          "agencyLocationId": "SYI",
+          "description": "SHREWSBURY",
+          "agencyLocationType": "INST",
+          "bailOffice": false,
+          "serviceRequired": false,
+          "active": true
+        },
+        "activeFlag": true,
+        "inOutStatus": "IN",
+        "startDate": "2019-12-19"
+      }
+    },
+    {
+      "nomsId": "A1183CW",
+      "offenderId": -1039,
+      "firstName": "CHRIS",
+      "surname": "WOAKES",
+      "dateOfBirth": "1989-03-02",
+      "activeBooking": {
+        "bookingId": -39,
+        "bookingNo": "Z00039",
+        "offenderId": -1039,
+        "rootOffenderId": -1039,
+        "agencyLocation": {
+          "agencyLocationId": "SYI",
+          "description": "SHREWSBURY",
+          "agencyLocationType": "INST",
+          "bailOffice": false,
+          "serviceRequired": false,
+          "active": true
+        },
+        "activeFlag": true,
+        "inOutStatus": "IN",
+        "startDate": "2019-12-19"
+      }
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "pageSize": 2,
+    "pageNumber": 1,
+    "offset": 2,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalPages": 2,
+  "totalElements": 4,
+  "last": true,
+  "number": 1,
+  "size": 2,
+  "numberOfElements": 2,
+  "sort": {
+    "sorted": true,
+    "unsorted": false,
+    "empty": false
+  },
+  "first": false,
+  "empty": false
+}

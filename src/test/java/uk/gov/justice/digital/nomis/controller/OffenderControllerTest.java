@@ -11,15 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.gov.justice.digital.nomis.api.Offender;
+
+import java.util.Objects;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.core.ResolvableType.forType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -55,9 +58,9 @@ public class OffenderControllerTest {
                 .statusCode(200)
                 .extract()
                 .body()
-                .as(Offender.class);
+                .asString();
 
-        assertThat(offender).isNotNull();
+        assertThatJsonFile(offender, "offender.json");
     }
 
     @Test
@@ -89,25 +92,6 @@ public class OffenderControllerTest {
     }
 
     @Test
-    public void getOffenderByNomsIdReturns404WhenOffenderNotFound() {
-        given()
-                .when()
-                .auth().oauth2(validOauthToken)
-                .get("/offenders/nomsId/Z666666ZZ")
-                .then()
-                .statusCode(404);
-    }
-
-    @Test
-    public void offenderByNomsIdIsAuthorized() {
-        given()
-                .when()
-                .get("/offenders/nomsId/A1234AA")
-                .then()
-                .statusCode(401);
-    }
-
-    @Test
     public void activeOffendersByPrisonIsAuthorized() {
         given()
                 .when()
@@ -131,6 +115,36 @@ public class OffenderControllerTest {
     }
 
     @Test
+    public void getActiveOffendersByPrisonFirstPage() {
+        final var offenders = given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .get("/offenders/prison/SYI?page=0&size=2")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        assertThatJsonFile(offenders, "offenders_page0.json");
+    }
+
+    @Test
+    public void getActiveOffendersByPrisonSecondPage() {
+        final var offenders = given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .get("/offenders/prison/SYI?page=1&size=2")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        assertThatJsonFile(offenders, "offenders_page1.json");
+    }
+
+    @Test
     public void getActiveOffendersByPrisonReturns404WhenPrisonNotFound() {
         given()
                 .when()
@@ -138,5 +152,14 @@ public class OffenderControllerTest {
                 .get("/offenders/prison/ZZZZZZZ")
                 .then()
                 .statusCode(404);
+    }
+
+    <T> void assertThatJsonFile(final String response, final String jsonFile) {
+        final var responseAsJson = getBodyAsJsonContent(response);
+        assertThat(responseAsJson).isEqualToJson(jsonFile);
+    }
+
+    private <T> JsonContent<T> getBodyAsJsonContent(final String response) {
+        return new JsonContent<T>(getClass(), forType(String.class), Objects.requireNonNull(response));
     }
 }

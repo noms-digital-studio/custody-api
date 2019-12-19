@@ -1,18 +1,12 @@
 package uk.gov.justice.digital.nomis.jpa.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.sql.Timestamp;
-import java.util.List;
 
 @Data
 @Entity
@@ -105,10 +99,5 @@ public class Person {
     private String auditAdditionalInfo;
     @Column(name = "KEEP_BIOMETRICS")
     private String keepBiometrics;
-
-    @OneToMany
-    @BatchSize(size = 1000)
-    @JoinColumn(name = "OWNER_ID", referencedColumnName = "PERSON_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private List<PersonAddress> addresses;
 
 }

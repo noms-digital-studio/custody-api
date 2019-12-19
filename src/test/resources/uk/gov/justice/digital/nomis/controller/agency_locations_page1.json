@@ -1,0 +1,53 @@
+{
+  "content": [
+    {
+      "agencyLocationId": "TRO",
+      "description": "TROOM",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "MDI",
+      "description": "MOORLAND",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    },
+    {
+      "agencyLocationId": "SYI",
+      "description": "SHREWSBURY",
+      "agencyLocationType": "INST",
+      "bailOffice": false,
+      "serviceRequired": false,
+      "active": true
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": false,
+      "unsorted": true,
+      "empty": true
+    },
+    "pageSize": 10,
+    "pageNumber": 1,
+    "offset": 10,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalPages": 2,
+  "totalElements": 13,
+  "last": true,
+  "number": 1,
+  "size": 10,
+  "numberOfElements": 3,
+  "sort": {
+    "sorted": false,
+    "unsorted": true,
+    "empty": true
+  },
+  "first": false,
+  "empty": false
+}

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
@@ -26,9 +27,11 @@ import uk.gov.justice.digital.nomis.service.XtagEventsService;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.core.ResolvableType.forType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -72,15 +75,9 @@ public class OffenderEventsControllerTest {
                 .statusCode(200)
                 .extract()
                 .body()
-                .as(OffenderEvent[].class);
+                .asString();
 
-        final var events = ImmutableList.<OffenderEvent>builder().add(offenderEvents).build();
-
-
-        assertThat(events).extracting("nomisEventType").contains("BOOK_UPD_OASYS");
-        assertThat(events).extracting("eventType").contains("KA-KS");
-        assertThat(events).extracting("offenderId").contains(-1001L, -1002L);
-
+        assertThatJsonFile(offenderEvents, "events.json");
     }
 
     @Test
@@ -237,5 +234,14 @@ public class OffenderEventsControllerTest {
                         .offenderId(-1002L)
                         .rootOffenderId(-1002L)
                         .build());
+    }
+
+    <T> void assertThatJsonFile(final String response, final String jsonFile) {
+        final var responseAsJson = getBodyAsJsonContent(response);
+        assertThat(responseAsJson).isEqualToJson(jsonFile);
+    }
+
+    private <T> JsonContent<T> getBodyAsJsonContent(final String response) {
+        return new JsonContent<T>(getClass(), forType(String.class), Objects.requireNonNull(response));
     }
 }
