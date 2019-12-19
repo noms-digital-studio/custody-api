@@ -15,9 +15,6 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-//import org.springframework.hateoas.PagedResources;
-//import org.springframework.hateoas.Resource;
-
 @RestController
 @Api(description = "Sentence resources", tags = "Offender Sentences")
 public class SentencesController {

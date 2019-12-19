@@ -23,7 +23,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Api(description = "Offender case record events", tags = "Offender Events")
 public class OffenderEventsController {
 
-   ;
+    ;
 
     private final OffenderEventsService offenderEventsService;
 
@@ -60,7 +60,7 @@ public class OffenderEventsController {
     }
 
     public enum SortTypes {
-        TIMESTAMP_ASC ("TIMESTAMP_ASC"),
+        TIMESTAMP_ASC("TIMESTAMP_ASC"),
         TIMESTAMP_DESC("TIMESTAMP_DESC");
 
         private final String sortType;
