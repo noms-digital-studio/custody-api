@@ -137,18 +137,8 @@ public class OffenderBooking {
 
     @OneToMany
     @BatchSize(size = 1000)
-    @JoinColumn(name = "OFFENDER_BOOK_ID")
-    private List<OffenderCharge> offenderCharges;
-
-    @OneToMany
-    @BatchSize(size = 1000)
     @JoinColumn(name = "OFFENDER_BOOK_ID", referencedColumnName = "OFFENDER_BOOK_ID")
     private List<OffenderSentence> offenderSentences;
-
-    @OneToMany
-    @BatchSize(size = 1000)
-    @JoinColumn(name = "OFFENDER_BOOK_ID", referencedColumnName = "OFFENDER_BOOK_ID")
-    private List<OffenderHealthProblem> offenderHealthProblems;
 
     @OneToMany
     @BatchSize(size = 1000)
@@ -168,16 +158,6 @@ public class OffenderBooking {
     @BatchSize(size = 1000)
     @JoinColumn(name = "OFFENDER_BOOK_ID", referencedColumnName = "OFFENDER_BOOK_ID")
     private List<OffenderProfileDetails> offenderProfileDetails;
-
-    @OneToMany
-    @BatchSize(size = 1000)
-    @JoinColumn(name = "OFFENDER_BOOK_ID", referencedColumnName = "OFFENDER_BOOK_ID")
-    private List<OffenderEmployment> offenderEmployments;
-
-    @OneToMany
-    @BatchSize(size = 1000)
-    @JoinColumn(name = "OFFENDER_BOOK_ID", referencedColumnName = "OFFENDER_BOOK_ID")
-    private List<OffenderRehabDecision> offenderRehabDecisions;
 
     @OneToMany
     @BatchSize(size = 1000)
