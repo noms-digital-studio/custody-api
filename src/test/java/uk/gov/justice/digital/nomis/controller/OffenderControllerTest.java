@@ -92,6 +92,40 @@ public class OffenderControllerTest {
     }
 
     @Test
+    public void canGetOffenderByNomsId() {
+        final var offender = given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .get("/offenders/nomsId/A1234AA")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        assertThatJsonFile(offender, "offender.json");
+    }
+
+    @Test
+    public void getOffenderByNomsIdReturns404WhenOffenderNotFound() {
+        given()
+                .when()
+                .auth().oauth2(validOauthToken)
+                .get("/offenders/nomsId/Z666666ZZ")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void offenderByNomsIdIsAuthorized() {
+        given()
+                .when()
+                .get("/offenders/nomsId/A1234AA")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
     public void activeOffendersByPrisonIsAuthorized() {
         given()
                 .when()
