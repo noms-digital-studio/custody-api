@@ -1,0 +1,34 @@
+[
+  {
+    "bookingId": -1,
+    "profileDetails": [
+      {
+        "profileSeq": 1,
+        "profileType": "R_EYE_C",
+        "profileCode": "BLUE",
+        "listSeq": 1,
+        "caseloadType": "INST"
+      },
+      {
+        "profileSeq": 1,
+        "profileType": "FACE",
+        "profileCode": "OVAL",
+        "listSeq": 2,
+        "caseloadType": "INST"
+      },
+      {
+        "profileSeq": 1,
+        "profileType": "SMOKE",
+        "profileCode": "N",
+        "listSeq": 3,
+        "caseloadType": "INST"
+      },
+      {
+        "profileSeq": 1,
+        "profileType": "RELF",
+        "profileCode": "CHRCE",
+        "listSeq": 1
+      }
+    ]
+  }
+]

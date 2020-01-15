@@ -32,4 +32,6 @@ spring:
     console:
       enabled: true
 
-
+graceful:
+  shutdown:
+    enabled: false

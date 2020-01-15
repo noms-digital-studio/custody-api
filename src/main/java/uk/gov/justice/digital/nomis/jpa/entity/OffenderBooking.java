@@ -157,6 +157,16 @@ public class OffenderBooking {
     @OneToMany
     @BatchSize(size = 1000)
     @JoinColumn(name = "OFFENDER_BOOK_ID", referencedColumnName = "OFFENDER_BOOK_ID")
+    private List<OffenderIdentifyingMarks> offenderIdentifyingMarks;
+
+    @OneToMany
+    @BatchSize(size = 1000)
+    @JoinColumn(name = "OFFENDER_BOOK_ID", referencedColumnName = "OFFENDER_BOOK_ID")
+    private List<OffenderPhysicalAttributes> offenderPhysicalAttributes;
+
+    @OneToMany
+    @BatchSize(size = 1000)
+    @JoinColumn(name = "OFFENDER_BOOK_ID", referencedColumnName = "OFFENDER_BOOK_ID")
     private List<OffenderProfileDetails> offenderProfileDetails;
 
     @OneToMany

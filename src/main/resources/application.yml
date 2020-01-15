@@ -42,3 +42,8 @@ azure:
   application-insights:
     web:
       enable-W3C: true
+
+
+graceful:
+  shutdown:
+    enabled: true
