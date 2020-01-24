@@ -6,10 +6,9 @@ import java.time.LocalDate
 plugins {
     id 'java'
     id 'groovy'
-    //  when upgrading spring boot to 2.2.3 remove pinned tomcat version below (ext['tomcat.version'] = '9.0.30')
-    id 'org.springframework.boot' version '2.2.2.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-    id 'org.owasp.dependencycheck' version '5.2.4'
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.owasp.dependencycheck' version '5.3.0'
     id 'com.github.ben-manes.versions' version '0.27.0'
 }
 
@@ -25,8 +24,6 @@ configurations {
 
 project.sourceCompatibility = 11
 project.targetCompatibility = 11
-
-ext['tomcat.version'] = '9.0.30'
 
 dependencyCheck {
     failBuildOnCVSS = 5
