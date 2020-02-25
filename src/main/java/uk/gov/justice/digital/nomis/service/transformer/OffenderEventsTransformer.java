@@ -289,6 +289,8 @@ public class OffenderEventsTransformer {
                     return courtSentenceChangedEventOf(xtag);
                 case "IEDT_OUT":
                     return offenderTransferOutOfLidsEventOf(xtag);
+                case "BAND_CATEGORY_CHANGE":
+                    return bandCategoryChangeEventOf(xtag);
                 default:
                     return OffenderEvent.builder()
                             .eventType(xtag.getEventType())
@@ -627,6 +629,18 @@ public class OffenderEventsTransformer {
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
                 .imprisonmentStatusSeq(longOf(xtag.getContent().getP_imprison_status_seq()))
                 .nomisEventType(xtag.getEventType())
+                .build();
+    }
+
+    private OffenderEvent bandCategoryChangeEventOf(Xtag xtag) {
+        return OffenderEvent.builder()
+                .eventType("BAND_CATEGORY_CHANGE")
+                .eventDatetime(xtag.getNomisTimestamp())
+                .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
+                .imprisonmentStatusSeq(longOf(xtag.getContent().getP_imprison_status_seq()))
+                .nomisEventType(xtag.getEventType())
+                .bandCategory(xtag.getContent().getP_band_category())
+                .previousBandCategory(xtag.getContent().getP_previous_band_category())
                 .build();
     }
 

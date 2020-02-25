@@ -153,4 +153,49 @@ public class OffenderEventsTransformerTest {
         assertThat(transformer.offenderEventOf(Xtag.builder().build())).isNull();
         assertThat(transformer.offenderEventOf(Xtag.builder().eventType("meh").build())).isNotNull();
     }
+
+    @Test
+    public void bandCategoryEventIsHandledWithPreviousBand() {
+        final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+
+        final var event = transformer.offenderEventOf(
+                Xtag
+                        .builder()
+                        .eventType("BAND_CATEGORY_CHANGE")
+                        .content(XtagContent
+                                .builder()
+                                .p_offender_book_id("12345")
+                                .p_band_category("CONVICTED")
+                                .p_previous_band_category("REMAND")
+                                .p_imprison_status_seq("4")
+                                .build())
+                        .build()
+        );
+        assertThat(event.getBookingId()).isEqualTo(12345L);
+        assertThat(event.getBandCategory()).isEqualTo("CONVICTED");
+        assertThat(event.getPreviousBandCategory()).isEqualTo("REMAND");
+        assertThat(event.getImprisonmentStatusSeq()).isEqualTo(4);
+
+    }
+    @Test
+    public void bandCategoryEventIsHandledWithoutPreviousBand() {
+        final var transformer = new OffenderEventsTransformer(mock(TypesTransformer.class), mock(ObjectMapper.class));
+
+        final var event = transformer.offenderEventOf(
+                Xtag
+                        .builder()
+                        .eventType("BAND_CATEGORY_CHANGE")
+                        .content(XtagContent
+                                .builder()
+                                .p_offender_book_id("12345")
+                                .p_band_category("CONVICTED")
+                                .p_imprison_status_seq("4")
+                                .build())
+                        .build()
+        );
+        assertThat(event.getBookingId()).isEqualTo(12345L);
+        assertThat(event.getBandCategory()).isEqualTo("CONVICTED");
+        assertThat(event.getPreviousBandCategory()).isNull();
+        assertThat(event.getImprisonmentStatusSeq()).isEqualTo(4);
+    }
 }
