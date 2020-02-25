@@ -3,6 +3,8 @@ package uk.gov.justice.digital.nomis.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.justice.digital.nomis.api.Offender;
+import uk.gov.justice.digital.nomis.api.OffenderEvent;
 import uk.gov.justice.digital.nomis.jpa.filters.OffenderEventsFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.XtagEventsRepository;
 import uk.gov.justice.digital.nomis.service.transformer.OffenderEventsTransformer;
@@ -19,16 +21,19 @@ public class XtagEventsService {
 
     private final XtagEventsRepository xtagEventsRepository;
     private final OffenderEventsTransformer offenderEventsTransformer;
+    private final OffenderService offenderService;
 
     @Autowired
-    public XtagEventsService(final XtagEventsRepository xtagEventsRepository, final OffenderEventsTransformer offenderEventsTransformer) {
+    public XtagEventsService(final XtagEventsRepository xtagEventsRepository, final OffenderEventsTransformer offenderEventsTransformer, OffenderService offenderService) {
         this.xtagEventsRepository = xtagEventsRepository;
         this.offenderEventsTransformer = offenderEventsTransformer;
+        this.offenderService = offenderService;
     }
 
     public List<uk.gov.justice.digital.nomis.api.OffenderEvent> findAll(final OffenderEventsFilter oeFilter) {
         return xtagEventsRepository.findAll(fudgedXtagFilterOf(oeFilter)).stream()
                 .map(offenderEventsTransformer::offenderEventOf)
+                .map(this::addAdditionalEventData)
                 .collect(Collectors.toList());
     }
 
@@ -47,5 +52,15 @@ public class XtagEventsService {
             return localDateTime;
         }
         return localDateTime.plusHours(1L);
+    }
+
+
+    private OffenderEvent addAdditionalEventData(final OffenderEvent oe) {
+        if ("OFFENDER_ALIAS-CHANGED".equals(oe.getEventType())){
+            final var nomsId = offenderService.getOffenderByOffenderId(oe.getOffenderId()).map(Offender::getNomsId)
+                    .orElse(null);
+            oe.setOffenderIdDisplay(nomsId);
+        }
+        return oe;
     }
 }
