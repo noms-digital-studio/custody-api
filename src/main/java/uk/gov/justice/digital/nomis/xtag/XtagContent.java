@@ -96,7 +96,4 @@ public class XtagContent {
     private String p_new_record;
     private String p_record_deleted;
     private String p_timestamp;
-
-    private String p_band_category;
-    private String p_previous_band_category;
 }
