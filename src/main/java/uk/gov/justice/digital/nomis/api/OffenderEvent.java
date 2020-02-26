@@ -85,7 +85,4 @@ public class OffenderEvent {
     private String toAgencyLocationId;
 
     private String nomisEventType;
-
-    private String bandCategory;
-    private String previousBandCategory;
 }
