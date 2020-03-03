@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.nomis.jpa.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -15,12 +18,18 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Data
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "OFFENDER_EXTERNAL_MOVEMENTS")
 public class OffenderExternalMovement {
 
     @Embeddable
     @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Pk implements Serializable {
         @ManyToOne
         @JoinColumn(name = "OFFENDER_BOOK_ID")
@@ -33,6 +42,10 @@ public class OffenderExternalMovement {
     @EmbeddedId
     private Pk id;
 
+    @Column(name = "MOVEMENT_SEQ", insertable = false, updatable = false)
+    private Long movementSeq;
+    @Column(name = "OFFENDER_BOOK_ID", insertable = false, updatable = false)
+    private Long offenderBookId;
     @Column(name = "MOVEMENT_DATE")
     private Timestamp movementDate;
     @Column(name = "MOVEMENT_TIME")

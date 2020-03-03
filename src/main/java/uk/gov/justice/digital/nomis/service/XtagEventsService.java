@@ -61,6 +61,17 @@ public class XtagEventsService {
                     .orElse(null);
             oe.setOffenderIdDisplay(nomsId);
         }
+        else if ("EXTERNAL_MOVEMENT_RECORD-INSERTED".equals(oe.getEventType())){
+            offenderService.getExternalMovement(oe.getBookingId(), oe.getMovementSeq()).ifPresent(em -> {
+                final var offenderBooking = em.getId().getOffenderBooking();
+                oe.setOffenderIdDisplay(offenderBooking.getOffender().getOffenderIdDisplay());
+                oe.setFromAgencyLocationId(em.getFromAgyLocId());
+                oe.setToAgencyLocationId(em.getToAgyLocId());
+                oe.setDirectionCode(em.getDirectionCode());
+                oe.setMovementDateTime(em.getMovementTime() != null ? em.getMovementTime().toLocalDateTime() : null);
+                oe.setMovementType(em.getMovementReason() != null ? em.getMovementReason().getMovementType() : null);
+            });
+        }
         return oe;
     }
 }

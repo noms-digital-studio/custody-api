@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.Offender;
 import uk.gov.justice.digital.nomis.api.OffenderActiveBooking;
+import uk.gov.justice.digital.nomis.jpa.entity.OffenderExternalMovement;
 import uk.gov.justice.digital.nomis.jpa.filters.OffenderBookingFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.AgencyLocationsRepository;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderBookingRepository;
+import uk.gov.justice.digital.nomis.jpa.repository.OffenderExternalMovementsRepository;
 import uk.gov.justice.digital.nomis.jpa.repository.OffenderRepository;
 import uk.gov.justice.digital.nomis.service.transformer.OffenderActiveBookingTransformer;
 import uk.gov.justice.digital.nomis.service.transformer.OffenderTransformer;
@@ -28,14 +30,16 @@ public class OffenderService {
     private final OffenderRepository offenderRepository;
     private final AgencyLocationsRepository agencyLocationRepository;
     private final OffenderBookingRepository offenderBookingRepository;
+    private final OffenderExternalMovementsRepository offenderExtMovementRepository;
     private final OffenderTransformer offenderTransformer;
     private final OffenderActiveBookingTransformer offenderActiveBookingTransformer;
 
     @Autowired
-    public OffenderService(final OffenderRepository offenderRepository, final AgencyLocationsRepository agencyLocationRepository, final OffenderBookingRepository offenderBookingRepository, final OffenderTransformer offenderTransformer, final OffenderActiveBookingTransformer offenderActiveBookingTransformer) {
+    public OffenderService(final OffenderRepository offenderRepository, final AgencyLocationsRepository agencyLocationRepository, final OffenderBookingRepository offenderBookingRepository, OffenderExternalMovementsRepository offenderExtMovementRepository, final OffenderTransformer offenderTransformer, final OffenderActiveBookingTransformer offenderActiveBookingTransformer) {
         this.offenderRepository = offenderRepository;
         this.agencyLocationRepository = agencyLocationRepository;
         this.offenderBookingRepository = offenderBookingRepository;
+        this.offenderExtMovementRepository = offenderExtMovementRepository;
         this.offenderTransformer = offenderTransformer;
         this.offenderActiveBookingTransformer = offenderActiveBookingTransformer;
     }
@@ -86,5 +90,9 @@ public class OffenderService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(offenderList, pageable, rootOffendersRawPage.getTotalElements());
+    }
+
+    public Optional<OffenderExternalMovement> getExternalMovement(final Long bookingId, final Long movementSeq) {
+        return offenderExtMovementRepository.findByOffenderBookIdAndMovementSeq(bookingId, movementSeq);
     }
 }
