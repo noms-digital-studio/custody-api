@@ -242,7 +242,7 @@ public class OffenderEventsTransformer {
                 case "OFF_PROF_DETAIL_UPD":
                     return offenderProfileUpdatedEventOf(xtag);
                 case "S2_RESULT":
-                    return sentenceCaclulationDateChangedEventOf(xtag);
+                    return sentenceDatesChangedEventOf(xtag);
                 case "A2_CALLBACK":
                     return hearingDateChangedEventOf(xtag);
                 case "A2_RESULT":
@@ -284,7 +284,7 @@ public class OffenderEventsTransformer {
                 case "S1_DEL_RESULT":
                     return alertDeletedEventOf(xtag);
                 case "OFF_SENT_OASYS":
-                    return sentenceCaclulationDateChangedEventOf(xtag);
+                    return sentenceCalculationDateChangedEventOf(xtag);
                 case "C_NOTIFICATION":
                     return courtSentenceChangedEventOf(xtag);
                 case "IEDT_OUT":
@@ -554,9 +554,18 @@ public class OffenderEventsTransformer {
                 .build();
     }
 
-    private OffenderEvent sentenceCaclulationDateChangedEventOf(final Xtag xtag) {
+    private OffenderEvent sentenceCalculationDateChangedEventOf(final Xtag xtag) {
         return OffenderEvent.builder()
                 .eventType("SENTENCE_CALCULATION_DATES-CHANGED")
+                .eventDatetime(xtag.getNomisTimestamp())
+                .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
+                .nomisEventType(xtag.getEventType())
+                .build();
+    }
+
+    private OffenderEvent sentenceDatesChangedEventOf(final Xtag xtag) {
+        return OffenderEvent.builder()
+                .eventType("SENTENCE_DATES-CHANGED")
                 .eventDatetime(xtag.getNomisTimestamp())
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
                 .sentenceCalculationId(longOf(xtag.getContent().getP_offender_sent_calculation_id()))

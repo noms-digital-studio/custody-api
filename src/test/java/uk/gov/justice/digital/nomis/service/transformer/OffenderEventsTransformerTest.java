@@ -3,6 +3,7 @@ package uk.gov.justice.digital.nomis.service.transformer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import org.junit.Before;
 import org.junit.Test;
 import uk.gov.justice.digital.nomis.CustodyApiApplication;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderEvent;
@@ -31,6 +32,13 @@ public class OffenderEventsTransformerTest {
             ",\"userid\":\"QWU90D\"\n" +
             "},\"text\":\"[redacted]stice.gov.uk \\n\\u260F 01811 8055 (Direct \\u2013 22222) \\u#### N/A [redacted]\"\n" +
             ",\"amended\":false}}";
+    private OffenderEventsTransformer offenderEventsTransformer;
+
+    @Before
+    public void setup() {
+        final var objectMapper = new CustodyApiApplication().objectMapper();
+        offenderEventsTransformer = new OffenderEventsTransformer(mock(TypesTransformer.class), objectMapper);
+    }
 
     @Test
     public void canDeserializeIntoXtagContent() {
@@ -152,5 +160,34 @@ public class OffenderEventsTransformerTest {
         assertThat(transformer.offenderEventOf((Xtag) null)).isNull();
         assertThat(transformer.offenderEventOf(Xtag.builder().build())).isNull();
         assertThat(transformer.offenderEventOf(Xtag.builder().eventType("meh").build())).isNotNull();
+    }
+
+
+    @Test
+    public void S2_RESULT_IsMappedTo_SENTENCE_DATES_CHANGED() {
+        final var event = offenderEventsTransformer.offenderEventOf(Xtag
+                .builder()
+                .eventType("S2_RESULT")
+                .content(XtagContent
+                        .builder()
+                        .p_offender_book_id("99")
+                        .p_offender_sent_calculation_id("88")
+                        .build())
+                .build());
+
+        assertThat(event.getEventType()).isEqualTo("SENTENCE_DATES-CHANGED");
+    }
+    @Test
+    public void OFF_SENT_OASYS_IsMappedTo_SENTENCE_CALCULATION_DATES_CHANGED() {
+        final var event = offenderEventsTransformer.offenderEventOf(Xtag
+                .builder()
+                .eventType("OFF_SENT_OASYS")
+                .content(XtagContent
+                        .builder()
+                        .p_offender_book_id("99")
+                        .build())
+                .build());
+
+        assertThat(event.getEventType()).isEqualTo("SENTENCE_CALCULATION_DATES-CHANGED");
     }
 }
