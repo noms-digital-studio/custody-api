@@ -93,6 +93,9 @@ public class XtagContent {
     private String p_movement_type;
     private String p_identifier_type;
 
+    private String p_bed_assign_seq;
+    private String p_living_unit_id;
+
     private String p_new_record;
     private String p_record_deleted;
     private String p_timestamp;

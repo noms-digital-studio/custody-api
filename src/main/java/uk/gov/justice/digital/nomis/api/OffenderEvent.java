@@ -75,6 +75,10 @@ public class OffenderEvent {
     private Long incidentQuestionSeq;
     private Long incidentResponseSeq;
 
+    // bed assignment data
+    private Integer bedAssignmentSeq;
+    private Long livingUnitId;
+
     // external movement event data
     private LocalDateTime movementDateTime;
     private String movementType;

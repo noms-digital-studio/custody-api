@@ -190,4 +190,29 @@ public class OffenderEventsTransformerTest {
 
         assertThat(event.getEventType()).isEqualTo("SENTENCE_CALCULATION_DATES-CHANGED");
     }
+
+    @Test
+    public void bedAssignmentCorrectlyMapped() {
+        final var now = LocalDateTime.now();
+
+        final var event = offenderEventsTransformer.offenderEventOf(Xtag
+                .builder()
+                .eventType("BED_ASSIGNMENT_HISTORY-INSERTED")
+                .nomisTimestamp(now)
+                .content(XtagContent
+                        .builder()
+                        .p_offender_book_id("99")
+                        .p_bed_assign_seq("1")
+                        .p_living_unit_id("34123412")
+                        .build())
+                .build());
+
+        assertThat(event.getEventType()).isEqualTo("BED_ASSIGNMENT_HISTORY-INSERTED");
+        assertThat(event.getBookingId()).isEqualTo(99L);
+        assertThat(event.getBedAssignmentSeq()).isEqualTo(1);
+        assertThat(event.getLivingUnitId()).isEqualTo(34123412L);
+        assertThat(event.getNomisEventType()).isEqualTo("BED_ASSIGNMENT_HISTORY-INSERTED");
+        assertThat(event.getEventDatetime()).isEqualTo(now);
+
+    }
 }

@@ -289,6 +289,8 @@ public class OffenderEventsTransformer {
                     return courtSentenceChangedEventOf(xtag);
                 case "IEDT_OUT":
                     return offenderTransferOutOfLidsEventOf(xtag);
+                case "BED_ASSIGNMENT_HISTORY-INSERTED":
+                    return offenderBedAssignmentEventOf(xtag);
                 default:
                     return OffenderEvent.builder()
                             .eventType(xtag.getEventType())
@@ -305,6 +307,17 @@ public class OffenderEventsTransformer {
         return OffenderEvent.builder()
                 .eventType("OFFENDER_TRANSFER-OUT_OF_LIDS")
                 .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
+                .eventDatetime(xtag.getNomisTimestamp())
+                .nomisEventType(xtag.getEventType())
+                .build();
+    }
+
+    private OffenderEvent offenderBedAssignmentEventOf(final Xtag xtag) {
+        return OffenderEvent.builder()
+                .eventType("BED_ASSIGNMENT_HISTORY-INSERTED")
+                .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
+                .bedAssignmentSeq(integerOf(xtag.getContent().getP_bed_assign_seq()))
+                .livingUnitId(longOf(xtag.getContent().getP_living_unit_id()))
                 .eventDatetime(xtag.getNomisTimestamp())
                 .nomisEventType(xtag.getEventType())
                 .build();
@@ -956,6 +969,10 @@ public class OffenderEventsTransformer {
 
     private Long longOf(final String num) {
         return Optional.ofNullable(num).map(Long::valueOf).orElse(null);
+    }
+
+    private Integer integerOf(final String num) {
+        return Optional.ofNullable(num).map(Integer::valueOf).orElse(null);
     }
 
     public static LocalDate localDateOf(final String date) {
