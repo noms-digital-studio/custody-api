@@ -60,8 +60,11 @@ public class XtagEventsService {
             final var nomsId = offenderService.getOffenderByOffenderId(oe.getOffenderId()).map(Offender::getNomsId)
                     .orElse(null);
             oe.setOffenderIdDisplay(nomsId);
-        }
-        else if ("EXTERNAL_MOVEMENT_RECORD-INSERTED".equals(oe.getEventType())){
+        } else if ("OFFENDER-UPDATED".equals(oe.getEventType())) {
+            final var nomsId = offenderService.getOffenderByOffenderId(oe.getOffenderId()).map(Offender::getNomsId)
+                    .orElse(null);
+            oe.setOffenderIdDisplay(nomsId);
+        } else if ("EXTERNAL_MOVEMENT_RECORD-INSERTED".equals(oe.getEventType())){
             offenderService.getExternalMovement(oe.getBookingId(), oe.getMovementSeq()).ifPresent(em -> {
                 final var offenderBooking = em.getId().getOffenderBooking();
                 oe.setOffenderIdDisplay(offenderBooking.getOffender().getOffenderIdDisplay());

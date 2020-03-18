@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class XtagEventsServiceTest {
@@ -132,6 +132,24 @@ public class XtagEventsServiceTest {
         assertThat(offenderEventList).extracting("toAgencyLocationId").containsNull();
         assertThat(offenderEventList).extracting("movementDateTime").containsNull();
         assertThat(offenderEventList).extracting("movementType").containsNull();
+    }
+
+    @Test
+    public void shouldDecorateOffenderUpdatedWithOffenderDisplayNo() {
+        final var filter = OffenderEventsFilter.builder().from(LocalDateTime.now()).to(LocalDateTime.now()).build();
+        final var offender = Offender.builder().nomsId("A2345GB").offenderId(1L).build();
+
+        final var xTagEvent = XtagEventNonJpa.builder().build();
+        when(repository.findAll(Mockito.any(OffenderEventsFilter.class))).thenReturn(List.of(xTagEvent));
+
+        when(offenderService.getOffenderByOffenderId(1L)).thenReturn(Optional.of(offender));
+        when(transformer.offenderEventOf(Mockito.any(XtagEventNonJpa.class))).thenReturn(
+                OffenderEvent.builder().eventType("OFFENDER-UPDATED").offenderId(1L).build());
+
+        final var offenderEventList = service.findAll(filter);
+
+        assertThat(offenderEventList).extracting("offenderIdDisplay").containsExactly("A2345GB");
+        assertThat(offenderEventList).extracting("offenderId").containsExactly(1L);
     }
 
     @Test
