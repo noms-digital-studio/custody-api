@@ -56,24 +56,26 @@ public class XtagEventsService {
 
 
     private OffenderEvent addAdditionalEventData(final OffenderEvent oe) {
-        if ("OFFENDER_ALIAS-CHANGED".equals(oe.getEventType())){
-            final var nomsId = offenderService.getOffenderByOffenderId(oe.getOffenderId()).map(Offender::getNomsId)
-                    .orElse(null);
-            oe.setOffenderIdDisplay(nomsId);
-        } else if ("OFFENDER-UPDATED".equals(oe.getEventType())) {
-            final var nomsId = offenderService.getOffenderByOffenderId(oe.getOffenderId()).map(Offender::getNomsId)
-                    .orElse(null);
-            oe.setOffenderIdDisplay(nomsId);
-        } else if ("EXTERNAL_MOVEMENT_RECORD-INSERTED".equals(oe.getEventType())){
-            offenderService.getExternalMovement(oe.getBookingId(), oe.getMovementSeq()).ifPresent(em -> {
-                final var offenderBooking = em.getId().getOffenderBooking();
-                oe.setOffenderIdDisplay(offenderBooking.getOffender().getOffenderIdDisplay());
-                oe.setFromAgencyLocationId(em.getFromAgyLocId());
-                oe.setToAgencyLocationId(em.getToAgyLocId());
-                oe.setDirectionCode(em.getDirectionCode());
-                oe.setMovementDateTime(em.getMovementTime() != null ? em.getMovementTime().toLocalDateTime() : null);
-                oe.setMovementType(em.getMovementReason() != null ? em.getMovementReason().getMovementType() : null);
-            });
+        switch (oe.getEventType()) {
+            case "OFFENDER_ALIAS-CHANGED":
+            case "SENTENCE_DATES-CHANGED":
+            case "OFFENDER-UPDATED": {
+                final var nomsId = offenderService.getOffenderByOffenderId(oe.getOffenderId()).map(Offender::getNomsId)
+                        .orElse(null);
+                oe.setOffenderIdDisplay(nomsId);
+                break;
+            }
+            case "EXTERNAL_MOVEMENT_RECORD-INSERTED":
+                offenderService.getExternalMovement(oe.getBookingId(), oe.getMovementSeq()).ifPresent(em -> {
+                    final var offenderBooking = em.getId().getOffenderBooking();
+                    oe.setOffenderIdDisplay(offenderBooking.getOffender().getOffenderIdDisplay());
+                    oe.setFromAgencyLocationId(em.getFromAgyLocId());
+                    oe.setToAgencyLocationId(em.getToAgyLocId());
+                    oe.setDirectionCode(em.getDirectionCode());
+                    oe.setMovementDateTime(em.getMovementTime() != null ? em.getMovementTime().toLocalDateTime() : null);
+                    oe.setMovementType(em.getMovementReason() != null ? em.getMovementReason().getMovementType() : null);
+                });
+                break;
         }
         return oe;
     }

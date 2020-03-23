@@ -48,17 +48,7 @@ public class XtagEventsServiceTest {
 
     @Test
     public void shouldAddNomsIdToOffenderAliasEvent() {
-        final var filter = OffenderEventsFilter.builder().from(LocalDateTime.now()).to(LocalDateTime.now()).build();
-
-        final var xTagEvent = XtagEventNonJpa.builder().build();
-        when(repository.findAll(Mockito.any(OffenderEventsFilter.class))).thenReturn(List.of(xTagEvent));
-        when(offenderService.getOffenderByOffenderId(1L)).thenReturn(Optional.of(Offender.builder().nomsId("A2345GB").build()));
-        when(transformer.offenderEventOf(Mockito.any(XtagEventNonJpa.class))).thenReturn(
-                OffenderEvent.builder().eventType("OFFENDER_ALIAS-CHANGED").offenderId(1L).build());
-
-        final var offenderEventList = service.findAll(filter);
-
-        assertThat(offenderEventList).extracting("offenderIdDisplay").containsExactly("A2345GB");
+        assertEventIsDecoratedWithOffenderDisplayNo("OFFENDER_ALIAS-CHANGED");
     }
 
     @Test
@@ -136,20 +126,12 @@ public class XtagEventsServiceTest {
 
     @Test
     public void shouldDecorateOffenderUpdatedWithOffenderDisplayNo() {
-        final var filter = OffenderEventsFilter.builder().from(LocalDateTime.now()).to(LocalDateTime.now()).build();
-        final var offender = Offender.builder().nomsId("A2345GB").offenderId(1L).build();
+        assertEventIsDecoratedWithOffenderDisplayNo("OFFENDER-UPDATED");
+    }
 
-        final var xTagEvent = XtagEventNonJpa.builder().build();
-        when(repository.findAll(Mockito.any(OffenderEventsFilter.class))).thenReturn(List.of(xTagEvent));
-
-        when(offenderService.getOffenderByOffenderId(1L)).thenReturn(Optional.of(offender));
-        when(transformer.offenderEventOf(Mockito.any(XtagEventNonJpa.class))).thenReturn(
-                OffenderEvent.builder().eventType("OFFENDER-UPDATED").offenderId(1L).build());
-
-        final var offenderEventList = service.findAll(filter);
-
-        assertThat(offenderEventList).extracting("offenderIdDisplay").containsExactly("A2345GB");
-        assertThat(offenderEventList).extracting("offenderId").containsExactly(1L);
+    @Test
+    public void shouldDecorateSentenceDateChangedWithOffenderDisplayNo() {
+        assertEventIsDecoratedWithOffenderDisplayNo("SENTENCE_DATES-CHANGED");
     }
 
     @Test
@@ -170,6 +152,23 @@ public class XtagEventsServiceTest {
         final var actual = XtagEventsService.asUtcPlusOne(aSummerDate);
 
         assertThat(actual).isEqualTo(aSummerDate);
+    }
+
+    private void assertEventIsDecoratedWithOffenderDisplayNo(String eventName) {
+        final var filter = OffenderEventsFilter.builder().from(LocalDateTime.now()).to(LocalDateTime.now()).build();
+        final var offender = Offender.builder().nomsId("A2345GB").offenderId(1L).build();
+
+        final var xTagEvent = XtagEventNonJpa.builder().build();
+        when(repository.findAll(Mockito.any(OffenderEventsFilter.class))).thenReturn(List.of(xTagEvent));
+
+        when(offenderService.getOffenderByOffenderId(1L)).thenReturn(Optional.of(offender));
+        when(transformer.offenderEventOf(Mockito.any(XtagEventNonJpa.class))).thenReturn(
+                OffenderEvent.builder().eventType(eventName).offenderId(1L).build());
+
+        final var offenderEventList = service.findAll(filter);
+
+        assertThat(offenderEventList).extracting("offenderIdDisplay").containsExactly("A2345GB");
+        assertThat(offenderEventList).extracting("offenderId").containsExactly(1L);
     }
 
 }
