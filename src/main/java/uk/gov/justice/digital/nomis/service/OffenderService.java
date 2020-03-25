@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.justice.digital.nomis.api.Offender;
 import uk.gov.justice.digital.nomis.api.OffenderActiveBooking;
+import uk.gov.justice.digital.nomis.jpa.entity.OffenderBooking;
 import uk.gov.justice.digital.nomis.jpa.entity.OffenderExternalMovement;
 import uk.gov.justice.digital.nomis.jpa.filters.OffenderBookingFilter;
 import uk.gov.justice.digital.nomis.jpa.repository.AgencyLocationsRepository;
@@ -70,6 +71,12 @@ public class OffenderService {
         final var maybeOffender = offenderRepository.findByNomsId(nomsId);
 
         return maybeOffender.map(offenderTransformer::offenderOf);
+    }
+
+    @Transactional
+    public Optional<Offender> getOffenderByBookingId(final Long bookingId) {
+        final var maybeOffenderBooking = offenderBookingRepository.findById(bookingId);
+        return maybeOffenderBooking.map(OffenderBooking::getOffender).map(offenderTransformer::offenderOf);
     }
 
     public Page<OffenderActiveBooking> getOffendersByPrison(final String agencyLocationId, final Pageable pageable) {
