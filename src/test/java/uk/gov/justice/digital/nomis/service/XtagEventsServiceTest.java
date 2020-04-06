@@ -52,6 +52,11 @@ public class XtagEventsServiceTest {
     }
 
     @Test
+    public void shouldAddNomsIdToOffenderDetailsChangedEvent() {
+        assertEventIsDecoratedWithOffenderDisplayNoUsingOffenderId("OFFENDER_DETAILS-CHANGED");
+    }
+
+    @Test
     public void shouldDecorateWithExternalMovementData() {
         final var filter = OffenderEventsFilter.builder().from(LocalDateTime.now()).to(LocalDateTime.now()).build();
         final var offender = uk.gov.justice.digital.nomis.jpa.entity.Offender.builder().offenderIdDisplay("A2345GB").build();

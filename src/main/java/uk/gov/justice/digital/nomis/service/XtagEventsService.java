@@ -57,6 +57,7 @@ public class XtagEventsService {
 
     private OffenderEvent addAdditionalEventData(final OffenderEvent oe) {
         switch (oe.getEventType()) {
+            case "OFFENDER_DETAILS-CHANGED":
             case "OFFENDER_ALIAS-CHANGED":
             case "OFFENDER-UPDATED": {
                 final var nomsId = offenderService.getOffenderByOffenderId(oe.getOffenderId()).map(Offender::getNomsId)
