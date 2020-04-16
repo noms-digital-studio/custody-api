@@ -59,13 +59,13 @@ public class XtagEventsService {
         switch (oe.getEventType()) {
             case "OFFENDER_DETAILS-CHANGED":
             case "OFFENDER_ALIAS-CHANGED":
-            case "BED_ASSIGNMENT_HISTORY-INSERTED":
             case "OFFENDER-UPDATED": {
                 final var nomsId = offenderService.getOffenderByOffenderId(oe.getOffenderId()).map(Offender::getNomsId)
                         .orElse(null);
                 oe.setOffenderIdDisplay(nomsId);
                 break;
             }
+            case "BED_ASSIGNMENT_HISTORY-INSERTED":
             case "SENTENCE_DATES-CHANGED": {
                 final var nomsId = offenderService.getOffenderByBookingId(oe.getBookingId()).map(Offender::getNomsId)
                         .orElse(null);
