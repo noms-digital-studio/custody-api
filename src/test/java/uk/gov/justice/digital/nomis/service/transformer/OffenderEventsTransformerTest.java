@@ -215,4 +215,22 @@ public class OffenderEventsTransformerTest {
         assertThat(event.getEventDatetime()).isEqualTo(now);
 
     }
+    @Test
+    public void confirmedReleaseDateChangeMappedCorrectly() {
+        final var now = LocalDateTime.now();
+
+        final var event = offenderEventsTransformer.offenderEventOf(Xtag
+                .builder()
+                .eventType("CONFIRMED_RELEASE_DATE-CHANGED")
+                .nomisTimestamp(now)
+                .content(XtagContent
+                        .builder()
+                        .p_offender_book_id("99")
+                        .build())
+                .build());
+
+        assertThat(event.getEventType()).isEqualTo("CONFIRMED_RELEASE_DATE-CHANGED");
+        assertThat(event.getBookingId()).isEqualTo(99L);
+        assertThat(event.getEventDatetime()).isEqualTo(now);
+    }
 }

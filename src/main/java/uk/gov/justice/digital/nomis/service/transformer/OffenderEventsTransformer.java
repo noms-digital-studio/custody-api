@@ -291,6 +291,8 @@ public class OffenderEventsTransformer {
                     return offenderTransferOutOfLidsEventOf(xtag);
                 case "BED_ASSIGNMENT_HISTORY-INSERTED":
                     return offenderBedAssignmentEventOf(xtag);
+                case "CONFIRMED_RELEASE_DATE-CHANGED":
+                    return confirmedReleaseDateOf(xtag);
                 default:
                     return OffenderEvent.builder()
                             .eventType(xtag.getEventType())
@@ -936,6 +938,14 @@ public class OffenderEventsTransformer {
                         .orElse(Optional.ofNullable(xtag.getContent().getP_old_prision_num())
                                 .orElse(xtag.getContent().getP_old_prison_number())))
                 .nomisEventType(xtag.getEventType())
+                .build();
+    }
+
+    private OffenderEvent confirmedReleaseDateOf(final Xtag xtag) {
+        return OffenderEvent.builder()
+                .eventType(xtag.getEventType())
+                .eventDatetime(xtag.getNomisTimestamp())
+                .bookingId(longOf(xtag.getContent().getP_offender_book_id()))
                 .build();
     }
 
