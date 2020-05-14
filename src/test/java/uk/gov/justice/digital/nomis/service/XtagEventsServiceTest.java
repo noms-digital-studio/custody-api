@@ -162,6 +162,28 @@ public class XtagEventsServiceTest {
     }
 
     @Test
+    public void shouldDecorateConfirmedReleaseDateChangedWithOffenderDisplayNo() {
+        assertEventIsDecoratedWithOffenderDisplayNoUsingBookingId("CONFIRMED_RELEASE_DATE-CHANGED");
+    }
+
+    @Test
+    public void confirmedReleaseDateChangedDecorationFailureShouldNotPreventEventBeingRaised() {
+        final var filter = OffenderEventsFilter.builder().from(LocalDateTime.now()).to(LocalDateTime.now()).build();
+        final var offender = Offender.builder().nomsId("A2345GB").offenderId(1L).build();
+
+        final var xTagEvent = XtagEventNonJpa.builder().build();
+        when(repository.findAll(Mockito.any(OffenderEventsFilter.class))).thenReturn(List.of(xTagEvent));
+
+        when(offenderService.getOffenderByBookingId(1234L)).thenReturn(Optional.empty());
+        when(transformer.offenderEventOf(Mockito.any(XtagEventNonJpa.class))).thenReturn(
+                OffenderEvent.builder().eventType("CONFIRMED_RELEASE_DATE-CHANGED").offenderId(1L).bookingId(1234L).build());
+
+        final var offenderEventList = service.findAll(filter);
+
+        assertThat(offenderEventList).extracting("bookingId").containsExactly(1234L);
+    }
+
+    @Test
     public void appliesFudgeWhenNotCurrentlyInDaylightSavingsTime() {
 
         final var aWinterDate = LocalDateTime.of(2020, 1, 1, 0, 0, 0, 0);
