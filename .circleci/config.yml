@@ -1,61 +1,18 @@
-defaults: &defaults
-  working_directory: ~/app
-  environment:
-    JAVA_TOOL_OPTIONS: -Xmx1024m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
-
 version: 2.1
 
 orbs:
+  hmpps: ministryofjustice/hmpps@1.0.0
   owasp: entur/owasp@0.0.6
 
 executors:
   builder:
-    <<: *defaults
     docker:
       - image: circleci/openjdk:11-jdk-browsers
+    working_directory: ~/app
     environment:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
-
-  deployer:
-    <<: *defaults
-    docker:
-      - image: circleci/python:3
-
-commands:
-  app_version:
-    description: "Record the Application Version"
-    steps:
-      - run:
-          command: |
-            APP_VERSION=$(unzip -p build/libs/custody-api-*.jar BOOT-INF/classes/META-INF/build-info.properties | awk -F = '/build.version/ {print $2}')
-
-            # make up a good version name
-            ([[ "${CIRCLE_BRANCH}" == "master" ]] && echo "$APP_VERSION" || echo "${APP_VERSION}.${CIRCLE_BRANCH}") | tee ./app_version.txt | awk '{print "Setting app version to " $1}'
-
-  build_publish:
-    description: "Build container and publish to docker hub"
-    steps:
-      - run:
-          command: |
-            DOCKER_IMAGE="mojdigitalstudio/custody-api"
-            APP_VERSION=$(cat ./app_version.txt)
-            docker build --rm=false . \
-               --tag "$DOCKER_IMAGE:$APP_VERSION" \
-               --label "maintainer=noms-studio-webops@digital.justice.gov.uk" \
-               --label "app.version=$APP_VERSION" \
-               --label "build.version=$APP_VERSION" \
-               --label "build.number=$CIRCLE_BUILD_NUM" \
-               --label "build.url=$CIRCLE_BUILD_URL" \
-               --label "build.gitref=$CIRCLE_SHA1"
-
-            if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-              # publish to docker hub as the tag
-              docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-              docker tag $DOCKER_IMAGE:$APP_VERSION $DOCKER_IMAGE:latest
-              docker push $DOCKER_IMAGE:$APP_VERSION
-              docker push $DOCKER_IMAGE:latest
-            fi
+      JAVA_TOOL_OPTIONS: -Xmx1024m -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
 
 jobs:
   build:
@@ -67,7 +24,6 @@ jobs:
             - gradle-{{ checksum "build.gradle" }}
             - gradle-
       - run: ./gradlew build
-      - app_version
       - save_cache:
           paths:
             - ~/.gradle
@@ -83,16 +39,6 @@ jobs:
             - build.gradle
             - app_version.txt
 
-  build_docker:
-    executor: deployer
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/app
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - build_publish
-
 workflows:
   version: 2
   build-test-and-deploy:
@@ -101,12 +47,56 @@ workflows:
           filters:
             tags:
               ignore: /.*/
-      - build_docker:
-          requires:
-            - build
+      - hmpps/build_docker:
+          name: build_docker
           filters:
             branches:
-              only: master
+              only:
+                - k8s_deploy
+      - hmpps/deploy_env:
+          name: deploy_dev
+          env: "t3"
+          filters:
+            branches:
+              only:
+                - k8s_deploy
+          requires:
+            - build_docker
+            - build
+      - request-stage-approval:
+          type: approval
+          requires:
+            - deploy_dev
+
+      - hmpps/deploy_env:
+          name: deploy_stage
+          env: "t2"
+          context: custody-api-t2
+          requires:
+            - request-stage-approval
+      - request-preprod-approval:
+          type: approval
+          requires:
+            - deploy_stage
+
+      - hmpps/deploy_env:
+          name: deploy_preprod
+          env: "preprod"
+          context: custody-api-preprod
+          requires:
+            - request-preprod-approval
+      - request-prod-approval:
+          type: approval
+          requires:
+            - deploy_preprod
+
+      - hmpps/deploy_env:
+          name: deploy_prod
+          env: "prod"
+          slack_notification: true
+          context: custody-api-prod
+          requires:
+            - request-prod-approval
   scheduled:
     triggers:
       - schedule:
