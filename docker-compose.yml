@@ -2,7 +2,7 @@ version: '3.1'
 services:
 
   nomis-oauth2-server:
-    image: quay.io/hmpps/nomis-oauth2-server:latest
+    image: quay.io/hmpps/hmpps-auth:latest
     container_name: nomis-oauth2-server
     ports:
     - "9090:8080"
@@ -13,7 +13,7 @@ services:
     - SPRING_PROFILES_ACTIVE=dev
 
   custody-api:
-    image: mojdigitalstudio/custody-api:latest
+    image: quay.io/hmpps/custody-api:latest
     container_name: custody-api
     depends_on:
       - nomis-oauth2-server

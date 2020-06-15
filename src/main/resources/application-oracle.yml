@@ -16,5 +16,3 @@ spring:
         show_sql: false
         jdbc:
           fetch_size: 100
-  profiles:
-    include: logstash
