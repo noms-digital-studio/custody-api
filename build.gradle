@@ -1,10 +1,8 @@
 plugins {
-    id("uk.gov.justice.hmpps.gradle-spring-boot") version "0.4.0"
+    id("uk.gov.justice.hmpps.gradle-spring-boot") version "0.4.2"
     id 'groovy'
 }
 
-
-ext["spring-security.version"] = "5.3.2.RELEASE"
 
 dependencies {
     implementation files('lib/ojdbc10-19.3.jar')
@@ -12,14 +10,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.security.oauth:spring-security-oauth2:2.4.1.RELEASE'
-    implementation 'org.springframework.security:spring-security-jwt:1.1.0.RELEASE'
+    implementation 'org.springframework.security.oauth:spring-security-oauth2:2.5.0.RELEASE'
+    implementation 'org.springframework.security:spring-security-jwt:1.1.1.RELEASE'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.0'
 
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'com.zaxxer:HikariCP:3.4.5'
-    implementation 'commons-io:commons-io:2.6'
+    implementation 'commons-io:commons-io:2.7'
     implementation 'org.apache.commons:commons-lang3:3.10'
 
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
